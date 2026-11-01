@@ -94,6 +94,8 @@ test("disguise checks", () => {
   const v6 = [["ip", "1.2.3.4"], ["stack", "1.2.3.4"], ["stack", "2001:db8::1"]];
   assert.equal(checks({ ...base, exits: v6, rtc: ["2001:db8::1", "1.2.3.4"] }).webrtc[0], "ok");
   assert.deepEqual(checks({ ...base, exits: v6, rtc: ["2001:db8::9", "1.2.3.4"] }).webrtc, ["bad", "c_rtc_bad", { ip: "2001:db8::9" }]);
+  // the IPv4 / IPv6 test went direct while the page went through the proxy: its addresses are the ones that leak
+  assert.deepEqual(checks({ ...base, ip: "2406:da14::1", exits: [["ip", "2406:da14::1"], ["stack", "1.2.3.4"], ["stack", "2408:8207::1"]], rtc: ["1.2.3.4", "2408:8207::1"] }).webrtc, ["bad", "c_rtc_bad", { ip: "2408:8207::1" }]);
   // the address another destination sees (a rule-based proxy's direct route) still leaks to this site
   assert.equal(checks({ ...base, ip: "5.6.7.8", exits: [["ip", "5.6.7.8"], ["ex_cn", "1.2.3.4"]], rtc: ["1.2.3.4"] }).webrtc[0], "bad");
   assert.equal(checks({ ...base, rtc: false }).webrtc[1], "c_rtc_off");
