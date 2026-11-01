@@ -152,6 +152,8 @@ export default {
   og_r1: "Algunas cosas me delatan",
   og_r2: "Muchas cosas me delatan",
 
+  go_asn: "Consulta ASN", go_ipv6: "Test de IPv6", go_webrtc: "Test de fuga WebRTC",
+
   docs: [
     ["¿Qué hace esta página?", "Ejecuta los mismos rastreadores que cualquier sitio puede ejecutar en cuanto lo abres y escribe quién te hace eso: de dónde vienes probablemente, dónde estás, qué usas y qué prefieres.\nAl pasar el ratón sobre un hueco del párrafo ves de qué rastreadores salió, y la lista de abajo muestra cada rastreador, cómo lee (la API o cabecera de la columna derecha) y lo que leyó. Ninguno muestra un aviso de permiso."],
     ["¿Cómo adivina mi nacionalidad y ciudad?", "La ciudad sale de tu dirección IP, buscada en la base de geolocalización de Cloudflare, el mismo tipo de base que usan las redes publicitarias. Con una VPN es la ciudad del servidor VPN.\nLa nacionalidad se deduce del idioma del navegador (zh-TW apunta a Taiwán, pt-BR a Brasil) y de la zona horaria del sistema, que una VPN no cambia. El inglés de EE. UU. es el idioma por defecto de todos los dispositivos, así que entonces decide la zona horaria."],

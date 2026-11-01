@@ -152,6 +152,8 @@ export default {
   og_r1: "Quelques points me trahissent",
   og_r2: "Beaucoup de points me trahissent",
 
+  go_asn: "Recherche ASN", go_ipv6: "Test IPv6", go_webrtc: "Test de fuite WebRTC",
+
   docs: [
     ["Que fait cette page ?", "Elle lance les mêmes renifleurs que n’importe quel site peut lancer dès que vous l’ouvrez, puis écrit qui cela fait de vous : d’où vous venez probablement, où vous êtes, ce que vous utilisez et ce que vous préférez.\nSurvolez un trou du paragraphe pour voir de quels renifleurs il vient ; la liste en dessous montre chaque renifleur, comment il lit (l’API ou l’en-tête de la colonne de droite) et ce qu’il a lu. Aucun n’affiche de demande d’autorisation."],
     ["Comment devine-t-elle ma nationalité et ma ville ?", "La ville vient de votre adresse IP, cherchée dans la base de géolocalisation de Cloudflare, le même genre de base que celles des régies publicitaires. Avec un VPN, c’est la ville du serveur VPN.\nLa nationalité est déduite de la langue du navigateur (zh-TW renvoie à Taïwan, pt-BR au Brésil) et du fuseau horaire du système, qu’un VPN ne change pas. L’anglais américain est la langue par défaut de tous les appareils : dans ce cas, c’est le fuseau qui décide."],

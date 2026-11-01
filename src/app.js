@@ -28,12 +28,17 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   };
   // other 1ms.dog tools, when the host announces them (absent when self-hosted)
   const META = n => (document.querySelector(`meta[name="${n}"]`) || {}).content || "";
-  const IPQS = META("ipqs"), EGRESS = META("egress"), DNSTEST = META("dns");
+  const IPQS = META("ipqs"), EGRESS = META("egress"), DNSTEST = META("dns"), ASN = META("asn"), IPV6 = META("ipv6");
   // another tool's page in this page's language (every 1ms.dog tool keeps the same language folders)
   const inLang = host => host.replace(/\/$/, "") + ((D.base || D.paths)[LANG] || "/");
   const ipqsOf = ip => IPQS && ip ? inLang(IPQS) + "?ip=" + encodeURIComponent(ip) : "";
   if (EGRESS && $("#egLink")) { $("#egLink").href = inLang(EGRESS); $("#egLink").hidden = false; }
-  if (DNSTEST && $("#focusGo") && D.focus.go === "dns") { $("#focusGo").href = inLang(DNSTEST); $("#focusGo").hidden = false; }
+  // a topic page's link to the tool that looks deeper: DNS Test, or EgressLens's WebRTC leak test
+  const focusHref = D.focus && ({ dns: DNSTEST && inLang(DNSTEST), webrtc: EGRESS && inLang(EGRESS) + "webrtc-leak/" })[D.focus.go];
+  if (focusHref && $("#focusGo")) { $("#focusGo").href = focusHref; $("#focusGo").hidden = false; }
+  // an AS number links to its page on ASN Lookup
+  const asnOf = n => ASN && n ? inLang(ASN) + "AS" + n : "";
+  const asnLink = n => { const h = asnOf(n); return h ? `<a href="${esc(h)}" target="_blank" rel="noopener" title="${esc(t("go_asn"))}">AS${n}</a>` : "AS" + n; };
   const list = a => a.join(t("v_join"));
   // a network's everyday name: "Alibaba Cloud (Singapore) Private Limited" → "Alibaba Cloud", "Amazon.com, Inc." → "Amazon.com"
   const shortOrg = s => {
@@ -151,7 +156,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     row("ip", flagged(null, j.ip + " · IPv" + j.v, ipqsOf(j.ip)));
     row("geo", c.country ? flagged(c.country, [c.city, c.region, country(c.country)].filter(Boolean).join(", ")) : esc(t("v_empty")), { na: !c.country });
     if (c.latitude != null) txt("coords", [(+c.latitude).toFixed(2) + ", " + (+c.longitude).toFixed(2), c.postalCode].filter(Boolean).join(" · ")); else na("coords", "v_empty");
-    if (c.asn) txt("isp", "AS" + c.asn + " · " + (c.asOrganization || "")); else na("isp", "v_empty");
+    if (c.asn) row("isp", asnLink(c.asn) + esc(" · " + (c.asOrganization || ""))); else na("isp", "v_empty");
     if (c.timezone) txt("tzip", c.timezone + " · UTC" + offTxt(tzOffset(c.timezone))); else na("tzip", "v_empty");
     if (j.ptr) txt("ptr", j.ptr); else na("ptr", "v_empty");
     if (c.colo) txt("edge", c.colo + (c.clientTcpRtt ? " · RTT " + c.clientTcpRtt + " ms" : "")); else na("edge", "v_empty");
@@ -436,7 +441,8 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const [v4, v6] = await Promise.all([one(4), one(6)]);
     R.stack = [v4, v6].filter(Boolean);
     if (!v4 && !v6) return na("stack", "v_empty");
-    txt("stack", "IPv4 " + (v4 || "–") + " · IPv6 " + (v6 || "–"));
+    const s = esc("IPv4 " + (v4 || "–") + " · IPv6 " + (v6 || "–"));
+    row("stack", IPV6 ? `<span class="pa-t">${s}</span><a class="pa-go" href="${esc(inLang(IPV6))}" target="_blank" rel="noopener">${esc(t("go_ipv6"))} →</a>` : s);
   }
 
   // The DNS resolver: a name nobody looked up before goes to the visitor's resolver, and ip-api's name server tells
@@ -562,7 +568,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const ex = allExits(), split = ex && splitOf(ex);
     return { v: 1, nat: nat ? nat.cc : null, natFrom: nat ? nat.from : null, cc: c.country || null, city: c.city || null, langs: R.langs || [],
       tz: R.tz || null, h12: !!R.h12, os: R.osTxt || null, kind: d.kind || null, model: d.model || null, browser: R.browser || null,
-      screen: R.screen || null, gpu: R.gpu || null, org: c.asOrganization ? shortOrg(c.asOrganization) : c.asn ? "AS" + c.asn : null,
+      screen: R.screen || null, gpu: R.gpu || null, org: c.asOrganization ? shortOrg(c.asOrganization) : c.asn ? "AS" + c.asn : null, asn: c.asn ?? null,
       nt: split ? "split" : c.asn == null ? null : isDataCenter(c.asn, c.asOrganization) ? "dc" : "home", nx: split ? split.n : 0,
       dns: R.dnsCC || null, dark: !!R.dark, ab: !!R.adblock, jobs: jobsOf(), fp: R.fp || null, rand: !!R.rand,
       x: { split, fullOrg: [c.asn ? "AS" + c.asn : "", c.asOrganization].filter(Boolean).join(" · "), dnsOrg: R.dnsOrg || "", fpHex: R.fpHex } };
@@ -637,7 +643,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     blank("browser", P.browser ? esc(P.browser) : U);
     blank("screen", P.screen ? esc(P.screen) : U);
     blank("gpu", esc(P.gpu || t("gpu_unknown")));
-    blank("isp", P.org ? esc(P.org) : shared ? esc(t("masked")) : U, BLANKS.isp, X.fullOrg || (shared && !P.org ? t("masked_why") : ""));
+    blank("isp", P.org ? (!shared && asnOf(P.asn) ? `<a href="${esc(asnOf(P.asn))}" target="_blank" rel="noopener">${esc(P.org)}</a>` : esc(P.org)) : shared ? esc(t("masked")) : U, BLANKS.isp, X.fullOrg || (shared && !P.org ? t("masked_why") : ""));
     blank("dns", P.dns ? flagged(P.dns, country(P.dns)) : U, BLANKS.dns, X.dnsOrg || "");
     const sp = X.split;
     blank("nettype", esc(P.nt === "split" ? t("nt_split", { n: P.nx }) : P.nt ? t("nt_" + P.nt) : t("v_unknown")),
@@ -717,6 +723,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const P = portrait();
     delete P.x; delete P.fp;
     if (!show) { P.city = null; P.org = null; }
+    delete P.asn;
     P.l = LANG;
     P.ck = Object.fromEntries(Object.entries(R.ck || {}).filter(([, v]) => v).map(([id, [lv, key, vars]]) =>
       [id, [lv, key, Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "ip" ? maskIp(String(x)) : k === "org" && !show ? t("masked") : x]))]]));

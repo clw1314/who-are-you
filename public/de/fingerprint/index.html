@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Die ID, die jede Website ohne Cookies für Sie berechnet">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Browser-Fingerprint-Test · 1ms.dog","url":"https://who.1ms.dog/de/fingerprint/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Kostenloser Browser-Fingerprint-Test: Ihre Canvas-, WebGL-, Audio- und Schriften-Fingerabdrücke und die Gesamt-ID, die jede Website ohne Cookies berechnen kann, ob Ihr Browser sie verwürfelt und ob er Sie seit dem letzten Besuch wiedererkannt hat. Nichts wird gespeichert.","inLanguage":"de","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Was ist ein Browser-Fingerabdruck?","acceptedAnswer":{"@type":"Answer","text":"Eine Menge kleiner Unterschiede zwischen Rechnern: wie Grafikkarte und Treiber ein Canvas oder eine WebGL-Szene zeichnen, wie die Audioverarbeitung rundet, welche Schriften installiert sind, dazu Bildschirm, Sprache und Zeitzone. Einzeln alltäglich, zusammen oft einmalig. Eine Website macht daraus eine ID, und jede Website mit demselben Skript bekommt dieselbe ID von Ihnen."}},{"@type":"Question","name":"Ändert ein VPN oder ein privates Fenster ihn?","acceptedAnswer":{"@type":"Answer","text":"Nein. Nichts davon hängt von Ihrer IP ab, und ein privates Fenster zeichnet und spielt Ton genauso. Deshalb folgt Ihnen der Fingerabdruck auch nach dem Löschen von Cookies oder einem VPN-Wechsel. Die ID-Karte dieser Seite merkt sich Ihren letzten Besuch (nur in Ihrem Browser) und zeigt das."}},{"@type":"Question","name":"Wie verhindere ich Fingerprinting?","acceptedAnswer":{"@type":"Answer","text":"Mit einem Browser, der dagegen arbeitet: Brave verrauscht Canvas, WebGL und Audio standardmäßig; Firefox hat privacy.resistFingerprinting; der Tor Browser lässt alle gleich aussehen. Erweiterungen, die den User-Agent ändern oder Canvas blockieren, machen Sie oft auffälliger. Die Zeile „Fingerabdruck-Schutz“ zeigt, ob Ihr Browser verwürfelt."}},{"@type":"Question","name":"Kann der Test sagen, wie einmalig ich bin?","acceptedAnswer":{"@type":"Answer","text":"Nicht ohne die Fingerabdrücke aller zu sammeln, und das tut diese Seite nicht: Sie speichert nichts. Sie zeigt, was eine Website berechnen kann und ob es stabil bleibt. Kommen Sie später wieder: Sagt die Karte, der Fingerabdruck sei gleich, hätte jede Website Sie genauso erkannt."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.f689579b3d.css">
+<link rel="stylesheet" href="/assets/app.b7fd91f474.css">
 </head>
 <body>
 <div class="app">
@@ -73,7 +73,7 @@
       <div class="focus-r"><h2>Ihr Fingerabdruck</h2>
         <p class="focus-v" id="focusV"><i class="st"></i><b><i class="skl"></i></b></p>
         <ul class="focus-rows"><li data-f="fpid"><span>Gesamt-Fingerabdruck</span><b>…</b></li><li data-f="canvas"><span>Canvas</span><b>…</b></li><li data-f="webgl"><span>WebGL</span><b>…</b></li><li data-f="audio"><span>Audio</span><b>…</b></li><li data-f="fontfp"><span>Schriftenliste</span><b>…</b></li><li data-f="rand"><span>Fingerabdruck-Schutz</span><b>…</b></li></ul>
-        
+        <a class="focus-go" id="focusGo" target="_blank" rel="noopener" hidden>WebRTC-Leak-Test →</a>
       </div>
     </section>
     <section class="hero card">
@@ -146,8 +146,8 @@
 </div>
 <div class="adsbox ad-banner ad-placement" id="ad-slot" aria-hidden="true"></div>
 
-<script type="application/json" id="data">{"lang":"de","paths":{"en":"/fingerprint/","zh-CN":"/zh-cn/fingerprint/","zh-TW":"/zh-tw/fingerprint/","ja":"/ja/fingerprint/","ko":"/ko/fingerprint/","es":"/es/fingerprint/","fr":"/fr/fingerprint/","de":"/de/fingerprint/","pt":"/pt/fingerprint/","ru":"/ru/fingerprint/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"fingerprint","rows":["fpid","canvas","webgl","audio","fontfp","rand"],"check":"fp"}}</script>
-<script src="/assets/l.de.6ea15913e7.js"></script>
-<script src="/assets/app.0ddcf6757b.js"></script>
+<script type="application/json" id="data">{"lang":"de","paths":{"en":"/fingerprint/","zh-CN":"/zh-cn/fingerprint/","zh-TW":"/zh-tw/fingerprint/","ja":"/ja/fingerprint/","ko":"/ko/fingerprint/","es":"/es/fingerprint/","fr":"/fr/fingerprint/","de":"/de/fingerprint/","pt":"/pt/fingerprint/","ru":"/ru/fingerprint/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"fingerprint","rows":["fpid","canvas","webgl","audio","fontfp","rand"],"check":"fp","go":"webrtc"}}</script>
+<script src="/assets/l.de.b93b1b58d1.js"></script>
+<script src="/assets/app.ea174a90fe.js"></script>
 </body>
 </html>

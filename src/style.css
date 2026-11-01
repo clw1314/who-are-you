@@ -163,6 +163,12 @@ h2 { font-size: 15px; font-weight: 700; }
 .pa { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: 12.5px var(--f-num); }
 .pa a { color: inherit; text-decoration: underline dotted color-mix(in srgb, var(--fg) 40%, transparent); text-underline-offset: 3px; }
 .pa a:hover { color: var(--ink); }
+/* a value with a link after it: the value gives way, the link stays */
+.pa:has(.pa-go), .focus-rows b:has(.pa-go) { display: flex; gap: 8px; }
+.pa-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pa .pa-go, .focus-rows .pa-go { flex: none; font: 500 12px var(--f-ui); color: var(--ink); text-decoration: none; }
+.pa .pa-go:hover { text-decoration: underline; }
+.bl a { color: inherit; text-decoration: none; }
 .pa .flag { margin-right: 4px; }
 .pm { justify-self: end; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: 10.5px/18px var(--f-num); color: var(--muted); padding: 0 6px; border-radius: 5px; background: var(--soft); }
 .pr.wait .pa { color: var(--muted); animation: blink 1.2s ease-in-out infinite; }

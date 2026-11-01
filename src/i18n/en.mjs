@@ -153,6 +153,8 @@ export default {
   og_r1: "A few things give me away",
   og_r2: "Lots of things give me away",
 
+  go_asn: "ASN Lookup", go_ipv6: "IPv6 Test", go_webrtc: "WebRTC leak test",
+
   docs: [
     ["What does this page do?", "It runs the same sniffers any website can run the moment you open it, then writes down who that makes you: where you probably come from, where you are, what you use and what you like.\nEvery blank in the paragraph says on hover which sniffers it came from, and the list below shows each sniffer, how it reads (the API or header in the right column) and what it read. None of them shows a permission prompt."],
     ["How does it guess my nationality and city?", "The city comes from your IP address, looked up in Cloudflare's geolocation database, the same kind of database every ad network uses. With a VPN it's the VPN server's city.\nNationality is a guess from your browser language (zh-TW points to Taiwan, pt-BR to Brazil) and the time zone your system is set to, which a VPN doesn't change. Plain US English is every device's default, so then the time zone decides."],

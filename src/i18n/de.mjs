@@ -152,6 +152,8 @@ export default {
   og_r1: "Ein paar Dinge verraten mich",
   og_r2: "Vieles verrät mich",
 
+  go_asn: "ASN-Abfrage", go_ipv6: "IPv6-Test", go_webrtc: "WebRTC-Leak-Test",
+
   docs: [
     ["Was macht diese Seite?", "Sie lässt dieselben Schnüffler laufen, die jede Website laufen lassen kann, sobald Sie sie öffnen, und schreibt auf, wer Sie damit sind: woher Sie wahrscheinlich kommen, wo Sie gerade sind, was Sie nutzen und was Sie mögen.\nZeigen Sie auf eine Lücke im Text, um zu sehen, von welchen Schnüfflern sie stammt; die Liste darunter zeigt jeden Schnüffler, wie er liest (die API oder der Header in der rechten Spalte) und was er gelesen hat. Keiner zeigt eine Berechtigungsabfrage."],
     ["Wie errät sie Staatsangehörigkeit und Stadt?", "Die Stadt kommt von Ihrer IP-Adresse, nachgeschlagen in der Geodatenbank von Cloudflare, derselben Art von Datenbank, die Werbenetze nutzen. Mit VPN ist es die Stadt des VPN-Servers.\nDie Staatsangehörigkeit wird aus der Browsersprache (zh-TW deutet auf Taiwan, pt-BR auf Brasilien) und der System-Zeitzone geschätzt; beides ändert ein VPN nicht. US-Englisch ist auf jedem Gerät voreingestellt, dann entscheidet die Zeitzone."],

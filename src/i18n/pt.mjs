@@ -152,6 +152,8 @@ export default {
   og_r1: "Algumas coisas me entregam",
   og_r2: "Muitas coisas me entregam",
 
+  go_asn: "Consulta ASN", go_ipv6: "Teste de IPv6", go_webrtc: "Teste de vazamento WebRTC",
+
   docs: [
     ["O que esta página faz?", "Ela roda os mesmos farejadores que qualquer site pode rodar assim que você o abre e escreve quem isso faz de você: de onde você provavelmente vem, onde está, o que usa e do que gosta.\nPasse o mouse sobre uma lacuna do parágrafo para ver de quais farejadores ela veio; a lista abaixo mostra cada farejador, como ele lê (a API ou o cabeçalho da coluna da direita) e o que leu. Nenhum mostra pedido de permissão."],
     ["Como ela adivinha minha nacionalidade e cidade?", "A cidade vem do seu endereço IP, consultado na base de geolocalização da Cloudflare, o mesmo tipo de base que as redes de anúncios usam. Com VPN, é a cidade do servidor VPN.\nA nacionalidade é deduzida do idioma do navegador (zh-TW aponta para Taiwan, pt-BR para o Brasil) e do fuso horário do sistema, que a VPN não muda. Inglês dos EUA é o padrão de todo aparelho; nesse caso, decide o fuso."],

@@ -3,9 +3,9 @@
 // link preview; the page script fills the focus panel from the same sniffers as the main page.
 //   rows   the sniffer rows the focus panel shows
 //   check  the disguise check whose verdict heads it
-//   go     another 1ms.dog tool to link to, by the <meta> the host announces it with
+//   go     what to link to when the host announces it: "dns" DNS Test, "webrtc" EgressLens's WebRTC leak test
 export const PAGES = {
-  fingerprint: { rows: ["fpid", "canvas", "webgl", "audio", "fontfp", "rand"], check: "fp" },
+  fingerprint: { rows: ["fpid", "canvas", "webgl", "audio", "fontfp", "rand"], check: "fp", go: "webrtc" },
   "dns-leak": { rows: ["dns", "ip", "ex_cn", "ex_intl", "stack"], check: "dns", go: "dns" },
 };
 
