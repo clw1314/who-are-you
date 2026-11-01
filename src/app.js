@@ -31,7 +31,9 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const IPQS = META("ipqs"), EGRESS = META("egress"), DNSTEST = META("dns"), ASN = META("asn"), IPV6 = META("ipv6");
   // another tool's page in this page's language (every 1ms.dog tool keeps the same language folders)
   const inLang = host => host.replace(/\/$/, "") + ((D.base || D.paths)[LANG] || "/");
-  const ipqsOf = ip => IPQS && ip ? inLang(IPQS) + "?ip=" + encodeURIComponent(ip) : "";
+  // only public addresses get a link: there is nothing to look up about a private, loopback or link-local one
+  const PRIVATE = /^(10\.|127\.|0\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.|::1?$|f[cd][0-9a-f]{2}:|fe[89ab][0-9a-f]:)/i;
+  const ipqsOf = ip => IPQS && ip && !PRIVATE.test(ip) ? inLang(IPQS) + "?ip=" + encodeURIComponent(ip) : "";
   if (EGRESS && $("#egLink")) { $("#egLink").href = inLang(EGRESS); $("#egLink").hidden = false; }
   // a topic page's link to the tool that looks deeper: DNS Test, or EgressLens's WebRTC leak test
   const focusHref = D.focus && ({ dns: DNSTEST && inLang(DNSTEST), webrtc: EGRESS && inLang(EGRESS) + "webrtc-leak/" })[D.focus.go];
