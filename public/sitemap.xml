@@ -140,4 +140,284 @@
     <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/"/>
   </url>
+  <url>
+    <loc>https://who.1ms.dog/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/zh-cn/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/zh-tw/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/ja/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/ko/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/es/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/fr/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/de/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/pt/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/ru/fingerprint/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/fingerprint/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/fingerprint/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/zh-cn/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/zh-tw/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/ja/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/ko/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/es/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/fr/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/de/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/pt/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
+  <url>
+    <loc>https://who.1ms.dog/ru/dns-leak/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://who.1ms.dog/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://who.1ms.dog/zh-cn/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="zh-TW" href="https://who.1ms.dog/zh-tw/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://who.1ms.dog/ja/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://who.1ms.dog/ko/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://who.1ms.dog/es/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://who.1ms.dog/fr/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://who.1ms.dog/de/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://who.1ms.dog/pt/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://who.1ms.dog/ru/dns-leak/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://who.1ms.dog/dns-leak/"/>
+  </url>
 </urlset>

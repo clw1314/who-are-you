@@ -33,11 +33,12 @@
   </header>
 
   <main id="main">
+    {{focus}}
     <section class="hero card">
       <div class="hero-b">
         <div class="col who">
           <p class="eyebrow"><i></i>{{eyebrow}}</p>
-          <h1>{{h1}}</h1>
+          {{heroTitle}}
           <div class="story-w"><div class="story wait" id="story">{{story}}</div><div class="story-sk" id="storySk" aria-hidden="true"><i class="skl"></i><i class="skl"></i><i class="skl"></i><i class="skl"></i><i class="skl"></i><i class="skl"></i><i class="skl"></i></div></div>
           <div class="idc" id="idc">
             <svg class="fp-art" id="fpArt" viewBox="0 0 64 64" aria-hidden="true"></svg>
@@ -69,6 +70,7 @@
       <div class="pgroups">{{groups}}</div>
     </section>
 
+    <nav class="topics">{{topics}}</nav>
   </main>
   <div data-ms-more></div>
 </div>

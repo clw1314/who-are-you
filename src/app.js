@@ -30,9 +30,10 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const META = n => (document.querySelector(`meta[name="${n}"]`) || {}).content || "";
   const IPQS = META("ipqs"), EGRESS = META("egress"), DNSTEST = META("dns");
   // another tool's page in this page's language (every 1ms.dog tool keeps the same language folders)
-  const inLang = host => host.replace(/\/$/, "") + (D.paths[LANG] || "/");
+  const inLang = host => host.replace(/\/$/, "") + ((D.base || D.paths)[LANG] || "/");
   const ipqsOf = ip => IPQS && ip ? inLang(IPQS) + "?ip=" + encodeURIComponent(ip) : "";
   if (EGRESS && $("#egLink")) { $("#egLink").href = inLang(EGRESS); $("#egLink").hidden = false; }
+  if (DNSTEST && $("#focusGo") && D.focus.go === "dns") { $("#focusGo").href = inLang(DNSTEST); $("#focusGo").hidden = false; }
   const list = a => a.join(t("v_join"));
   // a network's everyday name: "Alibaba Cloud (Singapore) Private Limited" → "Alibaba Cloud", "Amazon.com, Inc." → "Amazon.com"
   const shortOrg = s => {
@@ -108,6 +109,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
 
   /* ---------- rows: each keeps its size from the first paint; only the text changes ---------- */
   const PR = Object.fromEntries($$(".pr[data-s]").map(r => [r.dataset.s, r]));
+  const FR = Object.fromEntries($$(".focus-rows [data-f]").map(r => [r.dataset.f, r]));
   const N = SNIFFERS.length;
   let gen = 0, done = new Set();
   // fill a row: html is trusted markup built here, everything read from the browser or the server goes through esc()
@@ -116,6 +118,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     done.add(id);
     r.classList.remove("wait"); r.classList.toggle("na", !!opt.na);
     const a = r.querySelector(".pa"); a.innerHTML = html;
+    if (FR[id]) { FR[id].querySelector("b").innerHTML = html; FR[id].classList.toggle("na", !!opt.na); }
     const why = opt.why || (a.scrollWidth > a.clientWidth + 1 ? a.textContent : "");
     if (why) { r.dataset.why = why; r.tabIndex = 0; } else { delete r.dataset.why; r.removeAttribute("tabindex"); }
     progress();
@@ -665,12 +668,18 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       const cv = r.querySelector(".ck-v"); cv.textContent = t(key, vv);
       if (cv.scrollHeight > cv.clientHeight + 1) r.dataset.why = cv.textContent; else delete r.dataset.why;
       r.querySelector(".st").textContent = lv === "ok" ? "✓" : lv === "info" ? "i" : "!";
+      if (D.focus && D.focus.check === id) {
+        const fv = $("#focusV"); fv.className = "focus-v st-" + lv;
+        fv.querySelector("b").textContent = cv.textContent; fv.querySelector(".st").textContent = r.querySelector(".st").textContent;
+      }
       // a check that gives you away says how to fix it
       r.querySelector(".ck-fix").hidden = lv !== "bad" && lv !== "warn";
       const go = r.querySelector(".ck-go");
       if (go) {
-        const href = id === "dns" ? DNSTEST && inLang(DNSTEST) : id === "dc" ? ipqsOf(R && R.srv && R.srv.ip) : EGRESS && inLang(EGRESS);
-        go.hidden = !href || (lv !== "bad" && lv !== "warn"); if (href) go.href = href;
+        // WebRTC links to EgressLens's own WebRTC leak test whatever the result; the others only when they give you away
+        const href = id === "dns" ? DNSTEST && inLang(DNSTEST) : id === "dc" ? ipqsOf(R && R.srv && R.srv.ip)
+          : id === "webrtc" ? EGRESS && inLang(EGRESS) + "webrtc-leak/" : EGRESS && inLang(EGRESS);
+        go.hidden = !href || (id !== "webrtc" && lv !== "bad" && lv !== "warn"); if (href) go.href = href;
       }
     }
     if (!final) return;
@@ -833,6 +842,8 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const g = ++gen;
     R = {}; done = new Set();
     for (const r of Object.values(PR)) { r.classList.add("wait"); r.classList.remove("na"); r.querySelector(".pa").textContent = "…"; delete r.dataset.why; }
+    for (const r of Object.values(FR)) { r.classList.remove("na"); r.querySelector("b").textContent = "…"; }
+    if ($("#focusV")) { $("#focusV").className = "focus-v"; $("#focusV b").innerHTML = '<i class="skl"></i>'; $("#focusV .st").textContent = ""; }
     // the paragraph stays invisible (its skeleton on top) until every blank is in, so its text never reflows on screen
     $("#story").classList.add("wait"); $("#storySk").hidden = false;
     for (const b of Object.values(BL)) { b.classList.add("wait"); b.innerHTML = '<i class="skl"></i>'; delete b.dataset.why; b.removeAttribute("tabindex"); }

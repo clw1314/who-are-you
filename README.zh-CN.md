@@ -6,7 +6,7 @@
 
 接着它像网站识别伪装那样，把这些信息互相对比；并列出全部 71 个嗅探器、每个的读取方式和读到的结果。
 
-**在线使用：** https://who.1ms.dog
+**在线使用：** https://who.1ms.dog · 专题页：[浏览器指纹检测](https://who.1ms.dog/zh-cn/fingerprint/)、[DNS 泄露检测](https://who.1ms.dog/zh-cn/dns-leak/)（同一个工具，把那一项结果放在最前面；文案在 `src/pages.mjs`）
 
 ## 能看到什么
 

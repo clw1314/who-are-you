@@ -3,7 +3,8 @@
 // language page in headless Chrome and checks that the page script ran through: no script errors, every sniffer row
 // filled, every blank of the portrait filled with no placeholder or "undefined" left, every check judged. Then it
 // shares the English portrait (link and image card) and opens the link: the link must carry no address, city,
-// network or fingerprint, and the shared view must show the portrait with the city and fingerprint masked.
+// network or fingerprint, and the shared view must show the portrait with the city and fingerprint masked. Last, every
+// topic page in every language: its focus panel must get a verdict and fill every row.
 // The exit and DNS probes go to the real services, so a row may read "couldn't read" offline; it must not stay "…".
 // Usage: node scripts/smoke.mjs            (finds Chrome or Edge; CHROME_PATH=… to pick one)
 import { createServer } from "node:http";
@@ -13,6 +14,7 @@ import puppeteer from "puppeteer-core";
 import { LANGS } from "./build.mjs";
 import { SNIFFERS, BLANKS, CHECKS } from "../src/sniffers.mjs";
 import { decode, SLUG } from "../src/share.mjs";
+import { PAGES } from "../src/pages.mjs";
 
 const pub = new URL("../public/", import.meta.url);
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2", ".ico": "image/x-icon" };
@@ -101,6 +103,18 @@ for (const [lang, slug] of LANGS) {
     if (!v.mine) fail("share", "no \"check mine\" button");
     await s.page.close();
   }
+  await page.close();
+}
+
+// the topic pages: their focus panel fills with the verdict and every row it repeats
+for (const topic of Object.keys(PAGES)) for (const [lang, slug] of LANGS) {
+  const where = `${lang} ${topic}`;
+  const { page, errors } = await open(`${base}/${slug ? slug + "/" : ""}${topic}/`);
+  await page.waitForFunction(() => !document.querySelector("#rerun").disabled, { timeout: 30000 }).catch(() => fail(where, "the run never finished"));
+  const f = await page.evaluate(() => ({ v: document.querySelector("#focusV").className, rows: [...document.querySelectorAll(".focus-rows [data-f]")].map(x => [x.dataset.f, x.querySelector("b").textContent]) }));
+  for (const e of errors) fail(where, "script error: " + e);
+  if (!/st-/.test(f.v)) fail(where, "no verdict in the focus panel");
+  for (const [id, v] of f.rows) if (!v.trim() || v === "…") fail(where, `focus row ${id} not filled`);
   await page.close();
 }
 await browser.close();

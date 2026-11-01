@@ -71,3 +71,21 @@ test("no English fallback in the page script or the build", async () => {
     assert.ok(!/\|\|\s*\w+(\.name)?\.en\b|\?\?\s*en\[/.test(s), name + " falls back to English");
   }
 });
+
+test("every topic page is its own page in every language", async () => {
+  const { PAGES, TEXT } = await import("../src/pages.mjs");
+  const sitemap = await read("public/sitemap.xml");
+  for (const page of Object.keys(PAGES)) for (const [lang, slug] of LANGS) {
+    const p = (slug ? slug + "/" : "") + page + "/", h = await read(`public/${p}index.html`), main = await page0(slug);
+    const where = `${lang} ${page}`;
+    assert.equal((h.match(/<h1[\s>]/g) || []).length, 1, where + ": one h1");
+    assert.ok(h.includes(`<h1>${TEXT[page][lang].h1}</h1>`), where + ": its own h1");
+    assert.match(h, new RegExp(`<link rel="canonical" href="https://who.1ms.dog/${p}">`), where + ": canonical to itself");
+    assert.equal((h.match(/<link rel="alternate" hreflang=/g) || []).length, LANGS.length + 1, where + ": hreflang to every language and x-default");
+    assert.notEqual(h.match(/<title>[^<]*/)[0], main.match(/<title>[^<]*/)[0], where + ": its own title");
+    assert.match(h, new RegExp(`og:image" content="https://who.1ms.dog/og/${page}-${lang.toLowerCase()}.png"`), where + ": its own preview");
+    assert.equal((h.match(/<li data-f="/g) || []).length, PAGES[page].rows.length, where + ": focus rows");
+    assert.ok(sitemap.includes(`<loc>https://who.1ms.dog/${p}</loc>`), where + ": in the sitemap");
+  }
+});
+const page0 = slug => read(`public/${slug ? slug + "/" : ""}index.html`);

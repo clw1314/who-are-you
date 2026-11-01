@@ -6,7 +6,7 @@ Who do websites think you are? [Who Are You](https://who.1ms.dog) runs the sniff
 
 It then checks those readings against each other the way a site would to spot a disguise, and lists all 71 sniffers with how each one reads and what it read.
 
-**Live:** https://who.1ms.dog
+**Live:** https://who.1ms.dog · topic pages: [browser fingerprint test](https://who.1ms.dog/fingerprint/), [DNS leak test](https://who.1ms.dog/dns-leak/) (same tool, that result first; text in `src/pages.mjs`)
 
 ## What it shows
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Renders the link-preview images with resvg (dev dependency), 1200 × 630: public/og/<lang>.png for each language,
-// and public/og/r<tier>-<lang>.png for shared results (the Worker picks one by how many checks give the sharer away).
+// public/og/<page>-<lang>.png for each topic page (src/pages.mjs), and public/og/r<tier>-<lang>.png for shared results (the Worker picks one by how many checks give the sharer away).
 // The headline and subtitle come from the page's strings; the rings are the page's fingerprint picture; the colored
 // bars are the disguise check. Run when the headline or the look changes, and commit the output. Uses system fonts
 // for the text (Windows: Segoe UI, Microsoft YaHei, Microsoft JhengHei, Yu Gothic UI, Malgun Gothic).
@@ -8,6 +8,7 @@
 import { readFile, writeFile, mkdir, readdir } from "node:fs/promises";
 import { Resvg } from "@resvg/resvg-js";
 import { SNIFFERS } from "../src/sniffers.mjs";
+import { PAGES, TEXT } from "../src/pages.mjs";
 
 const pub = new URL("../public/", import.meta.url), src = new URL("../src/", import.meta.url);
 const render = svg => new Resvg(svg, { fitTo: { mode: "width", value: 1200 }, font: { loadSystemFonts: true, defaultFontFamily: "Segoe UI" } }).render().asPng();
@@ -67,6 +68,8 @@ await mkdir(out, { recursive: true });
 for (const f of (await readdir(new URL("i18n/", src))).filter(f => f.endsWith(".mjs"))) {
   const lang = f.slice(0, -4), d = (await import(new URL("i18n/" + f, src).href)).default;
   await writeFile(new URL(lang.toLowerCase() + ".png", out), render(card(lang, d)));
+  // the topic pages: their own headline and subtitle
+  for (const p of Object.keys(PAGES)) await writeFile(new URL(`${p}-${lang.toLowerCase()}.png`, out), render(card(lang, { ...d, ...TEXT[p][lang] })));
   for (const k of [0, 1, 2]) await writeFile(new URL(`r${k}-${lang.toLowerCase()}.png`, out), render(card(lang, d, k)));
   console.log("og/" + lang.toLowerCase() + ".png");
 }

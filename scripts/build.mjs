@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Builds the static site in public/ from src/:
 //   index.html, <lang>/index.html              the page per language
+//   <lang>/<page>/index.html                   the topic pages (src/pages.mjs) per language
 //   assets/app.<hash>.js, assets/app.<hash>.css the page's code and styles, shared by every language
 //   assets/l.<lang>.<hash>.js                    the strings the browser code needs, per language
 //   sitemap.xml, robots.txt, llms.txt, _headers  SEO and security headers (CSP)
@@ -12,6 +13,7 @@ import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { build as bundle, transform } from "esbuild";
 import { GROUPS, COLUMNS, SNIFFERS, BLANKS, CHECKS } from "../src/sniffers.mjs";
+import { PAGES, TEXT } from "../src/pages.mjs";
 
 const SITE = (process.env.SITE_URL || "https://who.1ms.dog").replace(/\/+$/, "");
 const pub = new URL("../public/", import.meta.url), src = new URL("../src/", import.meta.url);
@@ -65,75 +67,99 @@ export async function build({ check = false } = {}) {
   const jsName = `app.${hash(js)}.js`, cssName = `app.${hash(css)}.css`;
   const files = { ["assets/" + jsName]: js, ["assets/" + cssName]: css };
 
-  const path = slug => "/" + (slug ? slug + "/" : "");
+  // a page's URL path: the language folder, then the topic page's folder ("" for the main page)
+  const path = (slug, page = "") => "/" + (slug ? slug + "/" : "") + (page ? page + "/" : "");
+  const pageList = ["", ...Object.keys(PAGES)];
+  for (const page of Object.keys(PAGES)) for (const [l] of langs) for (const k of ["seo_title", "seo_desc", "seo_kw", "h1", "og_sub", "intro", "focus_h", "docs"])
+    if (!TEXT[page][l] || !(k in TEXT[page][l])) throw new Error(`src/pages.mjs: ${page} ${l} has no "${k}"`);
   for (const [lang, slug, locale] of langs) {
-    const d = I[lang], T = k => { if (!(k in d)) throw new Error(`i18n/${lang}.mjs has no "${k}"`); return d[k]; };
-    const strings = Object.fromEntries(Object.keys(en).filter(k => !BUILD_ONLY.has(k)).map(k => [k, T(k)]));
+    const base = I[lang];
+    const strings = Object.fromEntries(Object.keys(en).filter(k => !BUILD_ONLY.has(k)).map(k => [k, base[k]]));
     const sjs = `window.L1MS=${JSON.stringify(strings).replace(/</g, "\\u003c")};\n`;
     const sName = `l.${lang.toLowerCase()}.${hash(sjs)}.js`;
     files["assets/" + sName] = sjs;
 
-    const url = SITE + path(slug), docs = T("docs");
-    const alts = langs.map(([l, sl]) => `<link rel="alternate" hreflang="${l}" href="${SITE + path(sl)}">`).join("\n") + `\n<link rel="alternate" hreflang="x-default" href="${SITE}/">`;
-    const graph = [
-      { "@type": "WebApplication", name: T("app_name") + " · 1ms.dog", url, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
-        browserRequirements: "Requires JavaScript", description: T("seo_desc"), inLanguage: lang, isAccessibleForFree: true,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
-      { "@type": "FAQPage", mainEntity: docs.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a.replace(/\n+/g, " ") } })) },
-    ];
-    const head = [
-      `<title>${esc(T("seo_title"))}</title>`,
-      `<meta name="description" content="${esc(T("seo_desc"))}">`,
-      `<meta name="keywords" content="${esc(T("seo_kw"))}">`,
-      ...(lang === "zh-CN" ? [`<meta http-equiv="Cache-Control" content="no-transform">`, `<meta http-equiv="Cache-Control" content="no-siteapp">`, `<meta name="applicable-device" content="pc,mobile">`] : []),
-      `<meta name="robots" content="index, follow, max-image-preview:large">`,
-      `<meta name="application-name" content="${esc(T("app_name"))}">`,
-      `<meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">`,
-      `<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">`,
-      `<link rel="canonical" href="${url}">`, alts,
-      `<link rel="icon" href="/favicon.ico" sizes="any">`, `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">`, `<link rel="apple-touch-icon" href="/apple-touch-icon.png">`,
-      `<meta property="og:type" content="website">`, `<meta property="og:site_name" content="1ms.dog">`,
-      `<meta property="og:title" content="${esc(T("seo_title"))}">`, `<meta property="og:description" content="${esc(T("og_sub"))}">`, `<meta property="og:url" content="${url}">`,
-      `<meta property="og:locale" content="${locale}">`, `<meta property="og:image" content="${SITE}/og/${lang.toLowerCase()}.png">`,
-      `<meta property="og:image:width" content="1200">`, `<meta property="og:image:height" content="630">`,
-      `<meta name="twitter:card" content="summary_large_image">`, `<meta name="twitter:image" content="${SITE}/og/${lang.toLowerCase()}.png">`,
-      `<meta name="twitter:title" content="${esc(T("seo_title"))}">`, `<meta name="twitter:description" content="${esc(T("og_sub"))}">`,
-      `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c")}</script>`,
-    ].join("\n");
+    for (const page of pageList) {
+      // a topic page has its own title, description, H1, body text and questions; everything else is the main page's
+      const d = page ? { ...base, ...TEXT[page][lang] } : base;
+      const T = k => { if (!(k in d)) throw new Error(`i18n/${lang}.mjs has no "${k}"`); return d[k]; };
+      const url = SITE + path(slug, page), docs = T("docs"), og = `${SITE}/og/${page ? page + "-" : ""}${lang.toLowerCase()}.png`;
+      const alts = langs.map(([l, sl]) => `<link rel="alternate" hreflang="${l}" href="${SITE + path(sl, page)}">`).join("\n") + `\n<link rel="alternate" hreflang="x-default" href="${SITE + path("", page)}">`;
+      const graph = [
+        { "@type": "WebApplication", name: (page ? T("h1") : T("app_name")) + " · 1ms.dog", url, applicationCategory: "UtilitiesApplication", operatingSystem: "Any",
+          browserRequirements: "Requires JavaScript", description: T("seo_desc"), inLanguage: lang, isAccessibleForFree: true,
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } },
+        { "@type": "FAQPage", mainEntity: docs.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a.replace(/\n+/g, " ") } })) },
+      ];
+      const head = [
+        `<title>${esc(T("seo_title"))}</title>`,
+        `<meta name="description" content="${esc(T("seo_desc"))}">`,
+        `<meta name="keywords" content="${esc(T("seo_kw"))}">`,
+        ...(lang === "zh-CN" ? [`<meta http-equiv="Cache-Control" content="no-transform">`, `<meta http-equiv="Cache-Control" content="no-siteapp">`, `<meta name="applicable-device" content="pc,mobile">`] : []),
+        `<meta name="robots" content="index, follow, max-image-preview:large">`,
+        `<meta name="application-name" content="${esc(T("app_name"))}">`,
+        `<meta name="theme-color" content="#f6f6f7" media="(prefers-color-scheme: light)">`,
+        `<meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">`,
+        `<link rel="canonical" href="${url}">`, alts,
+        `<link rel="icon" href="/favicon.ico" sizes="any">`, `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">`, `<link rel="apple-touch-icon" href="/apple-touch-icon.png">`,
+        `<meta property="og:type" content="website">`, `<meta property="og:site_name" content="1ms.dog">`,
+        `<meta property="og:title" content="${esc(T("seo_title"))}">`, `<meta property="og:description" content="${esc(T("og_sub"))}">`, `<meta property="og:url" content="${url}">`,
+        `<meta property="og:locale" content="${locale}">`, `<meta property="og:image" content="${og}">`,
+        `<meta property="og:image:width" content="1200">`, `<meta property="og:image:height" content="630">`,
+        `<meta name="twitter:card" content="summary_large_image">`, `<meta name="twitter:image" content="${og}">`,
+        `<meta name="twitter:title" content="${esc(T("seo_title"))}">`, `<meta name="twitter:description" content="${esc(T("og_sub"))}">`,
+        `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c")}</script>`,
+      ].join("\n");
 
-    // the checks and every sniffer have their rows from the start; readings fill them in place
-    const checks = `<ul class="ck" id="checks">` + CHECKS.map(c => `<li class="ckr" data-c="${c}"><i class="st"></i><span class="ck-l">${esc(T("c_" + c))}` +
-      `<span class="ck-acts"><button class="ck-fix" type="button" aria-expanded="false" hidden>${esc(T("fix"))}</button>` +
-      (GO[c] ? `<a class="ck-go" target="_blank" rel="noopener" hidden>${esc(T("go_" + GO[c]))} →</a>` : "") +
-      `</span></span><span class="ck-v"><i class="skl"></i></span>` +
-      `<ul class="ck-tip" hidden>${T("tip_" + c).split("\n").map(l => `<li>${esc(l)}</li>`).join("")}</ul></li>`).join("") + "</ul>";
-    const G = Object.fromEntries(GROUPS);
-    const group = g => `<div class="pg" data-g="${g}"><h3>${esc(T("g_" + g))}<span class="pg-n">${G[g].length}</span>` +
-      (g === "exit" ? `<a class="pg-a" id="egLink" target="_blank" rel="noopener" hidden>${esc(T("ex_more"))}</a>` : "") + "</h3>" +
-      G[g].map(s => `<div class="pr wait" data-s="${s.id}"${s.s ? " data-sens" : ""}><span class="pn">${esc(T("s_" + s.id))}</span><span class="pa">…</span><code class="pm">${esc(s.m)}</code></div>`).join("") + "</div>";
-    const groups = COLUMNS.map(col => `<div class="pcol">${col.map(group).join("")}</div>`).join("");
-    const helpNav = docs.map(([q], i) => `<button type="button" role="tab" data-hq="${i}" aria-selected="${i === 0}">${esc(q)}</button>`).join("");
-    const helpC = docs.map(([q, a], i) => `<article data-hqb="${i}"${i ? " hidden" : ""}><h3>${esc(q)}</h3>${a.split(/\n+/).map(p => `<p>${esc(p)}</p>`).join("")}</article>`).join("");
-    const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
-    const paths = Object.fromEntries(langs.map(([l, sl]) => [l, path(sl)]));
-    const data = { lang, paths };
+      // the checks and every sniffer have their rows from the start; readings fill them in place
+      const checks = `<ul class="ck" id="checks">` + CHECKS.map(c => `<li class="ckr" data-c="${c}"><i class="st"></i><span class="ck-l">${esc(T("c_" + c))}` +
+        `<span class="ck-acts"><button class="ck-fix" type="button" aria-expanded="false" hidden>${esc(T("fix"))}</button>` +
+        (GO[c] ? `<a class="ck-go" target="_blank" rel="noopener" hidden>${esc(T("go_" + GO[c]))} →</a>` : "") +
+        `</span></span><span class="ck-v"><i class="skl"></i></span>` +
+        `<ul class="ck-tip" hidden>${T("tip_" + c).split("\n").map(l => `<li>${esc(l)}</li>`).join("")}</ul></li>`).join("") + "</ul>";
+      const G = Object.fromEntries(GROUPS);
+      const group = g => `<div class="pg" data-g="${g}"><h3>${esc(T("g_" + g))}<span class="pg-n">${G[g].length}</span>` +
+        (g === "exit" ? `<a class="pg-a" id="egLink" target="_blank" rel="noopener" hidden>${esc(T("ex_more"))}</a>` : "") + "</h3>" +
+        G[g].map(s => `<div class="pr wait" data-s="${s.id}"${s.s ? " data-sens" : ""}><span class="pn">${esc(T("s_" + s.id))}</span><span class="pa">…</span><code class="pm">${esc(s.m)}</code></div>`).join("") + "</div>";
+      const groups = COLUMNS.map(col => `<div class="pcol">${col.map(group).join("")}</div>`).join("");
+      // A topic page opens with its own H1, body text and the one result it is about; the portrait follows under
+      // its own heading. The main page has no focus panel.
+      const P = PAGES[page];
+      const focus = !page ? "" : `<section class="focus card" id="focus" data-page="${page}">
+      <div class="focus-t"><h1>${esc(T("h1"))}</h1><p>${esc(T("intro"))}</p></div>
+      <div class="focus-r"><h2>${esc(T("focus_h"))}</h2>
+        <p class="focus-v" id="focusV"><i class="st"></i><b><i class="skl"></i></b></p>
+        <ul class="focus-rows">${P.rows.map(id => `<li data-f="${id}"><span>${esc(T("s_" + id))}</span><b>…</b></li>`).join("")}</ul>
+        ${P.go ? `<a class="focus-go" id="focusGo" target="_blank" rel="noopener" hidden>${esc(T("go_" + P.go))} →</a>` : ""}
+      </div>
+    </section>`;
+      const heroTitle = page ? `<h2 class="h1">${esc(base.h1)}</h2>` : `<h1>${esc(T("h1"))}</h1>`;
+      // the other pages of this tool, in this language: the topic pages, and the main page from a topic page
+      const topics = pageList.filter(p => p !== page).map(p => `<a href="${path(slug, p)}">${esc(p ? TEXT[p][lang].h1 : base.h1)}</a>`).join("");
+      const helpNav = docs.map(([q], i) => `<button type="button" role="tab" data-hq="${i}" aria-selected="${i === 0}">${esc(q)}</button>`).join("");
+      const helpC = docs.map(([q, a], i) => `<article data-hqb="${i}"${i ? " hidden" : ""}><h3>${esc(q)}</h3>${a.split(/\n+/).map(p => `<p>${esc(p)}</p>`).join("")}</article>`).join("");
+      const langOpts = langs.map(([l]) => `<option value="${l}"${l === lang ? " selected" : ""}>${esc(I[l].name)}</option>`).join("");
+      const paths = Object.fromEntries(langs.map(([l, sl]) => [l, path(sl, page)]));
+      // base: every language's main page, which other 1ms.dog tools share (links to them use it)
+      const data = { lang, paths, base: Object.fromEntries(langs.map(([l, sl]) => [l, path(sl)])), focus: page ? { page, ...P } : null };
 
-    const html = tpl
-      .replace(/(<(\w+)\b[^>]*\sdata-i="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g, (m, open, tag, k, inner, close) => open + esc(T(k)) + close)
-      .replace(/\{\{a:(\w+)\}\}/g, (m, k) => esc(T(k)))   // translated attribute values (aria-label)
-      .replace("{{lang}}", lang).replace("{{pathsAttr}}", esc(JSON.stringify(paths))).replace("{{rootAttr}}", slug ? "" : " data-root")
-      .replace("{{prepaint}}", PREPAINT).replace("{{head}}", head).replace("{{css}}", cssName).replace("{{js}}", jsName).replace("{{strings}}", sName)
-      .split("{{homeHref}}").join(path(slug)).replace("{{langOpts}}", langOpts).replace("{{h1}}", esc(T("h1")))
-      .replace("{{story}}", storyHtml(T("story"), lang)).replace("{{checks}}", checks).replace("{{segs}}", CHECKS.map(c => `<i data-c="${c}"></i>`).join(""))
-      .replace("{{eyebrow}}", esc(T("eyebrow").replace("{n}", SNIFFERS.length))).replace("{{groups}}", groups)
-      .replace("{{helpNav}}", helpNav).replace("{{helpC}}", helpC).replace("{{data}}", JSON.stringify(data).replace(/</g, "\\u003c"));
-    if (/\{\{\w+\}\}/.test(html)) throw new Error("unfilled placeholder in " + path(slug) + ": " + /\{\{\w+\}\}/.exec(html)[0]);
-    files[(slug ? slug + "/" : "") + "index.html"] = html;
+      const html = tpl
+        .replace(/(<(\w+)\b[^>]*\sdata-i="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g, (m, open, tag, k, inner, close) => open + esc(T(k)) + close)
+        .replace(/\{\{a:(\w+)\}\}/g, (m, k) => esc(T(k)))   // translated attribute values (aria-label)
+        .replace("{{lang}}", lang).replace("{{pathsAttr}}", esc(JSON.stringify(paths))).replace("{{rootAttr}}", slug ? "" : " data-root")
+        .replace("{{prepaint}}", PREPAINT).replace("{{head}}", head).replace("{{css}}", cssName).replace("{{js}}", jsName).replace("{{strings}}", sName)
+        .split("{{homeHref}}").join(path(slug)).replace("{{langOpts}}", langOpts).replace("{{focus}}", focus).replace("{{heroTitle}}", heroTitle)
+        .replace("{{story}}", storyHtml(T("story"), lang)).replace("{{checks}}", checks).replace("{{segs}}", CHECKS.map(c => `<i data-c="${c}"></i>`).join(""))
+        .replace("{{eyebrow}}", esc(T("eyebrow").replace("{n}", SNIFFERS.length))).replace("{{groups}}", groups).replace("{{topics}}", topics)
+        .replace("{{helpNav}}", helpNav).replace("{{helpC}}", helpC).replace("{{data}}", JSON.stringify(data).replace(/</g, "\\u003c"));
+      if (/\{\{\w+\}\}/.test(html)) throw new Error("unfilled placeholder in " + path(slug, page) + ": " + /\{\{\w+\}\}/.exec(html)[0]);
+      files[path(slug, page).slice(1) + "index.html"] = html;
+    }
   }
 
   files["sitemap.xml"] = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n` +
-    langs.map(([, s]) => `  <url>\n    <loc>${SITE + path(s)}</loc>\n` + langs.map(([l, s2]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE + path(s2)}"/>`).join("\n") +
-      `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}/"/>\n  </url>`).join("\n") + "\n</urlset>\n";
+    pageList.flatMap(page => langs.map(([, s]) => `  <url>\n    <loc>${SITE + path(s, page)}</loc>\n` + langs.map(([l, s2]) => `    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE + path(s2, page)}"/>`).join("\n") +
+      `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE + path("", page)}"/>\n  </url>`)).join("\n") + "\n</urlset>\n";
   files["robots.txt"] = `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${SITE}/sitemap.xml\n`;
   files["llms.txt"] = `# Who Are You · 1ms.dog
 
@@ -147,6 +173,8 @@ export async function build({ check = false } = {}) {
 
 - Page: ${SITE}/ (also ${langs.slice(1).map(([, s]) => "/" + s + "/").join(", ")})
 - API (what the server sees, JSON): ${SITE}/api/me
+- Browser fingerprint test: ${SITE}/fingerprint/
+- DNS leak test: ${SITE}/dns-leak/
 - Source code: https://github.com/yt1988/who-are-you
 `;
   // The only inline script is the pre-paint snippet, identical on every page: one hash covers the site. Besides its
