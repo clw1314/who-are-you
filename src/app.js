@@ -661,7 +661,9 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       const sg = $(`#segs [data-c="${id}"]`); if (sg) sg.className = "st-" + lv;
       const vv = Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "cc" ? country(x) : id === "split" ? exitName(x) : x]));
       if (id === "tz" || id === "lang" || id === "dns") vv.ipc = ipc ? country(ipc) : "?";
-      const cv = r.querySelector(".ck-v"); cv.textContent = t(key, vv); r.dataset.why = cv.textContent;
+      // the whole text on hover only when two lines cut it short; otherwise it would just repeat the row
+      const cv = r.querySelector(".ck-v"); cv.textContent = t(key, vv);
+      if (cv.scrollHeight > cv.clientHeight + 1) r.dataset.why = cv.textContent; else delete r.dataset.why;
       r.querySelector(".st").textContent = lv === "ok" ? "✓" : lv === "info" ? "i" : "!";
       // a check that gives you away says how to fix it
       r.querySelector(".ck-fix").hidden = lv !== "bad" && lv !== "warn";
