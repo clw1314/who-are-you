@@ -106,7 +106,7 @@ export async function build({ check = false } = {}) {
       `<span class="ck-acts"><button class="ck-fix" type="button" aria-expanded="false" hidden>${esc(T("fix"))}</button>` +
       (GO[c] ? `<a class="ck-go" target="_blank" rel="noopener" hidden>${esc(T("go_" + GO[c]))} →</a>` : "") +
       `</span></span><span class="ck-v"><i class="skl"></i></span>` +
-      `<p class="ck-tip" hidden>${esc(T("tip_" + c))}</p></li>`).join("") + "</ul>";
+      `<ul class="ck-tip" hidden>${T("tip_" + c).split("\n").map(l => `<li>${esc(l)}</li>`).join("")}</ul></li>`).join("") + "</ul>";
     const G = Object.fromEntries(GROUPS);
     const group = g => `<div class="pg" data-g="${g}"><h3>${esc(T("g_" + g))}<span class="pg-n">${G[g].length}</span>` +
       (g === "exit" ? `<a class="pg-a" id="egLink" target="_blank" rel="noopener" hidden>${esc(T("ex_more"))}</a>` : "") + "</h3>" +

@@ -97,7 +97,8 @@ h2 { font-size: 15px; font-weight: 700; }
 .ck-fix::after { content: " ▾"; font-size: 9px; }
 .ck-fix[aria-expanded="true"]::after { content: " ▴"; }
 .ck-fix:hover { text-decoration: underline; }
-.ck-tip { grid-column: 1 / -1; margin: 6px 0 4px 28px; padding: 9px 12px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); font-size: 12.5px; line-height: 1.6; color: var(--fg); }
+.ck-tip { grid-column: 1 / -1; margin: 6px 0 4px 28px; padding: 8px 12px 8px 26px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); font-size: 12.5px; line-height: 1.6; color: var(--fg); }
+.ck-tip li::marker { color: var(--ink); }
 /* two lines at most, so a long network name doesn't make the row taller; the whole text is on hover */
 .ck-v { color: var(--muted); font-size: 12.5px; line-height: 1.4; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .ckr[data-why] { cursor: help; }
