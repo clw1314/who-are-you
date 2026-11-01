@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="DNS가 VPN을 우회하고 있나요?">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"DNS 유출 테스트 · 1ms.dog","url":"https://who.1ms.dog/ko/dns-leak/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"무료 DNS 유출 테스트: 실제로 이름 조회를 해 주는 DNS 리졸버를 찾아 국가와 네트워크를 사이트가 보는 IP와 비교합니다. 다르면 VPN이나 프록시에서 DNS가 새는 것입니다. Clash, V2Ray, 브라우저에서 고치는 방법 포함.","inLanguage":"ko","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"DNS 유출이란?","acceptedAnswer":{"@type":"Answer","text":"브라우저가 사이트에 접속하기 전에 DNS 리졸버가 이름을 주소로 바꿉니다. 이 조회가 VPN이나 프록시를 거치지 않으면 내 통신사의 리졸버로 갑니다. 통신사는 방문하는 모든 사이트를 보게 되고, 리졸버와 IP를 비교하는 사이트는 VPN 사용과 실제 위치를 알아챕니다."}},{"@type":"Question","name":"리졸버를 어떻게 찾나요?","acceptedAnswer":{"@type":"Answer","text":"페이지는 edns.ip-api.com 아래에서 아무도 조회한 적 없는 무작위 이름을 조회합니다. 캐시로는 답할 수 없으니 리졸버가 ip-api의 네임서버에 물어야 하고, 네임서버는 리졸버의 주소와 네트워크, 리졸버가 전달한 클라이언트 서브넷(ECS)을 알려 줍니다. 테스트는 리졸버의 국가와 IP의 국가를 비교합니다."}},{"@type":"Question","name":"DNS 유출은 어떻게 고치나요?","acceptedAnswer":{"@type":"Answer","text":"Clash / Mihomo: DNS를 켜고 enhanced-mode를 fake-ip로 하거나, TUN 모드로 모든 조회를 거치게 합니다. V2Ray / Xray: DNS도 프록시로 보내세요(프록시를 거치는 DoH 서버 설정). 브라우저의 보안 DNS(DoH)도 통신사를 피하게 해 줍니다. 고친 뒤 다시 테스트하세요."}},{"@type":"Question","name":"리졸버가 다른 도시의 Cloudflare나 Google이면 유출인가요?","acceptedAnswer":{"@type":"Answer","text":"대개 아닙니다. 1.1.1.1, 8.8.8.8 같은 공개 DNS는 요청에 가장 가까운 데이터 센터에서 답하므로 도시가 VPN 출구와 다를 수 있습니다. 정체가 드러나는 건 내 통신사의 리졸버이거나, IP는 해외인데 리졸버는 자국에 있는 경우입니다."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.8aef19b547.css">
+<link rel="stylesheet" href="/assets/app.f689579b3d.css">
 </head>
 <body>
 <div class="app">
@@ -148,6 +148,6 @@
 
 <script type="application/json" id="data">{"lang":"ko","paths":{"en":"/dns-leak/","zh-CN":"/zh-cn/dns-leak/","zh-TW":"/zh-tw/dns-leak/","ja":"/ja/dns-leak/","ko":"/ko/dns-leak/","es":"/es/dns-leak/","fr":"/fr/dns-leak/","de":"/de/dns-leak/","pt":"/pt/dns-leak/","ru":"/ru/dns-leak/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"dns-leak","rows":["dns","ip","ex_cn","ex_intl","stack"],"check":"dns","go":"dns"}}</script>
 <script src="/assets/l.ko.390fc5db50.js"></script>
-<script src="/assets/app.9d4a16b121.js"></script>
+<script src="/assets/app.0ddcf6757b.js"></script>
 </body>
 </html>

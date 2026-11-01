@@ -737,18 +737,27 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const img = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
   async function drawCard(show) {
     const W = 1080, P = 64, F = "Geist, 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans', 'Malgun Gothic', sans-serif";
-    const LIME = "#a3e635", FG = "#f2f2f2", MUT = "#9a9a9a", LV = { ok: "#3ecf8e", warn: "#f5c524", bad: "#f56565", info: "#6b6b6b" };
-    const logo = await img("/assets/logo-dark.svg").catch(() => null);
-    // the paragraph as segments of plain words and answers
+    // in the page's own theme and colors, as the visitor sees it (the theme button, or the system's)
+    const css = getComputedStyle(document.documentElement), V = k => css.getPropertyValue(k).trim();
+    const th = document.documentElement.getAttribute("data-theme"), dark = th ? th === "dark" : mq("(prefers-color-scheme: dark)");
+    const BG = V("--panel"), FG = V("--fg"), MUT = V("--muted"), INK = V("--ink"), LINE = V("--line");
+    const LV = { ok: V("--t1"), warn: V("--t3"), bad: V("--t5"), info: MUT };
+    const logo = await img(dark ? "/assets/logo-dark.svg" : "/assets/logo-light.svg").catch(() => null);
+    // the paragraph as segments: [text, kind], kind "ans" for an answer, "dim" for one shown quietly (age), "" for words
     const lines = $$("#story p").map(p => [...p.childNodes].map(n => {
-      if (n.nodeType === 3) return [n.textContent, false];
+      if (n.nodeType === 3) return [n.textContent, ""];
       const k = n.dataset && n.dataset.b;
-      return [(k === "city" || k === "isp") && !show ? t("masked") : n.textContent, true];
+      return [(k === "city" || k === "isp") && !show ? t("masked") : n.textContent, k === "age" ? "dim" : "ans"];
     }));
     const res = R.ck || {}, n = Object.values(res).filter(v => v && (v[0] === "bad" || v[0] === "warn")).length;
     const draw = (c, paint) => {
       let y = P;
-      if (paint) { c.fillStyle = "#161616"; c.fillRect(0, 0, W, c.canvas.height); const g = c.createRadialGradient(0, 0, 0, 0, 0, 900); g.addColorStop(0, "rgba(163,230,53,.16)"); g.addColorStop(1, "rgba(163,230,53,0)"); c.fillStyle = g; c.fillRect(0, 0, W, c.canvas.height); }
+      if (paint) {
+        c.fillStyle = BG; c.fillRect(0, 0, W, c.canvas.height);
+        // the accent glow in the corner, as on the page
+        const g = c.createRadialGradient(0, 0, 0, 0, 0, 900); g.addColorStop(0, INK); g.addColorStop(1, BG);
+        c.globalAlpha = dark ? .14 : .1; c.fillStyle = g; c.fillRect(0, 0, W, c.canvas.height); c.globalAlpha = 1;
+      }
       if (paint && logo) c.drawImage(logo, P, y, 120, 48);
       c.font = `600 22px ${F}`; c.fillStyle = MUT; c.textAlign = "right"; if (paint) c.fillText(location.host, W - P, y + 32); c.textAlign = "left";
       y += 48 + 44;
@@ -757,13 +766,14 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       const size = 28, lh = 48;
       for (const segs of lines) {
         let x = P; y += lh;
-        for (const [text, ans] of segs) {
+        for (const [text, kind] of segs) {
+          const ans = kind === "ans";
           c.font = `${ans ? 700 : 400} ${size}px ${F}`;
           for (const tok of text.match(/[　-鿿가-힯＀-￯]|[^\s　-鿿가-힯＀-￯]+\s*|\s+/g) || []) {
             const w = c.measureText(tok).width;
             if (x + w > W - P && x > P) { x = P; y += lh; if (/^\s+$/.test(tok)) continue; }
             if (paint) {
-              if (ans) { c.fillStyle = "rgba(163,230,53,.28)"; c.fillRect(x, y + 6, w, 10); }
+              if (ans) { c.globalAlpha = .3; c.fillStyle = INK; c.fillRect(x, y + 6, w, 10); c.globalAlpha = 1; }
               c.fillStyle = ans ? FG : MUT; c.fillText(tok, x, y);
             }
             x += w;
@@ -773,7 +783,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       }
       // the count and every check
       y += 44;
-      if (paint) { c.fillStyle = "#2a2a2a"; c.fillRect(P, y, W - 2 * P, 2); }
+      if (paint) { c.fillStyle = LINE; c.fillRect(P, y, W - 2 * P, 2); }
       y += 70;
       c.font = `800 72px ${F}`; c.fillStyle = n ? (Object.values(res).some(v => v && v[0] === "bad") ? LV.bad : LV.warn) : LV.ok;
       if (paint) c.fillText(String(n), P, y);
@@ -788,7 +798,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
         c.font = `500 25px ${F}`; c.fillStyle = FG; c.fillText(t("c_" + id), cx + 30, cy);
       });
       y += 52 * Math.ceil(CHECKS.length / 2) + 40;
-      c.font = `700 28px ${F}`; c.fillStyle = LIME; if (paint) c.fillText(t("card_cta") + " → " + location.host, P, y);
+      c.font = `700 28px ${F}`; c.fillStyle = INK; if (paint) c.fillText(t("card_cta") + " → " + location.host, P, y);
       return y + P - 10;
     };
     const cv = document.createElement("canvas"); cv.width = W; cv.height = 10;
