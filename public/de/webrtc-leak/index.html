@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Zeigt WebRTC Ihre echte IP?">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"WebRTC-Leak-Test · 1ms.dog","url":"https://who.1ms.dog/de/webrtc-leak/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Kostenloser WebRTC-Leak-Test: die öffentlichen IPv4- und IPv6-Adressen und die lokalen Adressen, die WebRTC jeder Website gibt, verglichen mit der IP, die Ihr VPN oder Proxy zeigt. Weichen sie ab, verrät WebRTC Ihre echte IP. Mit Lösungen für Chrome, Firefox, Brave und Proxy-Clients.","inLanguage":"de","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Was ist ein WebRTC-Leak?","acceptedAnswer":{"@type":"Answer","text":"Um einen Anruf aufzubauen, sammelt WebRTC jede Adresse, unter der Sie erreichbar sind: die lokalen Ihrer Netzwerkkarte und die öffentliche, die ein STUN-Server sieht. Eine Seite liest sie mit ein paar Zeilen Skript, ohne Erlaubnis. Leitet Ihr VPN oder Proxy nur die Webanfragen der Seite weiter, geht die STUN-Anfrage über Ihre eigene Leitung, und die Seite erfährt Ihre echte IP hinter dem VPN."}},{"@type":"Question","name":"Wie funktioniert dieser Test?","acceptedAnswer":{"@type":"Answer","text":"Die Seite öffnet eine WebRTC-Verbindung zu den STUN-Servern von Cloudflare und Google, listet die gemeldeten Adressen (srflx-Kandidaten) und vergleicht sie mit denen, die diese Website, Ihre anderen Ausgänge und der IPv6-Test sehen. Eine Adresse, die keiner davon zeigt, ist ein Leak. Die lokalen Adressen stammen aus den host-Kandidaten; nichts wird gespeichert oder gesendet."}},{"@type":"Question","name":"Wie behebe ich einen WebRTC-Leak?","acceptedAnswer":{"@type":"Answer","text":"Proxy-Clients (Clash, V2Ray und andere): TUN-Modus einschalten, damit auch UDP durch den Proxy geht. Chrome und Edge: die Erweiterung WebRTC Network Limiter oder in uBlock Origin „Verhindern, dass WebRTC lokale IP-Adressen preisgibt“. Brave: Einstellungen → Datenschutz → WebRTC-IP-Verarbeitungsrichtlinie → Nicht über Proxy geleitetes UDP deaktivieren. Firefox: in about:config media.peerconnection.ice.default_address_only auf true, oder media.peerconnection.enabled auf false, um WebRTC abzuschalten. Dann den Test wiederholen."}},{"@type":"Question","name":"Ist eine lokale Adresse oder ein .local-Name ein Leak?","acceptedAnswer":{"@type":"Answer","text":"Ein Name auf .local heißt, der Browser versteckt Ihre lokale Adresse (mDNS) – genau das wollen Sie. Eine echte lokale Adresse wie 192.168.1.5 verrät nicht, wo Sie sind, macht Ihren Fingerabdruck aber einzigartiger. Eine IPv6-Adresse, die von Ihrem IPv4-Ausgang abweicht, ist nur dann ein Leak, wenn sie nicht Ihr IPv6-Ausgang ist: Der Test vergleicht sie mit der IPv6-Adresse, die Websites sehen."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.13cd3937b1.css">
+<link rel="stylesheet" href="/assets/app.a08bb6c1ce.css">
 </head>
 <body>
 <div class="app">
@@ -116,19 +116,6 @@
   </main>
   <div data-ms-more></div>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="sh_h">Ihr Porträt teilen</h2>
-      <button class="icon-btn" data-close type="button" aria-label="Schließen"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <div class="share-pic"><img id="shareImg" alt=""></div>
-      <label class="share-opt"><input type="checkbox" id="shareShow"><span data-i="sh_show">Meine Stadt und mein Netz zeigen</span></label>
-      <input id="shareUrl" type="text" readonly aria-labelledby="shareT">
-      <div class="share-acts"><button class="btn pri" id="copyLink" type="button" data-i="sh_copy">Link kopieren</button><button class="btn" id="copyImg" type="button" data-i="sh_img_copy">Bild kopieren</button><button class="btn" id="dlImg" type="button" data-i="sh_dl">Bild herunterladen</button><button class="btn" id="nativeShare" type="button" data-i="sh_native" hidden>Teilen …</button></div>
-      <p class="m" data-i="sh_note">Entsteht in Ihrem Browser und wird nie hochgeladen. Bild und Link enthalten weder Adresse noch Fingerabdruck; Stadt und Netz nur, wenn Sie das Kästchen ankreuzen.</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">Hilfe</h2>
@@ -147,7 +134,7 @@
 <div class="adsbox ad-banner ad-placement" id="ad-slot" aria-hidden="true"></div>
 
 <script type="application/json" id="data">{"lang":"de","paths":{"en":"/webrtc-leak/","zh-CN":"/zh-cn/webrtc-leak/","zh-TW":"/zh-tw/webrtc-leak/","ja":"/ja/webrtc-leak/","ko":"/ko/webrtc-leak/","es":"/es/webrtc-leak/","fr":"/fr/webrtc-leak/","de":"/de/webrtc-leak/","pt":"/pt/webrtc-leak/","ru":"/ru/webrtc-leak/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"webrtc-leak","rows":["webrtc","lan","ip","stack"],"check":"webrtc","go":"egress"}}</script>
-<script src="/assets/l.de.a36f3ab3d4.js"></script>
-<script src="/assets/app.b32b1fa454.js"></script>
+<script src="/assets/l.de.c8ecd846d8.js"></script>
+<script src="/assets/app.b62953ffd6.js"></script>
 </body>
 </html>

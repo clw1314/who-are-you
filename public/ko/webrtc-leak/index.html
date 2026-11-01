@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="WebRTC가 실제 IP를 드러내나요?">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"WebRTC 유출 테스트 · 1ms.dog","url":"https://who.1ms.dog/ko/webrtc-leak/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"무료 WebRTC 유출 테스트: WebRTC가 아무 사이트에나 넘겨주는 공인 IPv4·IPv6 주소와 로컬 주소를 보여 주고, VPN이나 프록시가 보여 주는 IP와 비교합니다. 다르면 WebRTC가 실제 IP를 유출하는 것입니다. Chrome, Firefox, Brave, 프록시 클라이언트에서 고치는 법도 함께.","inLanguage":"ko","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"WebRTC 유출이란?","acceptedAnswer":{"@type":"Answer","text":"통화를 연결하려고 WebRTC는 연락 가능한 모든 주소를 모읍니다. 네트워크 카드의 로컬 주소와 STUN 서버가 본 공인 주소입니다. 페이지는 스크립트 몇 줄로 권한 없이 이를 읽습니다. VPN이나 프록시가 페이지 요청만 전달하면 STUN 요청은 내 회선으로 나가고, 페이지는 VPN 뒤의 실제 IP를 알게 됩니다."}},{"@type":"Question","name":"이 테스트는 어떻게 작동하나요?","acceptedAnswer":{"@type":"Answer","text":"페이지는 Cloudflare와 Google의 STUN 서버에 WebRTC 연결을 열고, 돌려받은 주소(srflx 후보)를 이 사이트, 다른 출구, IPv6 테스트가 보는 주소와 비교합니다. 어느 것과도 맞지 않는 주소가 유출입니다. 로컬 주소는 host 후보에서 옵니다. 아무것도 저장하거나 보내지 않습니다."}},{"@type":"Question","name":"WebRTC 유출은 어떻게 막나요?","acceptedAnswer":{"@type":"Answer","text":"프록시 클라이언트(Clash, V2Ray 등): TUN 모드를 켜서 UDP도 프록시로 보냅니다. Chrome과 Edge: WebRTC Network Limiter 확장 프로그램, 또는 uBlock Origin의 \"WebRTC가 로컬 IP 주소를 유출하지 않도록 방지\". Brave: 설정 → 개인정보 보호 → WebRTC IP 처리 정책 → 프록시되지 않은 UDP 사용 중지. Firefox: about:config에서 media.peerconnection.ice.default_address_only를 true로, 완전히 끄려면 media.peerconnection.enabled를 false로. 바꾼 뒤 다시 테스트하세요."}},{"@type":"Question","name":"로컬 주소나 .local 이름도 유출인가요?","acceptedAnswer":{"@type":"Answer","text":".local로 끝나는 이름은 브라우저가 로컬 주소를 숨긴 것(mDNS)으로, 바람직한 상태입니다. 192.168.1.5 같은 실제 로컬 주소는 위치를 드러내지 않지만 지문을 더 고유하게 만듭니다. IPv4 출구와 다른 IPv6 주소는 그것이 내 IPv6 출구가 아닐 때만 유출입니다. 테스트는 사이트가 보는 IPv6 주소와 대조합니다."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.13cd3937b1.css">
+<link rel="stylesheet" href="/assets/app.a08bb6c1ce.css">
 </head>
 <body>
 <div class="app">
@@ -116,19 +116,6 @@
   </main>
   <div data-ms-more></div>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="sh_h">초상 공유</h2>
-      <button class="icon-btn" data-close type="button" aria-label="닫기"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <div class="share-pic"><img id="shareImg" alt=""></div>
-      <label class="share-opt"><input type="checkbox" id="shareShow"><span data-i="sh_show">도시와 통신사 보이기</span></label>
-      <input id="shareUrl" type="text" readonly aria-labelledby="shareT">
-      <div class="share-acts"><button class="btn pri" id="copyLink" type="button" data-i="sh_copy">링크 복사</button><button class="btn" id="copyImg" type="button" data-i="sh_img_copy">이미지 복사</button><button class="btn" id="dlImg" type="button" data-i="sh_dl">이미지 저장</button><button class="btn" id="nativeShare" type="button" data-i="sh_native" hidden>공유…</button></div>
-      <p class="m" data-i="sh_note">모두 브라우저에서 만들어지고 업로드되지 않습니다. 이미지와 링크에 주소와 지문은 빠지고, 도시와 통신사는 체크했을 때만 들어갑니다.</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">도움말</h2>
@@ -147,7 +134,7 @@
 <div class="adsbox ad-banner ad-placement" id="ad-slot" aria-hidden="true"></div>
 
 <script type="application/json" id="data">{"lang":"ko","paths":{"en":"/webrtc-leak/","zh-CN":"/zh-cn/webrtc-leak/","zh-TW":"/zh-tw/webrtc-leak/","ja":"/ja/webrtc-leak/","ko":"/ko/webrtc-leak/","es":"/es/webrtc-leak/","fr":"/fr/webrtc-leak/","de":"/de/webrtc-leak/","pt":"/pt/webrtc-leak/","ru":"/ru/webrtc-leak/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"webrtc-leak","rows":["webrtc","lan","ip","stack"],"check":"webrtc","go":"egress"}}</script>
-<script src="/assets/l.ko.7324da47df.js"></script>
-<script src="/assets/app.b32b1fa454.js"></script>
+<script src="/assets/l.ko.b9fe071ee1.js"></script>
+<script src="/assets/app.b62953ffd6.js"></script>
 </body>
 </html>

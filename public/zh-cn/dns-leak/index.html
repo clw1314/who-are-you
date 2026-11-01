@@ -44,7 +44,7 @@
 <meta name="twitter:description" content="你的 DNS 有没有绕过 VPN？">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"DNS 泄露检测 · 1ms.dog","url":"https://who.1ms.dog/zh-cn/dns-leak/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"免费 DNS 泄露检测：找出实际替你解析域名的 DNS 服务器，看它在哪个国家、属于哪家运营商，再和网站看到的 IP 对比。对不上，就是 VPN 或代理漏了 DNS。附 Clash、V2Ray 和浏览器里的修复方法。","inLanguage":"zh-CN","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"什么是 DNS 泄露？","acceptedAnswer":{"@type":"Answer","text":"浏览器连接网站之前，要先由 DNS 解析器把域名换成地址。如果这一步没走 VPN 或代理，查询就发给了你本地运营商的解析器：运营商能看到你访问的每个网站；网站把解析器和你的 IP 一对比，也能看出你在用 VPN，以及你实际在哪。"}},{"@type":"Question","name":"这个检测怎么找到我的解析器？","acceptedAnswer":{"@type":"Answer","text":"页面会查询 edns.ip-api.com 下一个随机的、从没人查过的域名，所以没有缓存能直接回答：你的解析器只能去问 ip-api 的权威服务器，它会报告解析器的地址和运营商；如果解析器带上了你的客户端子网（ECS），也会一起报告。检测再把解析器所在国家和你 IP 的国家对比。"}},{"@type":"Question","name":"DNS 泄露怎么修？","acceptedAnswer":{"@type":"Answer","text":"Clash / Mihomo：开启 DNS，并把 enhanced-mode 设为 fake-ip，或者开 TUN 模式让所有查询都经过它。V2Ray / Xray 客户端：让 DNS 也走代理（或者设置一个走代理的 DoH 服务器）。浏览器里打开「安全 DNS」（DoH）也能让查询避开运营商。改完再测一次。"}},{"@type":"Question","name":"解析器显示是 Cloudflare 或 Google，但在另一个城市，算泄露吗？","acceptedAnswer":{"@type":"Answer","text":"一般不算。1.1.1.1、8.8.8.8 这类公共 DNS 会从离请求最近的数据中心回答，所以城市可能和 VPN 出口不一样。真正会暴露你的，是本地运营商的解析器，或者 IP 在国外、解析器却在国内。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.13cd3937b1.css">
+<link rel="stylesheet" href="/assets/app.a08bb6c1ce.css">
 </head>
 <body>
 <div class="app">
@@ -119,19 +119,6 @@
   </main>
   <div data-ms-more></div>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="sh_h">分享你的画像</h2>
-      <button class="icon-btn" data-close type="button" aria-label="关闭"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <div class="share-pic"><img id="shareImg" alt=""></div>
-      <label class="share-opt"><input type="checkbox" id="shareShow"><span data-i="sh_show">显示我的城市和运营商</span></label>
-      <input id="shareUrl" type="text" readonly aria-labelledby="shareT">
-      <div class="share-acts"><button class="btn pri" id="copyLink" type="button" data-i="sh_copy">复制链接</button><button class="btn" id="copyImg" type="button" data-i="sh_img_copy">复制图片</button><button class="btn" id="dlImg" type="button" data-i="sh_dl">下载图片</button><button class="btn" id="nativeShare" type="button" data-i="sh_native" hidden>分享到…</button></div>
-      <p class="m" data-i="sh_note">全部在你的浏览器里生成，不会上传。图片和链接里没有你的地址和指纹；城市和运营商只有勾选后才会带上。</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">帮助</h2>
@@ -150,7 +137,7 @@
 <div class="adsbox ad-banner ad-placement" id="ad-slot" aria-hidden="true"></div>
 
 <script type="application/json" id="data">{"lang":"zh-CN","paths":{"en":"/dns-leak/","zh-CN":"/zh-cn/dns-leak/","zh-TW":"/zh-tw/dns-leak/","ja":"/ja/dns-leak/","ko":"/ko/dns-leak/","es":"/es/dns-leak/","fr":"/fr/dns-leak/","de":"/de/dns-leak/","pt":"/pt/dns-leak/","ru":"/ru/dns-leak/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"dns-leak","rows":["dns","ip","ex_cn","ex_intl","stack"],"check":"dns","go":"dns"}}</script>
-<script src="/assets/l.zh-cn.93ca5e43f3.js"></script>
-<script src="/assets/app.b32b1fa454.js"></script>
+<script src="/assets/l.zh-cn.1f040dc1eb.js"></script>
+<script src="/assets/app.b62953ffd6.js"></script>
 </body>
 </html>

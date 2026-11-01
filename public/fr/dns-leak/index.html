@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Votre DNS contourne-t-il le VPN ?">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"Test de fuite DNS · 1ms.dog","url":"https://who.1ms.dog/fr/dns-leak/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Test gratuit de fuite DNS : trouvez le résolveur DNS qui résout vraiment les sites pour vous, son pays et son réseau, et comparez-le à l’IP que voient les sites. S’ils diffèrent, votre VPN ou proxy laisse fuir le DNS. Avec la correction dans Clash, V2Ray et le navigateur.","inLanguage":"fr","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Qu’est-ce qu’une fuite DNS ?","acceptedAnswer":{"@type":"Answer","text":"Avant que le navigateur se connecte à un site, un résolveur DNS transforme le nom en adresse. Si cette requête contourne le VPN ou le proxy, elle part chez le résolveur de votre fournisseur : celui-ci voit chaque site visité, et les sites qui comparent votre résolveur à votre IP voient que vous utilisez un VPN et où vous êtes vraiment."}},{"@type":"Question","name":"Comment le test trouve-t-il mon résolveur ?","acceptedAnswer":{"@type":"Answer","text":"La page résout un nom aléatoire sous edns.ip-api.com que personne n’a jamais demandé, donc aucun cache ne peut répondre : votre résolveur doit interroger le serveur de noms d’ip-api, qui indique l’adresse et le réseau du résolveur, et le sous-réseau client s’il le transmet (ECS). Le test compare le pays du résolveur à celui de votre IP."}},{"@type":"Question","name":"Comment corriger une fuite DNS ?","acceptedAnswer":{"@type":"Answer","text":"Clash / Mihomo : activez son DNS avec enhanced-mode fake-ip, ou passez en mode TUN pour que toutes les requêtes passent par lui. Clients V2Ray / Xray : faites passer le DNS par le proxy (ou configurez un serveur DoH qui y passe). Dans le navigateur, le DNS sécurisé (DoH) éloigne aussi les requêtes du fournisseur. Puis refaites le test."}},{"@type":"Question","name":"Mon résolveur est Cloudflare ou Google dans une autre ville. Est-ce une fuite ?","acceptedAnswer":{"@type":"Answer","text":"En général, non. Les résolveurs publics comme 1.1.1.1 et 8.8.8.8 répondent depuis le centre de données le plus proche de la requête ; la ville peut donc différer de la sortie VPN. Ce qui vous trahit, c’est un résolveur de votre fournisseur, ou situé dans votre pays alors que votre IP est à l’étranger."}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.13cd3937b1.css">
+<link rel="stylesheet" href="/assets/app.a08bb6c1ce.css">
 </head>
 <body>
 <div class="app">
@@ -116,19 +116,6 @@
   </main>
   <div data-ms-more></div>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="sh_h">Partager votre portrait</h2>
-      <button class="icon-btn" data-close type="button" aria-label="Fermer"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <div class="share-pic"><img id="shareImg" alt=""></div>
-      <label class="share-opt"><input type="checkbox" id="shareShow"><span data-i="sh_show">Afficher ma ville et mon réseau</span></label>
-      <input id="shareUrl" type="text" readonly aria-labelledby="shareT">
-      <div class="share-acts"><button class="btn pri" id="copyLink" type="button" data-i="sh_copy">Copier le lien</button><button class="btn" id="copyImg" type="button" data-i="sh_img_copy">Copier l’image</button><button class="btn" id="dlImg" type="button" data-i="sh_dl">Télécharger l’image</button><button class="btn" id="nativeShare" type="button" data-i="sh_native" hidden>Partager…</button></div>
-      <p class="m" data-i="sh_note">Fait dans votre navigateur, jamais envoyé. L’image et le lien ne contiennent ni votre adresse ni votre empreinte ; la ville et le réseau seulement si vous cochez la case.</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">Aide</h2>
@@ -147,7 +134,7 @@
 <div class="adsbox ad-banner ad-placement" id="ad-slot" aria-hidden="true"></div>
 
 <script type="application/json" id="data">{"lang":"fr","paths":{"en":"/dns-leak/","zh-CN":"/zh-cn/dns-leak/","zh-TW":"/zh-tw/dns-leak/","ja":"/ja/dns-leak/","ko":"/ko/dns-leak/","es":"/es/dns-leak/","fr":"/fr/dns-leak/","de":"/de/dns-leak/","pt":"/pt/dns-leak/","ru":"/ru/dns-leak/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"dns-leak","rows":["dns","ip","ex_cn","ex_intl","stack"],"check":"dns","go":"dns"}}</script>
-<script src="/assets/l.fr.f49717cf30.js"></script>
-<script src="/assets/app.b32b1fa454.js"></script>
+<script src="/assets/l.fr.30de698468.js"></script>
+<script src="/assets/app.b62953ffd6.js"></script>
 </body>
 </html>

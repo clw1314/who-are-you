@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="DNS が VPN を迂回していませんか？">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"DNS リークテスト · 1ms.dog","url":"https://who.1ms.dog/ja/dns-leak/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"無料の DNS リークテスト：実際にあなたの名前解決をしている DNS リゾルバーを見つけ、国とネットワークを、サイトから見える IP と比べます。食い違えば VPN やプロキシから DNS が漏れています。Clash、V2Ray、ブラウザでの直し方付き。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"DNS リークとは？","acceptedAnswer":{"@type":"Answer","text":"ブラウザがサイトにつなぐ前に、DNS リゾルバーが名前をアドレスに変えます。この問い合わせが VPN やプロキシを通らないと、手元のプロバイダーのリゾルバーに行きます。プロバイダーには訪れたサイトがすべて見え、リゾルバーと IP を比べるサイトには、VPN を使っていることと本当の居場所が分かります。"}},{"@type":"Question","name":"どうやってリゾルバーを見つける？","acceptedAnswer":{"@type":"Answer","text":"ページは edns.ip-api.com の下の、誰も問い合わせたことのないランダムな名前を引きます。キャッシュでは答えられないので、あなたのリゾルバーは ip-api のネームサーバーに聞くしかなく、ネームサーバーはリゾルバーのアドレスとネットワーク、リゾルバーが付けたクライアントサブネット（ECS）を報告します。テストはリゾルバーの国と IP の国を比べます。"}},{"@type":"Question","name":"DNS リークの直し方は？","acceptedAnswer":{"@type":"Answer","text":"Clash / Mihomo：DNS を有効にして enhanced-mode を fake-ip にするか、TUN モードで全問い合わせを通します。V2Ray / Xray：DNS もプロキシ経由に（プロキシを通る DoH サーバーを設定）。ブラウザの「セキュア DNS」（DoH）でもプロバイダーを避けられます。直したらもう一度テストしてください。"}},{"@type":"Question","name":"リゾルバーが別の都市の Cloudflare や Google。これは漏れ？","acceptedAnswer":{"@type":"Answer","text":"たいてい違います。1.1.1.1 や 8.8.8.8 のような公開 DNS は問い合わせに最も近いデータセンターから答えるので、都市が VPN の出口と違うことがあります。正体がばれるのは、手元のプロバイダーのリゾルバーや、IP は海外なのにリゾルバーが自国にある場合です。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.13cd3937b1.css">
+<link rel="stylesheet" href="/assets/app.a08bb6c1ce.css">
 </head>
 <body>
 <div class="app">
@@ -116,19 +116,6 @@
   </main>
   <div data-ms-more></div>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="sh_h">ポートレートを共有</h2>
-      <button class="icon-btn" data-close type="button" aria-label="閉じる"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <div class="share-pic"><img id="shareImg" alt=""></div>
-      <label class="share-opt"><input type="checkbox" id="shareShow"><span data-i="sh_show">都市とプロバイダーを表示</span></label>
-      <input id="shareUrl" type="text" readonly aria-labelledby="shareT">
-      <div class="share-acts"><button class="btn pri" id="copyLink" type="button" data-i="sh_copy">リンクをコピー</button><button class="btn" id="copyImg" type="button" data-i="sh_img_copy">画像をコピー</button><button class="btn" id="dlImg" type="button" data-i="sh_dl">画像を保存</button><button class="btn" id="nativeShare" type="button" data-i="sh_native" hidden>共有…</button></div>
-      <p class="m" data-i="sh_note">すべてブラウザ内で作られ、アップロードされません。画像とリンクにはアドレスとフィンガープリントは入りません。都市とプロバイダーはチェックしたときだけ入ります。</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">ヘルプ</h2>
@@ -147,7 +134,7 @@
 <div class="adsbox ad-banner ad-placement" id="ad-slot" aria-hidden="true"></div>
 
 <script type="application/json" id="data">{"lang":"ja","paths":{"en":"/dns-leak/","zh-CN":"/zh-cn/dns-leak/","zh-TW":"/zh-tw/dns-leak/","ja":"/ja/dns-leak/","ko":"/ko/dns-leak/","es":"/es/dns-leak/","fr":"/fr/dns-leak/","de":"/de/dns-leak/","pt":"/pt/dns-leak/","ru":"/ru/dns-leak/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"dns-leak","rows":["dns","ip","ex_cn","ex_intl","stack"],"check":"dns","go":"dns"}}</script>
-<script src="/assets/l.ja.2ed4446d84.js"></script>
-<script src="/assets/app.b32b1fa454.js"></script>
+<script src="/assets/l.ja.cf5a980c97.js"></script>
+<script src="/assets/app.b62953ffd6.js"></script>
 </body>
 </html>

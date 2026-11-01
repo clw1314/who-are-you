@@ -3,7 +3,7 @@
 // read; each row is in the HTML from the start and is filled the moment its sniffer answers. The paragraph is filled
 // once, when every sniffer it needs is in, so its text doesn't reflow piece by piece. Strings: window.L1MS.
 import { GROUPS, SNIFFERS, BLANKS, CHECKS } from "./sniffers.mjs";
-import { encode, decode } from "./share.mjs";
+import { encode, decode, linkPath, parsePath } from "./share.mjs";
 import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, fontHints, checks, offTxt, splitOf } from "./infer.mjs";
 
 (function () {
@@ -69,7 +69,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   };
   applyTheme(TH.includes(store.get(K.theme)) ? store.get(K.theme) : "system");
   thBtn.onclick = () => { const n = TH[(TH.indexOf(thBtn.dataset.th) + 1) % 3]; store.set(K.theme, n); applyTheme(n); };
-  $("#lang").onchange = e => { const l = e.target.value; store.set(K.lang, l); location.href = /^\/r\//.test(location.pathname) ? location.pathname + "?lang=" + l : D.paths[l] + location.search + location.hash; };   // a shared portrait comes along
+  $("#lang").onchange = e => { const l = e.target.value; store.set(K.lang, l); const r = parsePath(location.pathname); location.href = r ? linkPath(l, r.code) : D.paths[l] + location.search + location.hash; };   // a shared portrait comes along
 
   /* ---------- dialogs ---------- */
   function openDlg(id) { $("#" + id).hidden = false; document.documentElement.style.overflow = "hidden"; $("#" + id + " [data-close]").focus(); }
@@ -721,11 +721,10 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     paintChecks(res, c.country, final);
   }
 
-  /* ---------- sharing: an image card and a link, both made here, without the address or the fingerprint ---------- */
-  // The city and the network go out only when the sharer ticks "show"; the fingerprint never does (it is the very
-  // thing that would let anyone follow them). Addresses in the checks are cut to their network.
+  /* ---------- sharing: 1ms.dog's share dialog (/assets/share/), with a link and a card drawn here ---------- */
+  // Neither carries the address or the fingerprint (the very thing that would let anyone follow the sharer); the city
+  // and the network only when the sharer ticks the dialog's box. Addresses in the checks are cut to their network.
   const maskIp = ip => ip.includes(":") ? ip.split(":").slice(0, 2).join(":") + ":…" : ip.split(".").slice(0, 2).join(".") + ".•.•";
-  const shareShow = () => $("#shareShow").checked;
   function sharedPortrait(show) {
     const P = portrait();
     delete P.x; delete P.fp;
@@ -736,112 +735,67 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       [id, [lv, key, Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "ip" ? maskIp(String(x)) : k === "org" && !show ? t("masked") : x]))]]));
     return P;
   }
-  async function shortLink(long) {
-    const meta = document.querySelector('meta[name="shortener"]');   // announced by the 1ms.dog host; absent when self-hosted
-    if (!meta) return long;
-    try {
-      const r = await fetch(meta.content, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: long }), signal: AbortSignal.timeout(5000) });
-      const j = await r.json(); if (j.url) return j.url;
-    } catch (e) {}
-    return long;
-  }
 
-  // The card: brand, the paragraph as the page shows it (masked blanks stay masked), the count with every check,
-  // and where to try it. Drawn twice: once to measure the height, once to paint.
-  const img = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
-  async function drawCard(show) {
-    const W = 1080, P = 64, F = "Geist, 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans', 'Malgun Gothic', sans-serif";
-    // in the page's own theme and colors, as the visitor sees it (the theme button, or the system's)
-    const css = getComputedStyle(document.documentElement), V = k => css.getPropertyValue(k).trim();
-    const th = document.documentElement.getAttribute("data-theme"), dark = th ? th === "dark" : mq("(prefers-color-scheme: dark)");
-    const BG = V("--panel"), FG = V("--fg"), MUT = V("--muted"), INK = V("--ink"), LINE = V("--line");
-    const LV = { ok: V("--t1"), warn: V("--t3"), bad: V("--t5"), info: MUT };
-    const logo = await img(dark ? "/assets/logo-dark.svg" : "/assets/logo-light.svg").catch(() => null);
-    // the paragraph as segments: [text, kind], kind "ans" for an answer, "dim" for one shown quietly (age), "" for words
+  // The card's middle: the paragraph as the page shows it (masked blanks stay masked), then the count with every
+  // check. Laid out once to measure the height and once to paint, in the page's theme colors.
+  function cardBody(c, kit, paint) {
+    const { W, P, F, v } = kit, show = kit.show, FG = v("fg"), MUT = v("muted"), INK = v("ink"), LINE = v("line");
+    const LV = { ok: v("t1"), warn: v("t3"), bad: v("t5"), info: MUT };
+    // the paragraph as segments: [text, answer?]
     const lines = $$("#story p").map(p => [...p.childNodes].map(n => {
-      if (n.nodeType === 3) return [n.textContent, ""];
+      if (n.nodeType === 3) return [n.textContent, false];
       const k = n.dataset && n.dataset.b;
-      return [(k === "city" || k === "isp") && !show ? t("masked") : n.textContent, k === "age" ? "dim" : "ans"];
+      return [(k === "city" || k === "isp") && !show ? t("masked") : n.textContent, k !== "age"];
     }));
-    const res = R.ck || {}, n = Object.values(res).filter(v => v && (v[0] === "bad" || v[0] === "warn")).length;
-    const draw = (c, paint) => {
-      let y = P;
-      if (paint) {
-        c.fillStyle = BG; c.fillRect(0, 0, W, c.canvas.height);
-        // the accent glow in the corner, as on the page
-        const g = c.createRadialGradient(0, 0, 0, 0, 0, 900); g.addColorStop(0, INK); g.addColorStop(1, BG);
-        c.globalAlpha = dark ? .14 : .1; c.fillStyle = g; c.fillRect(0, 0, W, c.canvas.height); c.globalAlpha = 1;
-      }
-      if (paint && logo) c.drawImage(logo, P, y, 120, 48);
-      c.font = `600 22px ${F}`; c.fillStyle = MUT; c.textAlign = "right"; if (paint) c.fillText(location.host, W - P, y + 32); c.textAlign = "left";
-      y += 48 + 44;
-      c.font = `800 52px ${F}`; c.fillStyle = FG; if (paint) c.fillText(t("card_me"), P, y); y += 40;
-      // the paragraph, wrapped word by word (character by character for CJK)
-      const size = 28, lh = 48;
-      for (const segs of lines) {
-        let x = P; y += lh;
-        for (const [text, kind] of segs) {
-          const ans = kind === "ans";
-          c.font = `${ans ? 700 : 400} ${size}px ${F}`;
-          for (const tok of text.match(/[　-鿿가-힯＀-￯]|[^\s　-鿿가-힯＀-￯]+\s*|\s+/g) || []) {
-            const w = c.measureText(tok).width;
-            if (x + w > W - P && x > P) { x = P; y += lh; if (/^\s+$/.test(tok)) continue; }
-            if (paint) {
-              if (ans) { c.globalAlpha = .3; c.fillStyle = INK; c.fillRect(x, y + 6, w, 10); c.globalAlpha = 1; }
-              c.fillStyle = ans ? FG : MUT; c.fillText(tok, x, y);
-            }
-            x += w;
+    const res = R.ck || {}, n = Object.values(res).filter(x => x && (x[0] === "bad" || x[0] === "warn")).length;
+    c.textBaseline = "alphabetic"; c.textAlign = "left";
+    let y = kit.top + 20;
+    c.font = `800 52px ${F}`; c.fillStyle = FG; if (paint) c.fillText(t("card_me"), P, y); y += 40;
+    // wrapped word by word (character by character for CJK)
+    const size = 28, lh = 48;
+    for (const segs of lines) {
+      let x = P; y += lh;
+      for (const [text, ans] of segs) {
+        c.font = `${ans ? 700 : 400} ${size}px ${F}`;
+        for (const tok of text.match(/[　-鿿가-힯＀-￯]|[^\s　-鿿가-힯＀-￯]+\s*|\s+/g) || []) {
+          const w = c.measureText(tok).width;
+          if (x + w > W - P && x > P) { x = P; y += lh; if (/^\s+$/.test(tok)) continue; }
+          if (paint) {
+            if (ans) { c.globalAlpha = .3; c.fillStyle = INK; c.fillRect(x, y + 6, w, 10); c.globalAlpha = 1; }
+            c.fillStyle = ans ? FG : MUT; c.fillText(tok, x, y);
           }
+          x += w;
         }
-        y += 10;
       }
-      // the count and every check
-      y += 44;
-      if (paint) { c.fillStyle = LINE; c.fillRect(P, y, W - 2 * P, 2); }
-      y += 70;
-      c.font = `800 72px ${F}`; c.fillStyle = n ? (Object.values(res).some(v => v && v[0] === "bad") ? LV.bad : LV.warn) : LV.ok;
-      if (paint) c.fillText(String(n), P, y);
-      const nw = c.measureText(String(n)).width;
-      c.font = `700 30px ${F}`; c.fillStyle = FG; if (paint) c.fillText(n ? t("v_found", { n }) : t("v_clean"), P + nw + 24, y - 14);
-      y += 30;
-      const colW = (W - 2 * P) / 2;
-      CHECKS.forEach((id, i) => {
-        const v = res[id]; const cx = P + (i % 2) * colW, cy = y + 52 * Math.floor(i / 2) + 30;
-        if (!paint) return;
-        c.fillStyle = v ? LV[v[0]] : LV.info; c.beginPath(); c.arc(cx + 9, cy - 9, 9, 0, Math.PI * 2); c.fill();
-        c.font = `500 25px ${F}`; c.fillStyle = FG; c.fillText(t("c_" + id), cx + 30, cy);
-      });
-      y += 52 * Math.ceil(CHECKS.length / 2) + 40;
-      c.font = `700 28px ${F}`; c.fillStyle = INK; if (paint) c.fillText(t("card_cta") + " → " + location.host, P, y);
-      return y + P - 10;
-    };
-    const cv = document.createElement("canvas"); cv.width = W; cv.height = 10;
-    const h = draw(cv.getContext("2d"), false);
-    cv.height = h;
-    draw(cv.getContext("2d"), true);
-    return cv;
+      y += 10;
+    }
+    y += 40;
+    if (paint) { c.fillStyle = LINE; c.fillRect(P, y, W - 2 * P, 2); }
+    y += 70;
+    c.font = `800 72px ${F}`; c.fillStyle = n ? (Object.values(res).some(x => x && x[0] === "bad") ? LV.bad : LV.warn) : LV.ok;
+    if (paint) c.fillText(String(n), P, y);
+    const nw = c.measureText(String(n)).width;
+    c.font = `700 30px ${F}`; c.fillStyle = FG; if (paint) c.fillText(n ? t("v_found", { n }) : t("v_clean"), P + nw + 24, y - 14);
+    y += 30;
+    const colW = (W - 2 * P) / 2;
+    if (paint) CHECKS.forEach((id, i) => {
+      const r = res[id], cx = P + (i % 2) * colW, cy = y + 52 * Math.floor(i / 2) + 30;
+      c.fillStyle = r ? LV[r[0]] : LV.info; c.beginPath(); c.arc(cx + 9, cy - 9, 9, 0, Math.PI * 2); c.fill();
+      c.font = `500 25px ${F}`; c.fillStyle = FG; c.fillText(t("c_" + id), cx + 30, cy);
+    });
+    return y + 52 * Math.ceil(CHECKS.length / 2);
   }
 
-  let shareBlob = null;
-  async function makeShare() {
-    const show = shareShow();
-    const long = location.origin + "/r/" + encode(sharedPortrait(show));
-    $("#shareUrl").value = long;
-    shareBlob = null; $("#shareImg").removeAttribute("src");
-    const [url, cv] = await Promise.all([shortLink(long), drawCard(show).catch(() => null)]);
-    $("#shareUrl").value = url;
-    if (cv) { $("#shareImg").src = cv.toDataURL("image/png"); cv.toBlob(b => { shareBlob = b; }, "image/png"); }
-  }
-  $("#share").onclick = () => { $("#nativeShare").hidden = !navigator.share; openDlg("shareDlg"); makeShare(); };
-  $("#shareShow").onchange = makeShare;
-  const flash = (btn, k) => { const o = btn.textContent; btn.textContent = t(k); setTimeout(() => { btn.textContent = o; }, 1500); };
-  $("#copyLink").onclick = async e => { try { await navigator.clipboard.writeText($("#shareUrl").value); flash(e.target, "copied"); } catch (x) { $("#shareUrl").select(); } };
-  $("#copyImg").onclick = async e => { try { await navigator.clipboard.write([new ClipboardItem({ "image/png": shareBlob })]); flash(e.target, "copied"); } catch (x) {} };
-  $("#dlImg").onclick = () => { if (!$("#shareImg").src) return; const a = document.createElement("a"); a.href = $("#shareImg").src; a.download = "who-1ms-dog.png"; a.click(); };
-  $("#nativeShare").onclick = async () => {
-    const file = shareBlob && new File([shareBlob], "who-1ms-dog.png", { type: "image/png" });
-    const data = { title: t("card_me"), url: $("#shareUrl").value };
-    try { await navigator.share(file && navigator.canShare && navigator.canShare({ files: [file] }) ? { ...data, files: [file] } : data); } catch (e) {}
+  $("#share").onclick = async () => {
+    const { share } = await import("/assets/share/share.js");
+    const link = show => location.origin + linkPath(LANG, encode(sharedPortrait(show)));
+    share({
+      lang: LANG, name: t("app_name"), file: "who-1ms-dog", show: ["city", "isp"], never: ["ip"], ts: Date.now(),
+      link, home: location.origin + (D.paths[LANG] || "/"), text: () => t("card_me"),
+      height: (c, kit) => cardBody(c, kit, false) + 30 + 70,
+      draw: (c, kit) => { cardBody(c, kit, true); },
+      foot: () => [t("card_cta")],
+    }).open();
   };
 
   // Someone else's portrait: from /r/<code> (or an older #p=<code> link), drawn from the link with nothing sniffed;
@@ -859,7 +813,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     paintChecks(P.ck || {}, P.cc, true);
     return true;
   }
-  const sharedCode = (location.pathname.match(/^\/r\/([A-Za-z0-9_-]+)/) || [])[1] || (/^#p=/.test(location.hash) ? location.hash.slice(3) : null);
+  const sharedCode = (parsePath(location.pathname) || {}).code || (/^#p=/.test(location.hash) ? location.hash.slice(3) : null);
 
   /* ---------- a run ---------- */
   async function run() {

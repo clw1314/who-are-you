@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="許可なしにどのサイトにも分かるあなた">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"あなたは誰 · 1ms.dog","url":"https://who.1ms.dog/ja/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"許可なしにどのサイトでも分かること：推定の国籍、いる都市、言語、端末、GPU、ネットワーク、フォント、ブラウザフィンガープリントを一つの文章に埋めて見せ、71 個のスニファーと読み取った内容をすべて並べます。VPN・プロキシ・偽装ブラウザがばれる矛盾もチェック。データは保存しません。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"このページは何をする？","acceptedAnswer":{"@type":"Answer","text":"どのサイトでも、開いた瞬間に動かせるスニファーを動かし、それで分かる「あなた」を文章にします：どこの出身らしいか、今どこにいるか、何を使い、何が好きか。 文章の空欄にカーソルを合わせると、どのスニファーから来たかが出ます。下の一覧には、各スニファーの読み方（右の列の API やヘッダー）と読み取った内容があります。どれも許可を求めるダイアログは出しません。"}},{"@type":"Question","name":"国籍と都市はどう推測している？","acceptedAnswer":{"@type":"Answer","text":"都市は IP アドレスから、Cloudflare の位置情報データベースで調べています。広告ネットワークが使うのと同じ種類のデータベースです。VPN を使っていれば VPN サーバーの都市になります。 国籍はブラウザの言語（zh-TW なら台湾、pt-BR ならブラジル）と、システムのタイムゾーンから推測します。どちらも VPN では変わりません。米国英語はどの端末でも初期設定なので、その場合はタイムゾーンで決めます。"}},{"@type":"Question","name":"なぜ年齢は分からない？","acceptedAnswer":{"@type":"Answer","text":"ブラウザのどこにも年齢は書かれていないからです。広告ネットワークは行動から年齢や性別を推定します：どのサイトを訪れ、何を見て何を買ったか。同じフィンガープリントや Cookie でサイトをまたいでつなげることもよくあります。このページはそれを読まないので、作り話をせずに「分からない」と書きます。"}},{"@type":"Question","name":"ブラウザフィンガープリントとは？","acceptedAnswer":{"@type":"Answer","text":"文字や図形の描画（Canvas、WebGL）や音声処理のわずかな違い、インストール済みフォント、画面と各種設定。これをまとめてハッシュにすると、どのサイトでも同じ値になります。Cookie はいらず、プライベートウィンドウでも同じです。 IP に関係ないので、VPN では変わりません。対策のあるブラウザ（Brave、resistFingerprinting を有効にした Firefox、プライベートモードの Safari）はノイズを加えます。「フィンガープリント対策」の行で、あなたのブラウザがそうか分かります。"}},{"@type":"Question","name":"偽装チェックの使い方は？","acceptedAnswer":{"@type":"Answer","text":"VPN やプロキシを使ったり UA を変えたりすると、サイトは各情報を互いに照らし合わせます。システムのタイムゾーンが IP と合わない、言語が別の国のもの、WebRTC のアドレスが VPN のものではない、データセンターの回線、UA と GPU が合わない、こうした点が目立ちます。 VPN の国の人に見せたいなら：システムのタイムゾーンを合わせ、WebRTC を切るか VPN 内に収めるブラウザを使い、住宅用の出口を使ってください。"}},{"@type":"Question","name":"データは保存される？","acceptedAnswer":{"@type":"Answer","text":"されません。このサイトのサーバーが答えるのは 1 つのリクエスト（/api/me）だけで、中身はリクエストから元々見えるもの：あなたのアドレス、それに対する Cloudflare のデータ、ヘッダーです。ログは残しません。 出口と DNS リゾルバーを調べるため、ページはいくつかの外部サービスにも直接アクセスします（右の列に名前があります：IPIP.NET、IP.SB、chatgpt.com・claude.ai・cloudflare.com 上の Cloudflare trace、Cloudflare Radar、ip-api の DNS サーバー、STUN サーバー 2 つ）。これらにはあなたのアドレスが見えます。どのサイトを訪れたときとも同じです。それ以外はすべてブラウザ内で読み取り、外には出ません。コードはオープンソースです。 ページがあなたのブラウザ内に保存するのは 1 つだけで、外には送りません：前回の訪問の時刻・フィンガープリント・都市です。見分けられたかを示すために使い、ID カードの × で消せます。共有リンクには画像（ポートレート）だけが入り、アドレスと都市は入りません。"}},{"@type":"Question","name":"「このブラウザは非公開」と出る行があるのはなぜ？","acceptedAnswer":{"@type":"Answer","text":"すべてのブラウザがすべての API を持っているわけではありません。キーボード配列、バッテリー、回線の種類、メモリ、Client Hints は Chromium 系だけ。Safari と Firefox は意図的に情報を減らしています。読めないのはプライバシーにとって良いことです。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.13cd3937b1.css">
+<link rel="stylesheet" href="/assets/app.a08bb6c1ce.css">
 </head>
 <body>
 <div class="app">
@@ -109,19 +109,6 @@
   </main>
   <div data-ms-more></div>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="sh_h">ポートレートを共有</h2>
-      <button class="icon-btn" data-close type="button" aria-label="閉じる"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <div class="share-pic"><img id="shareImg" alt=""></div>
-      <label class="share-opt"><input type="checkbox" id="shareShow"><span data-i="sh_show">都市とプロバイダーを表示</span></label>
-      <input id="shareUrl" type="text" readonly aria-labelledby="shareT">
-      <div class="share-acts"><button class="btn pri" id="copyLink" type="button" data-i="sh_copy">リンクをコピー</button><button class="btn" id="copyImg" type="button" data-i="sh_img_copy">画像をコピー</button><button class="btn" id="dlImg" type="button" data-i="sh_dl">画像を保存</button><button class="btn" id="nativeShare" type="button" data-i="sh_native" hidden>共有…</button></div>
-      <p class="m" data-i="sh_note">すべてブラウザ内で作られ、アップロードされません。画像とリンクにはアドレスとフィンガープリントは入りません。都市とプロバイダーはチェックしたときだけ入ります。</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">ヘルプ</h2>
@@ -140,7 +127,7 @@
 <div class="adsbox ad-banner ad-placement" id="ad-slot" aria-hidden="true"></div>
 
 <script type="application/json" id="data">{"lang":"ja","paths":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":null}</script>
-<script src="/assets/l.ja.2ed4446d84.js"></script>
-<script src="/assets/app.b32b1fa454.js"></script>
+<script src="/assets/l.ja.cf5a980c97.js"></script>
+<script src="/assets/app.b62953ffd6.js"></script>
 </body>
 </html>

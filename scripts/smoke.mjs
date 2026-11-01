@@ -13,7 +13,7 @@ import { extname } from "node:path";
 import puppeteer from "puppeteer-core";
 import { LANGS } from "./build.mjs";
 import { SNIFFERS, BLANKS, CHECKS } from "../src/sniffers.mjs";
-import { decode, SLUG } from "../src/share.mjs";
+import { decode, SLUG, parsePath } from "../src/share.mjs";
 import { PAGES } from "../src/pages.mjs";
 
 const pub = new URL("../public/", import.meta.url);
@@ -26,8 +26,9 @@ const server = createServer(async (req, res) => {
   const path = decodeURIComponent(new URL(req.url, "http://x").pathname);
   if (path === "/api/me") { res.writeHead(200, { "content-type": "application/json" }); return res.end(JSON.stringify({ ...ME, at: Date.now() })); }
   // a shared portrait: the Worker serves its language's page (here without the preview tags it adds)
-  if (path.startsWith("/r/")) {
-    const P = decode(path.slice(3)), slug = P && SLUG[P.l];
+  const r = parsePath(path);
+  if (r) {
+    const P = decode(r.code), slug = P && SLUG[r.lang || P.l];
     res.writeHead(P ? 200 : 404, { "content-type": TYPES[".html"] });
     return res.end(P ? await readFile(new URL((slug ? slug + "/" : "") + "index.html", pub)) : "");
   }
@@ -79,13 +80,13 @@ for (const [lang, slug] of LANGS) {
   if (!/^\d+$/.test(r.num)) fail(lang, `count "${r.num}"`);
   if (!r.fp.trim() || !r.ret.trim()) fail(lang, "ID card not filled");
 
-  if (lang === "en") {
-    // share, then open the link as someone else would
+  if (lang === "zh-CN") {
+    // share (1ms.dog's share dialog), then open the link as someone else would
     await page.click("#share");
-    // the link and the image card, made in the page
-    await page.waitForFunction(() => /\/r\//.test(document.querySelector("#shareUrl").value) && document.querySelector("#shareImg").src, { timeout: 8000 })
+    // the link, in this language's folder, and the image card, made in the page
+    await page.waitForFunction(() => { const d = document.querySelector("dialog.ms-share"); return d && d.open && /\/zh-cn\/r\/\d+\./.test(d.querySelector(".ms-share-link input").value) && d.querySelector(".ms-share-img").src; }, { timeout: 8000 })
       .catch(() => fail("share", "no link or no image"));
-    const link = await page.$eval("#shareUrl", x => x.value), P = decode(link.split("/r/")[1] || "");
+    const link = await page.$eval("dialog.ms-share .ms-share-link input", x => x.value), P = decode(link.split("/r/")[1] || "");
     if (!P) fail("share", "the link doesn't decode");
     else {
       if (/203\.0\.113\.7|Tokyo|KDDI/.test(JSON.stringify(P))) fail("share", "the link carries the address, city or network");

@@ -38,7 +38,7 @@ async function loadI18n() {
 
 // Strings only the build uses (the page already shows them); everything else goes to the browser (the check names
 // too: the share card draws them)
-const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "app_name", "docs", "lang_label", "faq_h", "story"]);
+const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "docs", "lang_label", "faq_h", "story"]);
 
 // the icon after a link to another 1ms.dog tool, the site's own (never an arrow)
 export const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
@@ -64,7 +64,8 @@ export async function build({ check = false } = {}) {
 
   const root = fileURLToPath(new URL("..", import.meta.url));
   const js = (await bundle({ entryPoints: [fileURLToPath(new URL("app.js", src))], bundle: true, minify: true, format: "iife", target: "es2020",
-    legalComments: "none", write: false, absWorkingDir: root })).outputFiles[0].text;
+    // 1ms.dog's share dialog stays out: it is copied verbatim to public/assets/share/ and loaded when someone shares
+    legalComments: "none", write: false, absWorkingDir: root, external: ["/assets/share/*"] })).outputFiles[0].text;
   const cssFull = (await Promise.all(["fonts.css", "base.css", "style.css"].map(f => readFile(new URL(f, src), "utf8")))).join("\n");
   const css = (await transform(cssFull, { loader: "css", minify: true, legalComments: "none" })).code;
   const jsName = `app.${hash(js)}.js`, cssName = `app.${hash(css)}.css`;

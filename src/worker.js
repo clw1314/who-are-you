@@ -3,9 +3,9 @@
 //   GET /api/me   what the server learns from the request alone: the address, Cloudflare's geolocation and network
 //                 data for it, the TLS and HTTP details, the headers the browser sent, the address's reverse DNS and
 //                 the server's clock.
-//   GET /r/<code>  a shared portrait: its language's page with the result in the title and preview (src/share.mjs)
+//   GET [/<lang>]/r/<code>  a shared portrait: its language's page with the result in the title and preview (src/share.mjs)
 // Nothing is stored or logged. Every other path is a bare 404 (the 1ms.dog shell shows its own page for those).
-import { decode, findings, tier, SLUG } from "./share.mjs";
+import { decode, findings, tier, SLUG, parsePath } from "./share.mjs";
 import en from "./i18n/en.mjs";
 import zhCN from "./i18n/zh-CN.mjs";
 import zhTW from "./i18n/zh-TW.mjs";
@@ -42,16 +42,17 @@ async function ptr(ip) {
   } catch (e) { return null; }
 }
 
-// A shared portrait, /r/<code>[?lang=xx]: the language's page with its own title, description and preview image, so a
-// link pasted into a chat previews the result. The page script reads the portrait from the path and draws it.
+// A shared portrait, [/<lang>]/r/<code>[?lang=xx]: the language's page with its own title, description and preview
+// image, so a link pasted into a chat previews the result. The page script reads the portrait from the path and draws
+// it. The language: ?lang, else the path's folder, else the sharer's (older links have no folder).
 const I18N = { en, "zh-CN": zhCN, "zh-TW": zhTW, ja, ko, es, fr, de, pt, ru };
 const fill = (s, v) => { for (const k in v) s = s.split("{" + k + "}").join(v[k]); return s; };
 const attr = (name, value) => ({ element(el) { el.setAttribute(name, value); } });
-async function result(request, env, code, url) {
+async function result(request, env, { code, lang: dir }, url) {
   const P = decode(code);
   if (!P) return new Response(null, { status: 404 });
   const q = url.searchParams.get("lang");
-  const lang = I18N[q] ? q : I18N[P.l] ? P.l : "en", d = I18N[lang], slug = SLUG[lang];
+  const lang = I18N[q] ? q : dir || (I18N[P.l] ? P.l : "en"), d = I18N[lang], slug = SLUG[lang];
   const page = await env.ASSETS.fetch(new URL("/" + (slug ? slug + "/" : ""), url));
   if (!page.ok) return page;
   let nat = P.nat || "";
@@ -82,8 +83,8 @@ async function result(request, env, code, url) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const r = url.pathname.match(/^\/r\/([A-Za-z0-9_-]{8,8000})\/?$/);
-    if (r && request.method === "GET") return result(request, env, r[1], url);
+    const r = parsePath(url.pathname);
+    if (r && request.method === "GET") return result(request, env, r, url);
     if (url.pathname !== "/api/me") return new Response(null, { status: 404 });
     if (request.method !== "GET") return new Response(null, { status: 405, headers: { Allow: "GET" } });
     const at = Date.now();

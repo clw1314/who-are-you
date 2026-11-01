@@ -192,17 +192,6 @@ h2 { font-size: 15px; font-weight: 700; }
 .dlg-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 12px 12px 18px; border-bottom: 1px solid var(--line); }
 .dlg-h h2 { font-size: 16px; }
 .dialog.help { width: 860px; height: min(560px, calc(100vh - 32px)); }
-.dialog.share { width: 600px; }
-.share-pic { border-radius: 12px; overflow: hidden; background: var(--soft); aspect-ratio: 1080 / 1300; max-height: 46vh; display: grid; place-items: center; }
-.share-pic img { display: block; max-width: 100%; max-height: 46vh; }
-.share-pic img:not([src]) { visibility: hidden; }
-.share-opt { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
-.share-opt input { accent-color: var(--ink); width: 16px; height: 16px; }
-.share-acts { flex-wrap: wrap; }
-.share-b { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
-.share-b .m { font-size: 13px; }
-.share-b #shareUrl { height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--fg); font: 13px var(--f-num); width: 100%; }
-.share-acts { display: flex; gap: 8px; }
 .btn.pri { background: var(--ink); color: var(--ink-fg); border-color: transparent; font-weight: 600; }
 /* someone else's portrait: the city is masked, and there is nothing sniffed to list */
 .bl.hid { color: var(--muted); letter-spacing: .1em; background: none; }

@@ -41,7 +41,7 @@
 <meta name="twitter:description" content="Cookie なしでサイトが計算するあなたの ID">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"ブラウザフィンガープリント検査 · 1ms.dog","url":"https://who.1ms.dog/ja/fingerprint/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"無料のブラウザフィンガープリント検査：Canvas・WebGL・オーディオ・フォントのフィンガープリントと、どのサイトでも Cookie なしで計算できる総合 ID、ブラウザがランダム化しているか、前回の訪問から見分けられたかを表示。データは保存しません。","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"ブラウザフィンガープリントとは？","acceptedAnswer":{"@type":"Answer","text":"コンピューターごとの小さな違いの集まりです：GPU とドライバーによる Canvas や WebGL の描画結果、音声処理の丸め方、インストール済みフォント、それに画面・言語・タイムゾーン。1 つずつはありふれていても、合わせると唯一になりがちです。サイトはこれをハッシュにして ID にし、同じスクリプトを動かすサイトはどこでも同じ ID を得ます。"}},{"@type":"Question","name":"VPN やプライベートウィンドウで変わる？","acceptedAnswer":{"@type":"Answer","text":"変わりません。どれも IP に関係なく、プライベートウィンドウでも描画や音の処理は同じです。だから Cookie を消しても VPN を変えても追いかけられます。このページの ID カードは前回の訪問を（ブラウザ内だけに）覚えていて、それを確かめられます。"}},{"@type":"Question","name":"フィンガープリント追跡を防ぐには？","acceptedAnswer":{"@type":"Answer","text":"対策のあるブラウザを使います：Brave は標準で Canvas・WebGL・オーディオにノイズを加え、Firefox には privacy.resistFingerprinting があり、Tor Browser は全員を同じに見せます。UA を変えたり Canvas をブロックする拡張機能は、かえって目立つことが多いです。「フィンガープリント対策」の行で、ランダム化されているか分かります。"}},{"@type":"Question","name":"どれくらい珍しいか分かる？","acceptedAnswer":{"@type":"Answer","text":"それには全員のフィンガープリントを集める必要があり、このページはそれをしません：何も保存しないからです。示すのは、サイトが何を計算でき、それが安定しているかです。また来てみてください。ID カードが「同じ」と言えば、どのサイトも同じ方法であなたを見分けられたということです。"}}]}]}</script>
 <link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/app.13cd3937b1.css">
+<link rel="stylesheet" href="/assets/app.a08bb6c1ce.css">
 </head>
 <body>
 <div class="app">
@@ -116,19 +116,6 @@
   </main>
   <div data-ms-more></div>
 </div>
-<div class="scrim" id="shareDlg" hidden>
-  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
-    <div class="dlg-h"><h2 id="shareT" data-i="sh_h">ポートレートを共有</h2>
-      <button class="icon-btn" data-close type="button" aria-label="閉じる"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
-    <div class="share-b">
-      <div class="share-pic"><img id="shareImg" alt=""></div>
-      <label class="share-opt"><input type="checkbox" id="shareShow"><span data-i="sh_show">都市とプロバイダーを表示</span></label>
-      <input id="shareUrl" type="text" readonly aria-labelledby="shareT">
-      <div class="share-acts"><button class="btn pri" id="copyLink" type="button" data-i="sh_copy">リンクをコピー</button><button class="btn" id="copyImg" type="button" data-i="sh_img_copy">画像をコピー</button><button class="btn" id="dlImg" type="button" data-i="sh_dl">画像を保存</button><button class="btn" id="nativeShare" type="button" data-i="sh_native" hidden>共有…</button></div>
-      <p class="m" data-i="sh_note">すべてブラウザ内で作られ、アップロードされません。画像とリンクにはアドレスとフィンガープリントは入りません。都市とプロバイダーはチェックしたときだけ入ります。</p>
-    </div>
-  </div>
-</div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">
     <div class="dlg-h"><h2 id="helpT" data-i="faq_h">ヘルプ</h2>
@@ -147,7 +134,7 @@
 <div class="adsbox ad-banner ad-placement" id="ad-slot" aria-hidden="true"></div>
 
 <script type="application/json" id="data">{"lang":"ja","paths":{"en":"/fingerprint/","zh-CN":"/zh-cn/fingerprint/","zh-TW":"/zh-tw/fingerprint/","ja":"/ja/fingerprint/","ko":"/ko/fingerprint/","es":"/es/fingerprint/","fr":"/fr/fingerprint/","de":"/de/fingerprint/","pt":"/pt/fingerprint/","ru":"/ru/fingerprint/"},"base":{"en":"/","zh-CN":"/zh-cn/","zh-TW":"/zh-tw/","ja":"/ja/","ko":"/ko/","es":"/es/","fr":"/fr/","de":"/de/","pt":"/pt/","ru":"/ru/"},"focus":{"page":"fingerprint","rows":["fpid","canvas","webgl","audio","fontfp","rand"],"check":"fp"}}</script>
-<script src="/assets/l.ja.2ed4446d84.js"></script>
-<script src="/assets/app.b32b1fa454.js"></script>
+<script src="/assets/l.ja.cf5a980c97.js"></script>
+<script src="/assets/app.b62953ffd6.js"></script>
 </body>
 </html>
