@@ -90,6 +90,12 @@ test("disguise checks", () => {
   assert.deepEqual(v.webrtc[2], { ip: "1.2.3.4" });
   // an IPv6 address next to an IPv4 page request is only a warning
   assert.equal(checks({ ...base, rtc: ["2001:db8::1", "1.2.3.4"] }).webrtc[0], "warn");
+  // an IPv6 address this site sees too is no leak; one that differs from it is
+  const v6 = [["ip", "1.2.3.4"], ["stack", "1.2.3.4"], ["stack", "2001:db8::1"]];
+  assert.equal(checks({ ...base, exits: v6, rtc: ["2001:db8::1", "1.2.3.4"] }).webrtc[0], "ok");
+  assert.deepEqual(checks({ ...base, exits: v6, rtc: ["2001:db8::9", "1.2.3.4"] }).webrtc, ["bad", "c_rtc_bad", { ip: "2001:db8::9" }]);
+  // the address another destination sees (a rule-based proxy's direct route) still leaks to this site
+  assert.equal(checks({ ...base, ip: "5.6.7.8", exits: [["ip", "5.6.7.8"], ["ex_cn", "1.2.3.4"]], rtc: ["1.2.3.4"] }).webrtc[0], "bad");
   assert.equal(checks({ ...base, rtc: false }).webrtc[1], "c_rtc_off");
   // a user agent that claims a Mac on a Direct3D card
   assert.deepEqual(checks({ ...base, uaOS: "macOS", hintOS: null }).ua, ["bad", "c_ua_bad", { a: "macOS", b: "Windows" }]);

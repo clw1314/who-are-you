@@ -6,7 +6,7 @@
 
 接着它像网站识别伪装那样，把这些信息互相对比；并列出全部 71 个嗅探器、每个的读取方式和读到的结果。
 
-**在线使用：** https://who.1ms.dog · 专题页：[浏览器指纹检测](https://who.1ms.dog/zh-cn/fingerprint/)、[DNS 泄露检测](https://who.1ms.dog/zh-cn/dns-leak/)（同一个工具，把那一项结果放在最前面；文案在 `src/pages.mjs`）
+**在线使用：** https://who.1ms.dog · 专题页：[浏览器指纹检测](https://who.1ms.dog/zh-cn/fingerprint/)、[DNS 泄露检测](https://who.1ms.dog/zh-cn/dns-leak/)、[WebRTC 泄漏检测](https://who.1ms.dog/zh-cn/webrtc-leak/)（同一个工具，把那一项结果放在最前面；文案在 `src/pages.mjs`）
 
 ## 能看到什么
 
@@ -16,7 +16,7 @@
   - 浏览器语言和 IP 所在国家
   - DNS 泄露：实际替你解析域名的 DNS 解析器在哪个国家，和 IP 是否一致
   - 分流：国内网站、国外 IP 服务、ChatGPT、Claude、Cloudflare 和本站看到的出口是否不同
-  - WebRTC：STUN 服务器看到的公网地址是否不同于网页看到的
+  - WebRTC：STUN 服务器看到的公网地址，本站通过 IPv4 和 IPv6 都没见过的就算泄漏
   - 机房网络（云、托管、VPN 服务商）
   - User-Agent 和 Client Hints、WebGL 显卡暴露的真实系统
   - 指纹是稳定的（可追踪）还是随机的

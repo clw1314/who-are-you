@@ -92,7 +92,7 @@ export default {
   c_split_ok: "Jedes Ziel sieht denselben Ausgang",
   c_split_warn: "{a} und {b} sehen verschiedene Ausgänge",
   nt_split: "auf {n} Ausgänge verteilt",
-  lan_mdns: "versteckt (mDNS)",
+  lan_mdns: "versteckt (mDNS)", lan_mdns_why: "Der Browser versteckt Ihre lokale Adresse hinter einem zufälligen Namen auf .local (mDNS), Websites sehen sie nicht",
   kex_pq: "Post-Quanten",
   hz_v: "{n} Hz",
   scr_multi: "mehrere",
@@ -152,7 +152,7 @@ export default {
   og_r1: "Ein paar Dinge verraten mich",
   og_r2: "Vieles verrät mich",
 
-  go_asn: "ASN-Abfrage", go_ipv6: "IPv6-Test", go_webrtc: "WebRTC-Leak-Test",
+  go_asn: "ASN-Abfrage", go_ipv6: "IPv6-Test",
 
   docs: [
     ["Was macht diese Seite?", "Sie lässt dieselben Schnüffler laufen, die jede Website laufen lassen kann, sobald Sie sie öffnen, und schreibt auf, wer Sie damit sind: woher Sie wahrscheinlich kommen, wo Sie gerade sind, was Sie nutzen und was Sie mögen.\nZeigen Sie auf eine Lücke im Text, um zu sehen, von welchen Schnüfflern sie stammt; die Liste darunter zeigt jeden Schnüffler, wie er liest (die API oder der Header in der rechten Spalte) und was er gelesen hat. Keiner zeigt eine Berechtigungsabfrage."],

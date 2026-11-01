@@ -170,12 +170,15 @@ export function checks(x) {
   if (!x.exits) out.split = null;
   else if (x.exits.filter(([, ip]) => ip).length < 2) out.split = ["info", "c_na", {}];
   else { const s = splitOf(x.exits); out.split = s ? ["warn", "c_split_warn", { a: s.a, b: s.b }] : ["ok", "c_split_ok", {}]; }
-  // WebRTC: addresses the STUN servers saw that the page's request didn't come from
+  // WebRTC: addresses the STUN servers saw that a site doesn't already see, over IPv4 or IPv6 (another destination's
+  // exit doesn't count: this site wasn't meant to see that one). One of the page's family leaks; one of the other
+  // family leaks once that family's address is known to differ, and until then may be the IPv6 a VPN lets through.
   if (x.rtc === undefined || !x.ip) out.webrtc = null;
   else if (x.rtc === false) out.webrtc = ["ok", "c_rtc_off", {}];
   else {
-    const other = x.rtc.filter(ip => ip !== x.ip), same = other.filter(ip => fam(ip) === fam(x.ip));
-    out.webrtc = same.length ? ["bad", "c_rtc_bad", { ip: same[0] }] : other.length ? ["warn", "c_rtc_warn", { ip: other[0] }] : ["ok", x.rtc.length ? "c_rtc_ok" : "c_rtc_none", {}];
+    const site = [x.ip, ...(x.exits || []).filter(([id]) => id === "stack").map(([, ip]) => ip)];
+    const other = x.rtc.filter(ip => !site.includes(ip)), known = f => site.some(ip => fam(ip) === f), leak = other.filter(ip => known(fam(ip)));
+    out.webrtc = leak.length ? ["bad", "c_rtc_bad", { ip: leak[0] }] : other.length ? ["warn", "c_rtc_warn", { ip: other[0] }] : ["ok", x.rtc.length ? "c_rtc_ok" : "c_rtc_none", {}];
   }
   // the network
   out.dc = x.asn == null ? null : isDataCenter(x.asn, x.org) ? ["warn", "c_dc_warn", { org: x.org || "AS" + x.asn }] : ["ok", "c_dc_ok", { org: x.org || "AS" + x.asn }];

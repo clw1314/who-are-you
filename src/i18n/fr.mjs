@@ -92,7 +92,7 @@ export default {
   c_split_ok: "Toutes les destinations voient la même sortie",
   c_split_warn: "{a} et {b} voient des sorties différentes",
   nt_split: "répartie sur {n} sorties",
-  lan_mdns: "masquée (mDNS)",
+  lan_mdns: "masquée (mDNS)", lan_mdns_why: "Le navigateur cache votre adresse locale derrière un nom aléatoire en .local (mDNS) : les sites ne la voient pas",
   kex_pq: "post-quantique",
   hz_v: "{n} Hz",
   scr_multi: "plusieurs",
@@ -152,7 +152,7 @@ export default {
   og_r1: "Quelques points me trahissent",
   og_r2: "Beaucoup de points me trahissent",
 
-  go_asn: "Recherche ASN", go_ipv6: "Test IPv6", go_webrtc: "Test de fuite WebRTC",
+  go_asn: "Recherche ASN", go_ipv6: "Test IPv6",
 
   docs: [
     ["Que fait cette page ?", "Elle lance les mêmes renifleurs que n’importe quel site peut lancer dès que vous l’ouvrez, puis écrit qui cela fait de vous : d’où vous venez probablement, où vous êtes, ce que vous utilisez et ce que vous préférez.\nSurvolez un trou du paragraphe pour voir de quels renifleurs il vient ; la liste en dessous montre chaque renifleur, comment il lit (l’API ou l’en-tête de la colonne de droite) et ce qu’il a lu. Aucun n’affiche de demande d’autorisation."],

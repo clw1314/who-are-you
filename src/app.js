@@ -36,9 +36,11 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   // only public addresses get a link: there is nothing to look up about a private, loopback or link-local one
   const PRIVATE = /^(10\.|127\.|0\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.|::1?$|f[cd][0-9a-f]{2}:|fe[89ab][0-9a-f]:)/i;
   const ipqsOf = ip => IPQS && ip && !PRIVATE.test(ip) ? inLang(IPQS) + "?ip=" + encodeURIComponent(ip) : "";
+  // a public address's page on ASN Lookup (who runs the network it belongs to)
+  const ipLink = ip => ASN && !PRIVATE.test(ip) ? `<a href="${esc(inLang(ASN) + "ip/" + ip)}" target="_blank" rel="noopener" title="${esc(t("go_asn"))}">${esc(ip)}</a>` : esc(ip);
   if (EGRESS && $("#egLink")) { $("#egLink").href = inLang(EGRESS); $("#egLink").hidden = false; }
-  // a topic page's link to the tool that looks deeper: DNS Test, or EgressLens's WebRTC leak test
-  const focusHref = D.focus && ({ dns: DNSTEST && inLang(DNSTEST), webrtc: EGRESS && inLang(EGRESS) + "webrtc-leak/" })[D.focus.go];
+  // a topic page's link to the tool that looks deeper: DNS Test, or EgressLens for every exit
+  const focusHref = D.focus && ({ dns: DNSTEST && inLang(DNSTEST), egress: EGRESS && inLang(EGRESS) })[D.focus.go];
   if (focusHref && $("#focusGo")) { $("#focusGo").href = focusHref; $("#focusGo").hidden = false; }
   // an AS number links to its page on ASN Lookup
   const asnOf = n => ASN && n ? inLang(ASN) + "AS" + n : "";
@@ -409,10 +411,12 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     };
     await Promise.all(["stun:stun.cloudflare.com:3478", "stun:stun.l.google.com:19302"].map(one));
     R.rtc = [...ips];
-    txt("webrtc", R.rtc.length ? R.rtc.join(", ") : t("rtc_none"), { na: !R.rtc.length });
-    const local = [...lan], shown = local.filter(x => !/\.local$/i.test(x));
-    if (shown.length) txt("lan", shown.join(", "));
-    else if (local.length) txt("lan", t("lan_mdns"));
+    // IPv4 first, each public address linked to its network
+    R.rtc.sort((x, y) => x.includes(":") - y.includes(":"));
+    if (R.rtc.length) row("webrtc", R.rtc.map(ipLink).join(", ")); else na("webrtc", "rtc_none");
+    // local addresses as they are; an mDNS name (a random one ending in .local) only says the browser hides them
+    const local = [...lan], shown = local.filter(x => !/\.local$/i.test(x)), mdns = local.length > shown.length;
+    if (shown.length || mdns) txt("lan", [...shown, mdns ? t("lan_mdns") : ""].filter(Boolean).join(", "), mdns ? { why: t("lan_mdns_why") } : {});
     else na("lan", "v_empty");
   }
 
@@ -686,10 +690,9 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       r.querySelector(".ck-fix").hidden = lv !== "bad" && lv !== "warn";
       const go = r.querySelector(".ck-go");
       if (go) {
-        // WebRTC links to EgressLens's own WebRTC leak test whatever the result; the others only when they give you away
-        const href = id === "dns" ? DNSTEST && inLang(DNSTEST) : id === "dc" ? ipqsOf(R && R.srv && R.srv.ip)
-          : id === "webrtc" ? EGRESS && inLang(EGRESS) + "webrtc-leak/" : EGRESS && inLang(EGRESS);
-        go.hidden = !href || (id !== "webrtc" && lv !== "bad" && lv !== "warn"); if (href) go.href = href;
+        // only when the check gives you away
+        const href = id === "dns" ? DNSTEST && inLang(DNSTEST) : id === "dc" ? ipqsOf(R && R.srv && R.srv.ip) : EGRESS && inLang(EGRESS);
+        go.hidden = !href || (lv !== "bad" && lv !== "warn"); if (href) go.href = href;
       }
     }
     if (!final) return;

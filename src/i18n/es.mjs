@@ -92,7 +92,7 @@ export default {
   c_split_ok: "Todos los destinos ven la misma salida",
   c_split_warn: "{a} y {b} ven salidas distintas",
   nt_split: "repartida en {n} salidas",
-  lan_mdns: "oculta (mDNS)",
+  lan_mdns: "oculta (mDNS)", lan_mdns_why: "El navegador oculta tu dirección local tras un nombre aleatorio terminado en .local (mDNS), así que los sitios no la ven",
   kex_pq: "poscuántico",
   hz_v: "{n} Hz",
   scr_multi: "más de una",
@@ -152,7 +152,7 @@ export default {
   og_r1: "Algunas cosas me delatan",
   og_r2: "Muchas cosas me delatan",
 
-  go_asn: "Consulta ASN", go_ipv6: "Test de IPv6", go_webrtc: "Test de fuga WebRTC",
+  go_asn: "Consulta ASN", go_ipv6: "Test de IPv6",
 
   docs: [
     ["¿Qué hace esta página?", "Ejecuta los mismos rastreadores que cualquier sitio puede ejecutar en cuanto lo abres y escribe quién te hace eso: de dónde vienes probablemente, dónde estás, qué usas y qué prefieres.\nAl pasar el ratón sobre un hueco del párrafo ves de qué rastreadores salió, y la lista de abajo muestra cada rastreador, cómo lee (la API o cabecera de la columna derecha) y lo que leyó. Ninguno muestra un aviso de permiso."],

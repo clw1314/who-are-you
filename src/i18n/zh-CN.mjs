@@ -92,7 +92,7 @@ export default {
   c_split_ok: "所有网站看到同一个出口",
   c_split_warn: "{a}和{b}看到的出口不同",
   nt_split: "分流了 {n} 个出口",
-  lan_mdns: "已隐藏（mDNS）",
+  lan_mdns: "已隐藏（mDNS）", lan_mdns_why: "浏览器把局域网地址换成了一个随机的 .local 名字（mDNS），网站看不到真实地址",
   kex_pq: "抗量子",
   hz_v: "{n} Hz",
   scr_multi: "不止一块",
@@ -152,7 +152,7 @@ export default {
   og_r1: "有几处会暴露我",
   og_r2: "好多地方会暴露我",
 
-  go_asn: "ASN 查询", go_ipv6: "IPv6 测试", go_webrtc: "WebRTC 泄露检测",
+  go_asn: "ASN 查询", go_ipv6: "IPv6 测试",
 
   docs: [
     ["这个页面做什么？", "它运行的嗅探器，任何网站在你打开的那一刻都能运行。然后把结果写成一段话：你可能来自哪里、现在在哪、用什么、喜欢什么。\n把鼠标放在话里的空格上，会显示它来自哪些嗅探器。下面的列表列出每个嗅探器、读取方式（右侧那一列的 API 或请求头）和读到的内容。它们都不会弹出授权提示。"],

@@ -3,10 +3,11 @@
 // link preview; the page script fills the focus panel from the same sniffers as the main page.
 //   rows   the sniffer rows the focus panel shows
 //   check  the disguise check whose verdict heads it
-//   go     what to link to when the host announces it: "dns" DNS Test, "webrtc" EgressLens's WebRTC leak test
+//   go     what to link to when the host announces it: "dns" DNS Test, "egress" EgressLens
 export const PAGES = {
-  fingerprint: { rows: ["fpid", "canvas", "webgl", "audio", "fontfp", "rand"], check: "fp", go: "webrtc" },
+  fingerprint: { rows: ["fpid", "canvas", "webgl", "audio", "fontfp", "rand"], check: "fp" },
   "dns-leak": { rows: ["dns", "ip", "ex_cn", "ex_intl", "stack"], check: "dns", go: "dns" },
+  "webrtc-leak": { rows: ["webrtc", "lan", "ip", "stack"], check: "webrtc", go: "egress" },
 };
 
 // per page, per language: seo_title, seo_desc, seo_kw, h1, og_sub, intro (the body text above the result),
@@ -295,5 +296,277 @@ export const TEXT = {
         ["Резолвер — Cloudflare или Google в другом городе. Это утечка?", "Обычно нет. Публичные резолверы вроде 1.1.1.1 и 8.8.8.8 отвечают из ближайшего к запросу дата-центра, так что город может не совпадать с выходом VPN. Выдаёт вас резолвер вашего провайдера или резолвер в вашей стране, когда IP за границей."],
       ],
     },
+  },
+  "webrtc-leak": {
+    "en": {
+      "seo_title": "WebRTC Leak Test: does WebRTC show your real IP? · Who Are You",
+      "seo_desc": "Free WebRTC leak test: the public IPv4 and IPv6 addresses and the local addresses WebRTC hands to any site, compared with the IP your VPN or proxy shows. If they differ, WebRTC leaks your real IP. With how to fix it in Chrome, Firefox, Brave and proxy clients.",
+      "seo_kw": "WebRTC leak test, WebRTC leak, WebRTC IP leak, VPN WebRTC leak, check WebRTC, STUN IP leak, local IP leak, disable WebRTC",
+      "h1": "WebRTC leak test",
+      "og_sub": "Does WebRTC show your real IP?",
+      "intro": "Video calls in the browser use WebRTC, and any page can start it without asking. It asks a STUN server which address you came from, over UDP, which many VPNs and proxies don't carry. Here are the addresses WebRTC gives away, compared with the address sites see.",
+      "focus_h": "Your WebRTC addresses",
+      "docs": [
+        [
+          "What is a WebRTC leak?",
+          "To set up a call, WebRTC collects every address it could be reached at: the local ones on your network card, and the public one a STUN server sees. A page reads them with a few lines of script, no permission needed. If your VPN or proxy carries only the page's web requests, the STUN request goes out on your own line, and the page learns your real IP behind the VPN."
+        ],
+        [
+          "How does this test work?",
+          "The page opens a WebRTC connection to the STUN servers of Cloudflare and Google and lists the addresses they report (\"server reflexive\" candidates), then compares them with the address this site, your other exits and the IPv6 test see. An address that none of them show is a leak. The local addresses come from the \"host\" candidates; nothing is stored or sent anywhere."
+        ],
+        [
+          "How do I fix a WebRTC leak?",
+          "Proxy clients (Clash, V2Ray and others): turn on TUN mode so UDP goes through the proxy too. Chrome and Edge: the WebRTC Network Limiter extension, or uBlock Origin's \"Prevent WebRTC from leaking local IP addresses\". Brave: Settings → Privacy → WebRTC IP handling policy → Disable non-proxied UDP. Firefox: set media.peerconnection.ice.default_address_only to true in about:config, or media.peerconnection.enabled to false to turn WebRTC off. Then run this test again."
+        ],
+        [
+          "Is a local address or a .local name a leak?",
+          "A name ending in .local is the browser hiding your local address (mDNS), which is what you want. A real local address such as 192.168.1.5 doesn't reveal where you are, but it makes your fingerprint more unique. An IPv6 address that differs from your IPv4 exit is a leak only if it isn't your IPv6 exit: the test checks it against the IPv6 address sites see."
+        ]
+      ]
+    },
+    "zh-CN": {
+      "seo_title": "WebRTC 泄漏检测：WebRTC 会不会暴露你的真实 IP · 你是谁",
+      "seo_desc": "免费 WebRTC 泄漏检测：列出 WebRTC 交给任何网站的公网 IPv4、IPv6 和局域网地址，和 VPN 或代理显示的 IP 对比。对不上，就是 WebRTC 泄露了真实 IP。附 Chrome、Firefox、Brave 和代理客户端的修复方法。",
+      "seo_kw": "WebRTC 泄漏检测, WebRTC 泄露检测, WebRTC 泄露, WebRTC IP 泄露, VPN WebRTC 泄漏, WebRTC 检测, 真实 IP 泄露, 关闭 WebRTC, WebRTC leak test",
+      "h1": "WebRTC 泄漏检测",
+      "og_sub": "WebRTC 会不会暴露你的真实 IP？",
+      "intro": "浏览器里的视频通话靠 WebRTC，任何网页都能直接启动它，不用你同意。它会通过 UDP 问 STUN 服务器你从哪个地址来，而很多 VPN 和代理不转发 UDP。下面是 WebRTC 暴露的地址，和网站看到的地址对比。",
+      "focus_h": "你的 WebRTC 地址",
+      "docs": [
+        [
+          "什么是 WebRTC 泄漏？",
+          "为了建立通话，WebRTC 会收集所有能联系到你的地址：网卡上的局域网地址，以及 STUN 服务器看到的公网地址。网页几行脚本就能读到，不需要任何权限。如果 VPN 或代理只转发网页请求，STUN 请求就会走你自己的线路，网页就能拿到 VPN 背后的真实 IP。"
+        ],
+        [
+          "这个检测怎么做的？",
+          "页面向 Cloudflare 和 Google 的 STUN 服务器发起 WebRTC 连接，列出它们报告的地址（srflx 候选），再和本站、你的其他出口以及 IPv6 测试看到的地址比较。哪个都对不上的地址，就是泄漏。局域网地址来自 host 候选。所有数据不存储、不上传。"
+        ],
+        [
+          "WebRTC 泄漏怎么修？",
+          "代理客户端（Clash、V2Ray 等）：打开 TUN 模式，让 UDP 也走代理。Chrome 和 Edge：装 WebRTC Network Limiter 扩展，或在 uBlock Origin 里勾选「防止 WebRTC 泄露本地 IP 地址」。Brave：设置 → 隐私 → WebRTC IP 处理策略 → 禁用非代理 UDP。Firefox：在 about:config 把 media.peerconnection.ice.default_address_only 设为 true，或把 media.peerconnection.enabled 设为 false 彻底关闭。改完再测一次。"
+        ],
+        [
+          "局域网地址或 .local 名字算泄漏吗？",
+          "以 .local 结尾的名字是浏览器把局域网地址藏起来了（mDNS），这正是你想要的。真实的局域网地址（比如 192.168.1.5）不会暴露你在哪，但会让你的指纹更独特。和 IPv4 出口不同的 IPv6 地址，只有不是你的 IPv6 出口时才算泄漏：检测会拿它和网站看到的 IPv6 地址比对。"
+        ]
+      ]
+    },
+    "zh-TW": {
+      "seo_title": "WebRTC 洩漏檢測：WebRTC 會不會暴露你的真實 IP · 你是誰",
+      "seo_desc": "免費 WebRTC 洩漏檢測：列出 WebRTC 交給任何網站的公網 IPv4、IPv6 和區域網路位址，與 VPN 或代理顯示的 IP 比對。對不上，就是 WebRTC 洩漏了真實 IP。附 Chrome、Firefox、Brave 和代理用戶端的修復方法。",
+      "seo_kw": "WebRTC 洩漏檢測, WebRTC 洩露, WebRTC IP 洩漏, VPN WebRTC 洩漏, WebRTC 檢測, 真實 IP 洩漏, 關閉 WebRTC, WebRTC leak test",
+      "h1": "WebRTC 洩漏檢測",
+      "og_sub": "WebRTC 會不會暴露你的真實 IP？",
+      "intro": "瀏覽器裡的視訊通話靠 WebRTC，任何網頁都能直接啟動它，不必經過你同意。它會透過 UDP 問 STUN 伺服器你從哪個位址來，而很多 VPN 和代理不轉送 UDP。下面是 WebRTC 暴露的位址，與網站看到的位址比對。",
+      "focus_h": "你的 WebRTC 位址",
+      "docs": [
+        [
+          "什麼是 WebRTC 洩漏？",
+          "為了建立通話，WebRTC 會收集所有能聯絡到你的位址：網卡上的區域網路位址，以及 STUN 伺服器看到的公網位址。網頁幾行程式就能讀到，不需要任何權限。如果 VPN 或代理只轉送網頁請求，STUN 請求就會走你自己的線路，網頁就能拿到 VPN 背後的真實 IP。"
+        ],
+        [
+          "這個檢測怎麼做的？",
+          "頁面向 Cloudflare 和 Google 的 STUN 伺服器發起 WebRTC 連線，列出它們回報的位址（srflx 候選），再與本站、你的其他出口以及 IPv6 測試看到的位址比較。哪個都對不上的位址，就是洩漏。區域網路位址來自 host 候選。所有資料不儲存、不上傳。"
+        ],
+        [
+          "WebRTC 洩漏怎麼修？",
+          "代理用戶端（Clash、V2Ray 等）：開啟 TUN 模式，讓 UDP 也走代理。Chrome 和 Edge：安裝 WebRTC Network Limiter 擴充功能，或在 uBlock Origin 勾選「防止 WebRTC 洩漏本機 IP 位址」。Brave：設定 → 隱私 → WebRTC IP 處理政策 → 停用非代理 UDP。Firefox：在 about:config 把 media.peerconnection.ice.default_address_only 設為 true，或把 media.peerconnection.enabled 設為 false 完全關閉。改完再測一次。"
+        ],
+        [
+          "區域網路位址或 .local 名稱算洩漏嗎？",
+          "以 .local 結尾的名稱是瀏覽器把區域網路位址藏起來了（mDNS），這正是你要的。真實的區域網路位址（例如 192.168.1.5）不會暴露你在哪，但會讓你的指紋更獨特。與 IPv4 出口不同的 IPv6 位址，只有不是你的 IPv6 出口時才算洩漏：檢測會拿它和網站看到的 IPv6 位址比對。"
+        ]
+      ]
+    },
+    "ja": {
+      "seo_title": "WebRTC リークテスト：WebRTC で本当の IP が見えていないか · あなたは誰",
+      "seo_desc": "無料の WebRTC リークテスト：WebRTC がどのサイトにも渡す公開 IPv4・IPv6 アドレスとローカルアドレスを一覧にし、VPN やプロキシが示す IP と比べます。違えば WebRTC から本当の IP が漏れています。Chrome、Firefox、Brave、プロキシクライアントでの対策つき。",
+      "seo_kw": "WebRTC リークテスト, WebRTC リーク, WebRTC IP 漏れ, VPN WebRTC リーク, WebRTC チェック, ローカル IP 漏洩, WebRTC 無効化, WebRTC leak test",
+      "h1": "WebRTC リークテスト",
+      "og_sub": "WebRTC で本当の IP が見えていないか",
+      "intro": "ブラウザのビデオ通話は WebRTC を使い、どのページも許可なしに起動できます。WebRTC は UDP で STUN サーバーにどのアドレスから来たかを尋ねますが、UDP を通さない VPN やプロキシは少なくありません。WebRTC が明かすアドレスを、サイトから見えるアドレスと比べます。",
+      "focus_h": "あなたの WebRTC アドレス",
+      "docs": [
+        [
+          "WebRTC リークとは？",
+          "通話をつなぐため、WebRTC は連絡に使えるアドレスをすべて集めます。ネットワークカードのローカルアドレスと、STUN サーバーから見た公開アドレスです。ページは数行のスクリプトで、許可なしにそれを読めます。VPN やプロキシがページの通信しか運ばないと、STUN の問い合わせは自分の回線から出て、VPN の裏の本当の IP がページに知られます。"
+        ],
+        [
+          "このテストの仕組みは？",
+          "ページは Cloudflare と Google の STUN サーバーに WebRTC 接続を開き、返ってきたアドレス（srflx 候補）を一覧にして、このサイト、ほかの出口、IPv6 テストから見えるアドレスと比べます。どれとも一致しないアドレスがリークです。ローカルアドレスは host 候補から取ります。何も保存・送信しません。"
+        ],
+        [
+          "WebRTC リークの直し方は？",
+          "プロキシクライアント（Clash、V2Ray など）：TUN モードをオンにして UDP もプロキシに通します。Chrome と Edge：拡張機能 WebRTC Network Limiter か、uBlock Origin の「WebRTC によるローカル IP アドレスの漏洩を防ぐ」。Brave：設定 → プライバシー → WebRTC IP 処理ポリシー → プロキシ経由でない UDP を無効にする。Firefox：about:config で media.peerconnection.ice.default_address_only を true に、完全に止めるなら media.peerconnection.enabled を false に。変更後にもう一度テストしてください。"
+        ],
+        [
+          "ローカルアドレスや .local の名前はリーク？",
+          ".local で終わる名前は、ブラウザがローカルアドレスを隠している（mDNS）印で、望ましい状態です。192.168.1.5 のような本物のローカルアドレスは居場所を明かしませんが、フィンガープリントをより一意にします。IPv4 の出口と違う IPv6 アドレスは、それが自分の IPv6 出口でない場合だけリークです。テストはサイトから見える IPv6 アドレスと照合します。"
+        ]
+      ]
+    },
+    "ko": {
+      "seo_title": "WebRTC 유출 테스트: WebRTC가 실제 IP를 드러내나요? · 당신은 누구",
+      "seo_desc": "무료 WebRTC 유출 테스트: WebRTC가 아무 사이트에나 넘겨주는 공인 IPv4·IPv6 주소와 로컬 주소를 보여 주고, VPN이나 프록시가 보여 주는 IP와 비교합니다. 다르면 WebRTC가 실제 IP를 유출하는 것입니다. Chrome, Firefox, Brave, 프록시 클라이언트에서 고치는 법도 함께.",
+      "seo_kw": "WebRTC 유출 테스트, WebRTC 누출, WebRTC IP 유출, VPN WebRTC 유출, WebRTC 확인, 로컬 IP 유출, WebRTC 끄기, WebRTC leak test",
+      "h1": "WebRTC 유출 테스트",
+      "og_sub": "WebRTC가 실제 IP를 드러내나요?",
+      "intro": "브라우저의 영상 통화는 WebRTC를 쓰고, 어떤 페이지든 묻지 않고 실행할 수 있습니다. WebRTC는 UDP로 STUN 서버에 어느 주소에서 왔는지 묻는데, UDP를 전달하지 않는 VPN과 프록시가 많습니다. WebRTC가 드러내는 주소를 사이트가 보는 주소와 비교합니다.",
+      "focus_h": "내 WebRTC 주소",
+      "docs": [
+        [
+          "WebRTC 유출이란?",
+          "통화를 연결하려고 WebRTC는 연락 가능한 모든 주소를 모읍니다. 네트워크 카드의 로컬 주소와 STUN 서버가 본 공인 주소입니다. 페이지는 스크립트 몇 줄로 권한 없이 이를 읽습니다. VPN이나 프록시가 페이지 요청만 전달하면 STUN 요청은 내 회선으로 나가고, 페이지는 VPN 뒤의 실제 IP를 알게 됩니다."
+        ],
+        [
+          "이 테스트는 어떻게 작동하나요?",
+          "페이지는 Cloudflare와 Google의 STUN 서버에 WebRTC 연결을 열고, 돌려받은 주소(srflx 후보)를 이 사이트, 다른 출구, IPv6 테스트가 보는 주소와 비교합니다. 어느 것과도 맞지 않는 주소가 유출입니다. 로컬 주소는 host 후보에서 옵니다. 아무것도 저장하거나 보내지 않습니다."
+        ],
+        [
+          "WebRTC 유출은 어떻게 막나요?",
+          "프록시 클라이언트(Clash, V2Ray 등): TUN 모드를 켜서 UDP도 프록시로 보냅니다. Chrome과 Edge: WebRTC Network Limiter 확장 프로그램, 또는 uBlock Origin의 \"WebRTC가 로컬 IP 주소를 유출하지 않도록 방지\". Brave: 설정 → 개인정보 보호 → WebRTC IP 처리 정책 → 프록시되지 않은 UDP 사용 중지. Firefox: about:config에서 media.peerconnection.ice.default_address_only를 true로, 완전히 끄려면 media.peerconnection.enabled를 false로. 바꾼 뒤 다시 테스트하세요."
+        ],
+        [
+          "로컬 주소나 .local 이름도 유출인가요?",
+          ".local로 끝나는 이름은 브라우저가 로컬 주소를 숨긴 것(mDNS)으로, 바람직한 상태입니다. 192.168.1.5 같은 실제 로컬 주소는 위치를 드러내지 않지만 지문을 더 고유하게 만듭니다. IPv4 출구와 다른 IPv6 주소는 그것이 내 IPv6 출구가 아닐 때만 유출입니다. 테스트는 사이트가 보는 IPv6 주소와 대조합니다."
+        ]
+      ]
+    },
+    "es": {
+      "seo_title": "Test de fuga WebRTC: ¿WebRTC muestra tu IP real? · ¿Quién eres?",
+      "seo_desc": "Test de fuga WebRTC gratis: las direcciones IPv4 e IPv6 públicas y las locales que WebRTC entrega a cualquier sitio, comparadas con la IP que muestra tu VPN o proxy. Si no coinciden, WebRTC filtra tu IP real. Con cómo arreglarlo en Chrome, Firefox, Brave y clientes proxy.",
+      "seo_kw": "test de fuga WebRTC, fuga WebRTC, WebRTC leak test, fuga de IP WebRTC, VPN fuga WebRTC, comprobar WebRTC, fuga de IP local, desactivar WebRTC",
+      "h1": "Test de fuga WebRTC",
+      "og_sub": "¿WebRTC muestra tu IP real?",
+      "intro": "Las videollamadas en el navegador usan WebRTC, y cualquier página puede iniciarlo sin pedir permiso. Pregunta a un servidor STUN, por UDP, desde qué dirección llegas, y muchas VPN y proxies no llevan UDP. Aquí están las direcciones que WebRTC revela, comparadas con la que ven los sitios.",
+      "focus_h": "Tus direcciones WebRTC",
+      "docs": [
+        [
+          "¿Qué es una fuga WebRTC?",
+          "Para establecer una llamada, WebRTC reúne todas las direcciones en las que se te puede alcanzar: las locales de tu tarjeta de red y la pública que ve un servidor STUN. Una página las lee con unas líneas de script, sin permiso. Si tu VPN o proxy solo lleva las peticiones web de la página, la consulta STUN sale por tu propia línea y la página conoce tu IP real tras la VPN."
+        ],
+        [
+          "¿Cómo funciona este test?",
+          "La página abre una conexión WebRTC con los servidores STUN de Cloudflare y Google, lista las direcciones que devuelven (candidatos srflx) y las compara con la que ven este sitio, tus otras salidas y el test de IPv6. Una dirección que ninguno muestra es una fuga. Las direcciones locales salen de los candidatos host; no se guarda ni se envía nada."
+        ],
+        [
+          "¿Cómo arreglo una fuga WebRTC?",
+          "Clientes proxy (Clash, V2Ray y otros): activa el modo TUN para que el UDP también pase por el proxy. Chrome y Edge: la extensión WebRTC Network Limiter, o en uBlock Origin «Evitar que WebRTC filtre direcciones IP locales». Brave: Configuración → Privacidad → Política de gestión de IP de WebRTC → Desactivar UDP sin proxy. Firefox: en about:config pon media.peerconnection.ice.default_address_only en true, o media.peerconnection.enabled en false para apagar WebRTC. Luego repite el test."
+        ],
+        [
+          "¿Una dirección local o un nombre .local es una fuga?",
+          "Un nombre terminado en .local es el navegador ocultando tu dirección local (mDNS), justo lo que quieres. Una dirección local real como 192.168.1.5 no revela dónde estás, pero hace tu huella más única. Una IPv6 distinta de tu salida IPv4 solo es una fuga si no es tu salida IPv6: el test la compara con la IPv6 que ven los sitios."
+        ]
+      ]
+    },
+    "fr": {
+      "seo_title": "Test de fuite WebRTC : WebRTC montre-t-il votre vraie IP ? · Qui êtes-vous ?",
+      "seo_desc": "Test de fuite WebRTC gratuit : les adresses IPv4 et IPv6 publiques et les adresses locales que WebRTC donne à n'importe quel site, comparées à l'IP que montre votre VPN ou proxy. Si elles diffèrent, WebRTC fait fuiter votre vraie IP. Avec les correctifs pour Chrome, Firefox, Brave et les clients proxy.",
+      "seo_kw": "test de fuite WebRTC, fuite WebRTC, WebRTC leak test, fuite IP WebRTC, VPN fuite WebRTC, vérifier WebRTC, fuite IP locale, désactiver WebRTC",
+      "h1": "Test de fuite WebRTC",
+      "og_sub": "WebRTC montre-t-il votre vraie IP ?",
+      "intro": "Les appels vidéo dans le navigateur passent par WebRTC, et n'importe quelle page peut le lancer sans demander. Il demande à un serveur STUN, en UDP, de quelle adresse vous venez, et beaucoup de VPN et de proxys ne transportent pas l'UDP. Voici les adresses que WebRTC révèle, comparées à celle que voient les sites.",
+      "focus_h": "Vos adresses WebRTC",
+      "docs": [
+        [
+          "Qu'est-ce qu'une fuite WebRTC ?",
+          "Pour établir un appel, WebRTC rassemble toutes les adresses où l'on peut vous joindre : les adresses locales de votre carte réseau et l'adresse publique que voit un serveur STUN. Une page les lit en quelques lignes de script, sans autorisation. Si votre VPN ou proxy ne transporte que les requêtes web de la page, la requête STUN sort par votre propre ligne et la page apprend votre vraie IP derrière le VPN."
+        ],
+        [
+          "Comment fonctionne ce test ?",
+          "La page ouvre une connexion WebRTC vers les serveurs STUN de Cloudflare et Google, liste les adresses qu'ils renvoient (candidats srflx) et les compare à celle que voient ce site, vos autres sorties et le test IPv6. Une adresse qu'aucun d'eux ne montre est une fuite. Les adresses locales viennent des candidats host ; rien n'est stocké ni envoyé."
+        ],
+        [
+          "Comment corriger une fuite WebRTC ?",
+          "Clients proxy (Clash, V2Ray et autres) : activez le mode TUN pour que l'UDP passe aussi par le proxy. Chrome et Edge : l'extension WebRTC Network Limiter, ou dans uBlock Origin « Empêcher WebRTC de divulguer les adresses IP locales ». Brave : Paramètres → Confidentialité → Règle de gestion des IP WebRTC → Désactiver l'UDP hors proxy. Firefox : dans about:config, mettez media.peerconnection.ice.default_address_only à true, ou media.peerconnection.enabled à false pour couper WebRTC. Puis refaites le test."
+        ],
+        [
+          "Une adresse locale ou un nom en .local, est-ce une fuite ?",
+          "Un nom en .local, c'est le navigateur qui cache votre adresse locale (mDNS) : c'est ce que vous voulez. Une vraie adresse locale comme 192.168.1.5 ne dit pas où vous êtes, mais rend votre empreinte plus unique. Une IPv6 différente de votre sortie IPv4 n'est une fuite que si ce n'est pas votre sortie IPv6 : le test la compare à l'IPv6 que voient les sites."
+        ]
+      ]
+    },
+    "de": {
+      "seo_title": "WebRTC-Leak-Test: Zeigt WebRTC Ihre echte IP? · Wer sind Sie?",
+      "seo_desc": "Kostenloser WebRTC-Leak-Test: die öffentlichen IPv4- und IPv6-Adressen und die lokalen Adressen, die WebRTC jeder Website gibt, verglichen mit der IP, die Ihr VPN oder Proxy zeigt. Weichen sie ab, verrät WebRTC Ihre echte IP. Mit Lösungen für Chrome, Firefox, Brave und Proxy-Clients.",
+      "seo_kw": "WebRTC-Leak-Test, WebRTC Leak, WebRTC leak test, WebRTC IP-Leak, VPN WebRTC Leak, WebRTC prüfen, lokale IP Leak, WebRTC deaktivieren",
+      "h1": "WebRTC-Leak-Test",
+      "og_sub": "Zeigt WebRTC Ihre echte IP?",
+      "intro": "Videoanrufe im Browser laufen über WebRTC, und jede Seite kann es ohne Nachfrage starten. Es fragt einen STUN-Server per UDP, von welcher Adresse Sie kommen, und viele VPNs und Proxys leiten kein UDP weiter. Hier sind die Adressen, die WebRTC verrät, verglichen mit der, die Websites sehen.",
+      "focus_h": "Ihre WebRTC-Adressen",
+      "docs": [
+        [
+          "Was ist ein WebRTC-Leak?",
+          "Um einen Anruf aufzubauen, sammelt WebRTC jede Adresse, unter der Sie erreichbar sind: die lokalen Ihrer Netzwerkkarte und die öffentliche, die ein STUN-Server sieht. Eine Seite liest sie mit ein paar Zeilen Skript, ohne Erlaubnis. Leitet Ihr VPN oder Proxy nur die Webanfragen der Seite weiter, geht die STUN-Anfrage über Ihre eigene Leitung, und die Seite erfährt Ihre echte IP hinter dem VPN."
+        ],
+        [
+          "Wie funktioniert dieser Test?",
+          "Die Seite öffnet eine WebRTC-Verbindung zu den STUN-Servern von Cloudflare und Google, listet die gemeldeten Adressen (srflx-Kandidaten) und vergleicht sie mit denen, die diese Website, Ihre anderen Ausgänge und der IPv6-Test sehen. Eine Adresse, die keiner davon zeigt, ist ein Leak. Die lokalen Adressen stammen aus den host-Kandidaten; nichts wird gespeichert oder gesendet."
+        ],
+        [
+          "Wie behebe ich einen WebRTC-Leak?",
+          "Proxy-Clients (Clash, V2Ray und andere): TUN-Modus einschalten, damit auch UDP durch den Proxy geht. Chrome und Edge: die Erweiterung WebRTC Network Limiter oder in uBlock Origin „Verhindern, dass WebRTC lokale IP-Adressen preisgibt“. Brave: Einstellungen → Datenschutz → WebRTC-IP-Verarbeitungsrichtlinie → Nicht über Proxy geleitetes UDP deaktivieren. Firefox: in about:config media.peerconnection.ice.default_address_only auf true, oder media.peerconnection.enabled auf false, um WebRTC abzuschalten. Dann den Test wiederholen."
+        ],
+        [
+          "Ist eine lokale Adresse oder ein .local-Name ein Leak?",
+          "Ein Name auf .local heißt, der Browser versteckt Ihre lokale Adresse (mDNS) – genau das wollen Sie. Eine echte lokale Adresse wie 192.168.1.5 verrät nicht, wo Sie sind, macht Ihren Fingerabdruck aber einzigartiger. Eine IPv6-Adresse, die von Ihrem IPv4-Ausgang abweicht, ist nur dann ein Leak, wenn sie nicht Ihr IPv6-Ausgang ist: Der Test vergleicht sie mit der IPv6-Adresse, die Websites sehen."
+        ]
+      ]
+    },
+    "pt": {
+      "seo_title": "Teste de vazamento WebRTC: o WebRTC mostra seu IP real? · Quem é você?",
+      "seo_desc": "Teste de vazamento WebRTC grátis: os endereços IPv4 e IPv6 públicos e os locais que o WebRTC entrega a qualquer site, comparados com o IP que sua VPN ou proxy mostra. Se forem diferentes, o WebRTC vaza seu IP real. Com como corrigir no Chrome, Firefox, Brave e clientes proxy.",
+      "seo_kw": "teste de vazamento WebRTC, vazamento WebRTC, WebRTC leak test, vazamento de IP WebRTC, VPN vazamento WebRTC, verificar WebRTC, vazamento de IP local, desativar WebRTC",
+      "h1": "Teste de vazamento WebRTC",
+      "og_sub": "O WebRTC mostra seu IP real?",
+      "intro": "Chamadas de vídeo no navegador usam WebRTC, e qualquer página pode iniciá-lo sem pedir. Ele pergunta a um servidor STUN, por UDP, de qual endereço você vem, e muitas VPNs e proxies não transportam UDP. Aqui estão os endereços que o WebRTC revela, comparados com o que os sites veem.",
+      "focus_h": "Seus endereços WebRTC",
+      "docs": [
+        [
+          "O que é um vazamento WebRTC?",
+          "Para montar uma chamada, o WebRTC reúne todos os endereços em que você pode ser alcançado: os locais da sua placa de rede e o público que um servidor STUN vê. Uma página os lê com poucas linhas de script, sem permissão. Se sua VPN ou proxy só leva as requisições web da página, a consulta STUN sai pela sua própria linha e a página descobre seu IP real por trás da VPN."
+        ],
+        [
+          "Como este teste funciona?",
+          "A página abre uma conexão WebRTC com os servidores STUN da Cloudflare e do Google, lista os endereços que eles devolvem (candidatos srflx) e os compara com o que este site, suas outras saídas e o teste de IPv6 veem. Um endereço que nenhum deles mostra é um vazamento. Os endereços locais vêm dos candidatos host; nada é guardado nem enviado."
+        ],
+        [
+          "Como corrijo um vazamento WebRTC?",
+          "Clientes proxy (Clash, V2Ray e outros): ative o modo TUN para que o UDP também passe pelo proxy. Chrome e Edge: a extensão WebRTC Network Limiter, ou no uBlock Origin \"Impedir que o WebRTC vaze endereços IP locais\". Brave: Configurações → Privacidade → Política de tratamento de IP do WebRTC → Desativar UDP sem proxy. Firefox: em about:config, defina media.peerconnection.ice.default_address_only como true, ou media.peerconnection.enabled como false para desligar o WebRTC. Depois, teste de novo."
+        ],
+        [
+          "Um endereço local ou um nome .local é vazamento?",
+          "Um nome terminado em .local é o navegador escondendo seu endereço local (mDNS), que é o que você quer. Um endereço local real como 192.168.1.5 não revela onde você está, mas deixa sua impressão digital mais única. Um IPv6 diferente da sua saída IPv4 só é vazamento se não for a sua saída IPv6: o teste o compara com o IPv6 que os sites veem."
+        ]
+      ]
+    },
+    "ru": {
+      "seo_title": "Проверка утечки WebRTC: видно ли через WebRTC ваш настоящий IP? · Кто вы?",
+      "seo_desc": "Бесплатная проверка утечки WebRTC: публичные IPv4- и IPv6-адреса и локальные адреса, которые WebRTC отдаёт любому сайту, в сравнении с IP, который показывает ваш VPN или прокси. Если они не совпадают, WebRTC выдаёт ваш настоящий IP. С инструкциями для Chrome, Firefox, Brave и прокси-клиентов.",
+      "seo_kw": "проверка утечки WebRTC, утечка WebRTC, WebRTC leak test, утечка IP через WebRTC, VPN утечка WebRTC, проверить WebRTC, утечка локального IP, отключить WebRTC",
+      "h1": "Проверка утечки WebRTC",
+      "og_sub": "Видно ли через WebRTC ваш настоящий IP?",
+      "intro": "Видеозвонки в браузере работают через WebRTC, и любая страница может запустить его без спроса. Он спрашивает STUN-сервер по UDP, с какого адреса вы пришли, а многие VPN и прокси UDP не пропускают. Вот адреса, которые выдаёт WebRTC, в сравнении с тем, что видят сайты.",
+      "focus_h": "Ваши адреса WebRTC",
+      "docs": [
+        [
+          "Что такое утечка WebRTC?",
+          "Чтобы установить звонок, WebRTC собирает все адреса, по которым с вами можно связаться: локальные адреса сетевой карты и публичный адрес, который видит STUN-сервер. Страница читает их парой строк скрипта, без разрешения. Если VPN или прокси пропускает только веб-запросы страницы, запрос к STUN уходит по вашей собственной линии, и страница узнаёт ваш настоящий IP за VPN."
+        ],
+        [
+          "Как работает эта проверка?",
+          "Страница открывает WebRTC-соединение со STUN-серверами Cloudflare и Google, перечисляет адреса, которые они вернули (кандидаты srflx), и сравнивает их с адресом, который видят этот сайт, ваши другие выходы и тест IPv6. Адрес, которого нет ни у одного из них, — утечка. Локальные адреса берутся из кандидатов host; ничего не сохраняется и не отправляется."
+        ],
+        [
+          "Как устранить утечку WebRTC?",
+          "Прокси-клиенты (Clash, V2Ray и другие): включите режим TUN, чтобы UDP тоже шёл через прокси. Chrome и Edge: расширение WebRTC Network Limiter или в uBlock Origin «Предотвращать утечку локальных IP-адресов через WebRTC». Brave: Настройки → Конфиденциальность → Политика обработки IP WebRTC → Отключить UDP без прокси. Firefox: в about:config задайте media.peerconnection.ice.default_address_only = true или media.peerconnection.enabled = false, чтобы выключить WebRTC. Затем проверьте ещё раз."
+        ],
+        [
+          "Локальный адрес или имя .local — это утечка?",
+          "Имя на .local означает, что браузер прячет ваш локальный адрес (mDNS), — так и должно быть. Настоящий локальный адрес вроде 192.168.1.5 не выдаёт, где вы, но делает отпечаток уникальнее. IPv6-адрес, отличный от вашего IPv4-выхода, — утечка, только если это не ваш IPv6-выход: проверка сравнивает его с IPv6-адресом, который видят сайты."
+        ]
+      ]
+    }
   },
 };

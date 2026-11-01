@@ -92,7 +92,7 @@ export default {
   c_split_ok: "所有網站看到同一個出口",
   c_split_warn: "{a}和{b}看到的出口不同",
   nt_split: "分流了 {n} 個出口",
-  lan_mdns: "已隱藏（mDNS）",
+  lan_mdns: "已隱藏（mDNS）", lan_mdns_why: "瀏覽器把區域網路位址換成了一個隨機的 .local 名稱（mDNS），網站看不到真實位址",
   kex_pq: "抗量子",
   hz_v: "{n} Hz",
   scr_multi: "不只一個",
@@ -152,7 +152,7 @@ export default {
   og_r1: "有幾處會暴露我",
   og_r2: "好多地方會暴露我",
 
-  go_asn: "ASN 查詢", go_ipv6: "IPv6 測試", go_webrtc: "WebRTC 洩漏檢測",
+  go_asn: "ASN 查詢", go_ipv6: "IPv6 測試",
 
   docs: [
     ["這個頁面做什麼？", "它執行的嗅探器，任何網站在你打開的那一刻都能執行。然後把結果寫成一段話：你可能來自哪裡、現在在哪、用什麼、喜歡什麼。\n把滑鼠移到話裡的空格上，會顯示它來自哪些嗅探器。下面的清單列出每個嗅探器、讀取方式（右側那一欄的 API 或請求標頭）和讀到的內容。它們都不會跳出授權提示。"],

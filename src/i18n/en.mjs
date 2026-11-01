@@ -93,7 +93,7 @@ export default {
   c_split_ok: "Every destination sees the same exit",
   c_split_warn: "{a} and {b} see different exits",
   nt_split: "split across {n} exits",
-  lan_mdns: "hidden (mDNS)",
+  lan_mdns: "hidden (mDNS)", lan_mdns_why: "The browser hides your local address behind a random name ending in .local (mDNS), so sites don't see it",
   kex_pq: "post-quantum",
   hz_v: "{n} Hz",
   scr_multi: "more than one",
@@ -153,7 +153,7 @@ export default {
   og_r1: "A few things give me away",
   og_r2: "Lots of things give me away",
 
-  go_asn: "ASN Lookup", go_ipv6: "IPv6 Test", go_webrtc: "WebRTC leak test",
+  go_asn: "ASN Lookup", go_ipv6: "IPv6 Test",
 
   docs: [
     ["What does this page do?", "It runs the same sniffers any website can run the moment you open it, then writes down who that makes you: where you probably come from, where you are, what you use and what you like.\nEvery blank in the paragraph says on hover which sniffers it came from, and the list below shows each sniffer, how it reads (the API or header in the right column) and what it read. None of them shows a permission prompt."],

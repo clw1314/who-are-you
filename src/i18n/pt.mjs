@@ -92,7 +92,7 @@ export default {
   c_split_ok: "Todo destino vê a mesma saída",
   c_split_warn: "{a} e {b} veem saídas diferentes",
   nt_split: "dividida em {n} saídas",
-  lan_mdns: "oculto (mDNS)",
+  lan_mdns: "oculto (mDNS)", lan_mdns_why: "O navegador esconde seu endereço local atrás de um nome aleatório terminado em .local (mDNS), então os sites não o veem",
   kex_pq: "pós-quântico",
   hz_v: "{n} Hz",
   scr_multi: "mais de uma",
@@ -152,7 +152,7 @@ export default {
   og_r1: "Algumas coisas me entregam",
   og_r2: "Muitas coisas me entregam",
 
-  go_asn: "Consulta ASN", go_ipv6: "Teste de IPv6", go_webrtc: "Teste de vazamento WebRTC",
+  go_asn: "Consulta ASN", go_ipv6: "Teste de IPv6",
 
   docs: [
     ["O que esta página faz?", "Ela roda os mesmos farejadores que qualquer site pode rodar assim que você o abre e escreve quem isso faz de você: de onde você provavelmente vem, onde está, o que usa e do que gosta.\nPasse o mouse sobre uma lacuna do parágrafo para ver de quais farejadores ela veio; a lista abaixo mostra cada farejador, como ele lê (a API ou o cabeçalho da coluna da direita) e o que leu. Nenhum mostra pedido de permissão."],

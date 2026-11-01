@@ -6,7 +6,7 @@ Who do websites think you are? [Who Are You](https://who.1ms.dog) runs the sniff
 
 It then checks those readings against each other the way a site would to spot a disguise, and lists all 71 sniffers with how each one reads and what it read.
 
-**Live:** https://who.1ms.dog · topic pages: [browser fingerprint test](https://who.1ms.dog/fingerprint/), [DNS leak test](https://who.1ms.dog/dns-leak/) (same tool, that result first; text in `src/pages.mjs`)
+**Live:** https://who.1ms.dog · topic pages: [browser fingerprint test](https://who.1ms.dog/fingerprint/), [DNS leak test](https://who.1ms.dog/dns-leak/), [WebRTC leak test](https://who.1ms.dog/webrtc-leak/) (same tool, that result first; text in `src/pages.mjs`)
 
 ## What it shows
 
@@ -16,7 +16,7 @@ It then checks those readings against each other the way a site would to spot a 
   - browser language vs. the IP's country
   - DNS leak: the country of the resolver that actually looked you up vs. the IP's
   - split routing: a site in mainland China, an IP service abroad, ChatGPT, Claude, Cloudflare and this site seeing different exits
-  - WebRTC: public addresses STUN servers see that aren't the page's
+  - WebRTC: public addresses STUN servers see that this site sees neither over IPv4 nor over IPv6
   - data center network (clouds, hosting, VPN providers)
   - user agent vs. the system the client hints and WebGL renderer give away
   - whether the fingerprint is stable (trackable) or randomized
