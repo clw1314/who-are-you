@@ -125,7 +125,7 @@ export default {
   s_ext: "Extensions",
   ext_none: "aucune détectable",
   jb_crypto: "vous avez des cryptomonnaies",
-  ex_more: "Test complet →",
+  ex_more: "Test complet",
   share: "Partager",
   sh_h: "Partager votre portrait",
   sh_note: "Fait dans votre navigateur, jamais envoyé. L’image et le lien ne contiennent ni votre adresse ni votre empreinte ; la ville et le réseau seulement si vous cochez la case.",

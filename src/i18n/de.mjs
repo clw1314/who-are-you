@@ -125,7 +125,7 @@ export default {
   s_ext: "Erweiterungen",
   ext_none: "keine erkennbar",
   jb_crypto: "Sie halten Kryptowährung",
-  ex_more: "Vollständig prüfen →",
+  ex_more: "Vollständig prüfen",
   share: "Teilen",
   sh_h: "Ihr Porträt teilen",
   sh_note: "Entsteht in Ihrem Browser und wird nie hochgeladen. Bild und Link enthalten weder Adresse noch Fingerabdruck; Stadt und Netz nur, wenn Sie das Kästchen ankreuzen.",

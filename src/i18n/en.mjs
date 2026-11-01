@@ -126,7 +126,7 @@ export default {
   s_ext: "Extensions",
   ext_none: "none detectable",
   jb_crypto: "you hold crypto",
-  ex_more: "Full check →",
+  ex_more: "Full check",
   share: "Share",
   sh_h: "Share your portrait",
   sh_note: "Made in your browser and never uploaded. The image and link leave out your address and fingerprint; city and network only if you tick the box.",

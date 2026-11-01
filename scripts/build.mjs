@@ -40,6 +40,9 @@ async function loadI18n() {
 // too: the share card draws them)
 const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "app_name", "docs", "lang_label", "faq_h", "story"]);
 
+// the icon after a link to another 1ms.dog tool, the site's own (never an arrow)
+export const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
+
 // the checks another 1ms.dog tool looks into deeper; the page links there when the host announces that tool
 export const GO = { dns: "dns", split: "egress", webrtc: "egress", dc: "ipqs" };
 
@@ -114,12 +117,12 @@ export async function build({ check = false } = {}) {
       // the checks and every sniffer have their rows from the start; readings fill them in place
       const checks = `<ul class="ck" id="checks">` + CHECKS.map(c => `<li class="ckr" data-c="${c}"><i class="st"></i><span class="ck-l">${esc(T("c_" + c))}` +
         `<span class="ck-acts"><button class="ck-fix" type="button" aria-expanded="false" hidden>${esc(T("fix"))}</button>` +
-        (GO[c] ? `<a class="ck-go" target="_blank" rel="noopener" hidden>${esc(T("go_" + GO[c]))} →</a>` : "") +
+        (GO[c] ? `<a class="ck-go" target="_blank" rel="noopener" hidden>${esc(T("go_" + GO[c]))}${EXT}</a>` : "") +
         `</span></span><span class="ck-v"><i class="skl"></i></span>` +
         `<ul class="ck-tip" hidden>${T("tip_" + c).split("\n").map(l => `<li>${esc(l)}</li>`).join("")}</ul></li>`).join("") + "</ul>";
       const G = Object.fromEntries(GROUPS);
       const group = g => `<div class="pg" data-g="${g}"><h3>${esc(T("g_" + g))}<span class="pg-n">${G[g].length}</span>` +
-        (g === "exit" ? `<a class="pg-a" id="egLink" target="_blank" rel="noopener" hidden>${esc(T("ex_more"))}</a>` : "") + "</h3>" +
+        (g === "exit" ? `<a class="pg-a" id="egLink" target="_blank" rel="noopener" hidden>${esc(T("ex_more"))}${EXT}</a>` : "") + "</h3>" +
         G[g].map(s => `<div class="pr wait" data-s="${s.id}"${s.s ? " data-sens" : ""}><span class="pn">${esc(T("s_" + s.id))}</span><span class="pa">…</span><code class="pm">${esc(s.m)}</code></div>`).join("") + "</div>";
       const groups = COLUMNS.map(col => `<div class="pcol">${col.map(group).join("")}</div>`).join("");
       // A topic page opens with its own H1, body text and the one result it is about; the portrait follows under
@@ -130,7 +133,7 @@ export async function build({ check = false } = {}) {
       <div class="focus-r"><h2>${esc(T("focus_h"))}</h2>
         <p class="focus-v" id="focusV"><i class="st"></i><b><i class="skl"></i></b></p>
         <ul class="focus-rows">${P.rows.map(id => `<li data-f="${id}"><span>${esc(T("s_" + id))}</span><b>…</b></li>`).join("")}</ul>
-        ${P.go ? `<a class="focus-go" id="focusGo" target="_blank" rel="noopener" hidden>${esc(T("go_" + P.go))} →</a>` : ""}
+        ${P.go ? `<a class="focus-go" id="focusGo" target="_blank" rel="noopener" hidden>${esc(T("go_" + P.go))}${EXT}</a>` : ""}
       </div>
     </section>`;
       const heroTitle = page ? `<h2 class="h1">${esc(base.h1)}</h2>` : `<h1>${esc(T("h1"))}</h1>`;

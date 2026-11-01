@@ -125,7 +125,7 @@ export default {
   s_ext: "Extensiones",
   ext_none: "ninguna detectable",
   jb_crypto: "tienes criptomonedas",
-  ex_more: "Prueba completa →",
+  ex_more: "Prueba completa",
   share: "Compartir",
   sh_h: "Comparte tu retrato",
   sh_note: "Se hace en tu navegador y nunca se sube. La imagen y el enlace no llevan tu dirección ni tu huella; la ciudad y la red, solo si marcas la casilla.",

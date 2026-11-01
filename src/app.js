@@ -23,11 +23,13 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   // A flag and the text after it, the flag kept on the line of the text's first word; that word can be a link.
   const flagged = (cc, s, href) => {
     const m = String(s).match(/^(\S+)([\s\S]*)$/) || ["", "", ""];
-    const w = href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(m[1])}</a>` : esc(m[1]);
+    const w = href ? `<a href="${esc(href)}" target="_blank" rel="noopener" title="${esc(t("go_ipqs"))}">${esc(m[1])}</a>` : esc(m[1]);
     return `<span class="nw">${flag(cc)}${w}</span>${esc(m[2])}`;
   };
   // other 1ms.dog tools, when the host announces them (absent when self-hosted)
   const META = n => (document.querySelector(`meta[name="${n}"]`) || {}).content || "";
+  // the icon that ends a link to another tool (the same as the build's EXT)
+  const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
   const IPQS = META("ipqs"), EGRESS = META("egress"), DNSTEST = META("dns"), ASN = META("asn"), IPV6 = META("ipv6");
   // another tool's page in this page's language (every 1ms.dog tool keeps the same language folders)
   const inLang = host => host.replace(/\/$/, "") + ((D.base || D.paths)[LANG] || "/");
@@ -444,7 +446,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     R.stack = [v4, v6].filter(Boolean);
     if (!v4 && !v6) return na("stack", "v_empty");
     const s = esc("IPv4 " + (v4 || "–") + " · IPv6 " + (v6 || "–"));
-    row("stack", IPV6 ? `<span class="pa-t">${s}</span><a class="pa-go" href="${esc(inLang(IPV6))}" target="_blank" rel="noopener">${esc(t("go_ipv6"))} →</a>` : s);
+    row("stack", IPV6 ? `<span class="pa-t">${s}</span><a class="pa-go" href="${esc(inLang(IPV6))}" target="_blank" rel="noopener">${esc(t("go_ipv6"))}${EXT}</a>` : s);
   }
 
   // The DNS resolver: a name nobody looked up before goes to the visitor's resolver, and ip-api's name server tells
@@ -645,7 +647,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     blank("browser", P.browser ? esc(P.browser) : U);
     blank("screen", P.screen ? esc(P.screen) : U);
     blank("gpu", esc(P.gpu || t("gpu_unknown")));
-    blank("isp", P.org ? (!shared && asnOf(P.asn) ? `<a href="${esc(asnOf(P.asn))}" target="_blank" rel="noopener">${esc(P.org)}</a>` : esc(P.org)) : shared ? esc(t("masked")) : U, BLANKS.isp, X.fullOrg || (shared && !P.org ? t("masked_why") : ""));
+    blank("isp", P.org ? (!shared && asnOf(P.asn) ? `<a href="${esc(asnOf(P.asn))}" target="_blank" rel="noopener" title="${esc(t("go_asn"))}">${esc(P.org)}</a>` : esc(P.org)) : shared ? esc(t("masked")) : U, BLANKS.isp, X.fullOrg || (shared && !P.org ? t("masked_why") : ""));
     blank("dns", P.dns ? flagged(P.dns, country(P.dns)) : U, BLANKS.dns, X.dnsOrg || "");
     const sp = X.split;
     blank("nettype", esc(P.nt === "split" ? t("nt_split", { n: P.nx }) : P.nt ? t("nt_" + P.nt) : t("v_unknown")),
