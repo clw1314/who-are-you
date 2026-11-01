@@ -20,7 +20,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const language = tag => { try { return LNG ? LNG.of(tag) : tag; } catch (e) { return tag; } };
   const flag = cc => /^[A-Z]{2}$/.test(cc || "") ? `<img class="flag" src="/flags/${cc.toLowerCase()}.svg" alt="" width="20" height="15">` : "";
   // a flag and the text after it, the flag kept on the line of the text's first word
-  const flagged = (cc, s) => { const m = String(s).match(/^(S+)([sS]*)$/) || ["", "", ""]; return `<span class="nw">${flag(cc)}${esc(m[1])}</span>${esc(m[2])}`; };
+  const flagged = (cc, s) => { const m = String(s).match(/^(\S+)([\s\S]*)$/) || ["", "", ""]; return `<span class="nw">${flag(cc)}${esc(m[1])}</span>${esc(m[2])}`; };
   const list = a => a.join(t("v_join"));
   const within = (p, ms, fb) => Promise.race([p, new Promise(r => setTimeout(() => r(fb), ms))]);
   const sha = async s => {
