@@ -7,7 +7,7 @@ export default {
   seo_kw: "ブラウザフィンガープリント, プライバシー診断, サイトに知られている情報, WebRTC 漏れ, Canvas フィンガープリント, VPN 検出, IP 位置, ユーザーエージェント",
   og_sub: "許可なしにどのサイトにも分かるあなた",
   h1: "サイトから見たあなた",
-  story: "あなたの国籍はたぶん{nat}で、今{city}にいます。話す言語は{lang}、時計は{tz}、{clock}表示です。{device}で{browser}を使い、画面は{screen}、GPU は{gpu}です。{isp}経由で接続しています：{nettype}。DNS リゾルバーは{dns}。年齢：{age}。好みは{theme}で、{adblock}。入っているフォントから：{job}。ブラウザフィンガープリント：{fp}。",
+  story: "たぶん{nat}の人で、今は{city}。言語は{lang}、時計は{tz}・{clock}表示。\n{device}で{browser}を使用。画面は{screen}、GPU は{gpu}。\n{isp}経由で接続：{nettype}。DNS リゾルバーは{dns}。\n好みは{theme}、{adblock}。フォントから：{job}。年齢：{age}。",
 
   lang_label: "言語", faq_h: "ヘルプ", th_system: "テーマ：システム", th_light: "テーマ：ライト", th_dark: "テーマ：ダーク",
   a_theme: "テーマ", a_close: "閉じる", a_prev: "前へ", a_next: "次へ",
@@ -91,7 +91,7 @@ export default {
   c_split: "分流",
   c_split_ok: "どの宛先にも同じ出口",
   c_split_warn: "{a}と{b}で出口が違う",
-  nt_split: "出口が {n} つに分かれています（{a}と{b}で見えるアドレスが違う）",
+  nt_split: "出口が {n} つに分かれています",
   lan_mdns: "隠されている（mDNS）",
   kex_pq: "耐量子",
   hz_v: "{n} Hz",

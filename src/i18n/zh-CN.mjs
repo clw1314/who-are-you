@@ -7,7 +7,7 @@ export default {
   seo_kw: "浏览器指纹, 隐私检测, 网站知道我什么, WebRTC 泄露, Canvas 指纹, VPN 检测, IP 定位, User-Agent, 指纹浏览器检测",
   og_sub: "不用授权，每个网站都能知道的你",
   h1: "网站眼中的你",
-  story: "你的国籍可能是{nat}，现在人在{city}。你说{lang}，时区是{tz}，用{clock}时钟。你在{device}上用{browser}，屏幕{screen}，显卡是{gpu}。你通过{isp}上网：{nettype}。DNS 解析器在{dns}。你的年龄：{age}。你喜欢{theme}，{adblock}。从装的字体看：{job}。你的浏览器指纹：{fp}。",
+  story: "你可能是{nat}人，现在在{city}。你说{lang}，时区是{tz}，用{clock}时钟。\n你在{device}上用{browser}，屏幕{screen}，显卡是{gpu}。\n你通过{isp}上网，{nettype}；DNS 解析器在{dns}。\n你喜欢{theme}，{adblock}。从字体看：{job}。年龄：{age}。",
 
   lang_label: "语言", faq_h: "帮助", th_system: "主题：跟随系统", th_light: "主题：浅色", th_dark: "主题：深色",
   a_theme: "主题", a_close: "关闭", a_prev: "上一条", a_next: "下一条",
@@ -91,7 +91,7 @@ export default {
   c_split: "分流",
   c_split_ok: "所有网站看到同一个出口",
   c_split_warn: "{a}和{b}看到的出口不同",
-  nt_split: "流量分了 {n} 个出口（{a}和{b}看到的地址不同）",
+  nt_split: "分流了 {n} 个出口",
   lan_mdns: "已隐藏（mDNS）",
   kex_pq: "抗量子",
   hz_v: "{n} Hz",

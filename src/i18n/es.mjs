@@ -7,7 +7,7 @@ export default {
   seo_kw: "huella del navegador, fingerprint, comprobar privacidad, qué saben los sitios de mí, fuga WebRTC, huella canvas, detección de VPN, ubicación IP, user agent",
   og_sub: "Lo que cualquier sitio sabe de ti sin pedir permiso",
   h1: "Quién creen los sitios que eres",
-  story: "Tu nacionalidad probablemente es: {nat}. Ahora mismo estás en {city}. Hablas {lang}, tu reloj usa {tz}, en formato de {clock}. Usas {device} con {browser}, pantalla de {screen} y gráfica {gpu}. Te conectas a través de {isp}: {nettype}. Tu resolvedor DNS está en: {dns}. Tu edad: {age}. Prefieres {theme} y {adblock}. Tus fuentes dicen: {job}. Tu huella del navegador: {fp}.",
+  story: "Probablemente de {nat}; ahora en {city}. Hablas {lang}; tu reloj usa {tz}, formato de {clock}.\nUsas {browser} en {device}: pantalla de {screen} y gráfica {gpu}.\nTe conectas por medio de {isp}: {nettype}. Tu resolvedor DNS está en: {dns}.\nPrefieres {theme} y {adblock}. Tus fuentes dicen: {job}. Tu edad: {age}.",
 
   lang_label: "Idioma", faq_h: "Ayuda", th_system: "Tema: sistema", th_light: "Tema: claro", th_dark: "Tema: oscuro",
   a_theme: "Tema", a_close: "Cerrar", a_prev: "Anterior", a_next: "Siguiente",
@@ -91,7 +91,7 @@ export default {
   c_split: "Rutas divididas",
   c_split_ok: "Todos los destinos ven la misma salida",
   c_split_warn: "{a} y {b} ven salidas distintas",
-  nt_split: "repartida en {n} salidas ({a} y {b} ven direcciones distintas)",
+  nt_split: "repartida en {n} salidas",
   lan_mdns: "oculta (mDNS)",
   kex_pq: "poscuántico",
   hz_v: "{n} Hz",

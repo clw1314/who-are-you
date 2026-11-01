@@ -8,7 +8,7 @@ export default {
   og_sub: "What every website learns about you, without asking",
   h1: "Who sites think you are",
   // the portrait: each {blank} is filled from the sniffers, each one exactly once
-  story: "Your nationality is probably {nat}, and right now you're in {city}. You speak {lang}, your clock is set to {tz}, in {clock} format. You're on {device} with {browser}, a {screen} screen and {gpu} graphics. You connect through {isp}: {nettype}. Your DNS resolver: {dns}. Your age: {age}. You prefer {theme}, and {adblock}. Your fonts say: {job}. Your browser fingerprint: {fp}.",
+  story: "Probably from {nat}, now in {city}. You speak {lang}, on {tz} with a {clock} clock.\nYou use {browser} on {device}: a {screen} screen and {gpu} graphics.\nYou connect through {isp}, {nettype}; your DNS resolver is in {dns}.\nYou prefer {theme} and {adblock}. Your fonts say: {job}. Your age: {age}.",
 
   lang_label: "Language", faq_h: "Help", th_system: "Theme: system", th_light: "Theme: light", th_dark: "Theme: dark",
   a_theme: "Theme", a_close: "Close", a_prev: "Previous", a_next: "Next",
@@ -92,7 +92,7 @@ export default {
   c_split: "Split routing",
   c_split_ok: "Every destination sees the same exit",
   c_split_warn: "{a} and {b} see different exits",
-  nt_split: "split across {n} exits ({a} and {b} see different addresses)",
+  nt_split: "split across {n} exits",
   lan_mdns: "hidden (mDNS)",
   kex_pq: "post-quantum",
   hz_v: "{n} Hz",

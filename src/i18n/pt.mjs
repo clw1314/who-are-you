@@ -7,7 +7,7 @@ export default {
   seo_kw: "impressão digital do navegador, fingerprint, teste de privacidade, o que os sites sabem de mim, vazamento WebRTC, fingerprint canvas, detecção de VPN, localização por IP, user agent",
   og_sub: "O que todo site sabe sobre você, sem pedir",
   h1: "Quem os sites acham que você é",
-  story: "Sua nacionalidade provavelmente é: {nat}. Agora você está em {city}. Você fala {lang}; fuso horário: {tz}, relógio de {clock}. Você usa {device} com {browser}, tela de {screen} e placa de vídeo {gpu}. Você se conecta por meio de {isp}: {nettype}. Seu resolvedor de DNS fica em: {dns}. Sua idade: {age}. Você prefere {theme} e {adblock}. Suas fontes dizem: {job}. Sua impressão digital do navegador: {fp}.",
+  story: "Provavelmente de: {nat}. Agora em {city}. Você fala {lang}; fuso: {tz}, relógio de {clock}.\nVocê usa {browser} em {device}: tela de {screen} e placa de vídeo {gpu}.\nConexão por meio de {isp}: {nettype}. Seu resolvedor de DNS fica em: {dns}.\nVocê prefere {theme} e {adblock}. Suas fontes dizem: {job}. Sua idade: {age}.",
 
   lang_label: "Idioma", faq_h: "Ajuda", th_system: "Tema: sistema", th_light: "Tema: claro", th_dark: "Tema: escuro",
   a_theme: "Tema", a_close: "Fechar", a_prev: "Anterior", a_next: "Próxima",
@@ -91,7 +91,7 @@ export default {
   c_split: "Rotas divididas",
   c_split_ok: "Todo destino vê a mesma saída",
   c_split_warn: "{a} e {b} veem saídas diferentes",
-  nt_split: "dividida em {n} saídas ({a} e {b} veem endereços diferentes)",
+  nt_split: "dividida em {n} saídas",
   lan_mdns: "oculto (mDNS)",
   kex_pq: "pós-quântico",
   hz_v: "{n} Hz",

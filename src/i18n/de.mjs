@@ -7,7 +7,7 @@ export default {
   seo_kw: "Browser-Fingerabdruck, Fingerprint, Datenschutz-Test, was Websites über mich wissen, WebRTC-Leck, Canvas-Fingerprint, VPN-Erkennung, IP-Standort, User-Agent",
   og_sub: "Was jede Website über Sie weiß, ohne zu fragen",
   h1: "Für wen Websites Sie halten",
-  story: "Ihre Staatsangehörigkeit, vermutlich: {nat}. Aufenthaltsort gerade: {city}. Sie sprechen {lang}; Zeitzone: {tz}, Uhrzeit im Format {clock}. Sie nutzen {device} mit {browser}; Bildschirm {screen}, Grafikkarte {gpu}. Sie gehen über {isp} ins Netz: {nettype}. Ihr DNS-Resolver: {dns}. Ihr Alter: {age}. Sie bevorzugen {theme}, und {adblock}. Ihre Schriften verraten: {job}. Ihr Browser-Fingerabdruck: {fp}.",
+  story: "Staatsangehörigkeit, vermutlich: {nat}. Gerade in: {city}. Sie sprechen {lang}; Zeitzone: {tz}, Uhrzeit im Format {clock}.\nSie nutzen {browser} auf {device}; Bildschirm {screen}, Grafikkarte {gpu}.\nVerbindung über {isp}: {nettype}. DNS-Resolver: {dns}.\nSie bevorzugen {theme}, und {adblock}. Ihre Schriften verraten: {job}. Ihr Alter: {age}.",
 
   lang_label: "Sprache", faq_h: "Hilfe", th_system: "Design: System", th_light: "Design: hell", th_dark: "Design: dunkel",
   a_theme: "Design", a_close: "Schließen", a_prev: "Zurück", a_next: "Weiter",
@@ -52,7 +52,7 @@ export default {
   fonts_v: "{n} von {of}:", rand_yes: "an: dieselbe Zeichnung kam anders heraus", rand_no: "aus: beide Male gleich",
   rtc_off: "WebRTC ist aus", rtc_none: "keine öffentliche Adresse",
 
-  dv_pc: "einen PC mit {os}", dv_mac: "einen Mac ({os})", dv_phone: "ein Smartphone mit {os}", dv_tablet: "ein Tablet mit {os}", dv_model: "{model} ({os})", dv_unknown: "irgendein Gerät",
+  dv_pc: "einem PC mit {os}", dv_mac: "einem Mac ({os})", dv_phone: "einem Smartphone mit {os}", dv_tablet: "einem Tablet mit {os}", dv_model: "{model} ({os})", dv_unknown: "irgendeinem Gerät",
   gpu_unknown: "unbenannt", nt_dc: "ein Rechenzentrumsnetz, ein Zeichen für VPN oder Proxy", nt_home: "ein gewöhnliches Heim- oder Mobilfunknetz",
   age_v: "daraus kann keine Website es erkennen", age_why: "Browser verraten Ihr Alter nicht. Werbenetze schätzen es danach, was Sie auf verschiedenen Websites lesen, ansehen und kaufen; diese Seite hat nichts davon.",
   pt_dark: "den dunklen Modus", pt_light: "den hellen Modus", pt_ab: "Sie blockieren Werbung", pt_noab: "Sie blockieren keine Werbung",
@@ -91,7 +91,7 @@ export default {
   c_split: "Split-Routing",
   c_split_ok: "Jedes Ziel sieht denselben Ausgang",
   c_split_warn: "{a} und {b} sehen verschiedene Ausgänge",
-  nt_split: "auf {n} Ausgänge verteilt ({a} und {b} sehen verschiedene Adressen)",
+  nt_split: "auf {n} Ausgänge verteilt",
   lan_mdns: "versteckt (mDNS)",
   kex_pq: "Post-Quanten",
   hz_v: "{n} Hz",

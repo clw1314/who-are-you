@@ -7,7 +7,7 @@ export default {
   seo_kw: "브라우저 지문, 개인정보 점검, 사이트가 아는 내 정보, WebRTC 유출, 캔버스 지문, VPN 탐지, IP 위치, 사용자 에이전트",
   og_sub: "허락 없이 모든 사이트가 아는 당신",
   h1: "사이트가 보는 당신",
-  story: "국적은 아마 {nat}, 지금 있는 곳은 {city}. 사용 언어는 {lang}, 시간대는 {tz}, 시계는 {clock} 형식. 기기는 {device}, 브라우저는 {browser}, 화면은 {screen}, 그래픽 카드는 {gpu}. 접속 네트워크는 {isp}: {nettype}. DNS 리졸버 위치: {dns}. 나이: {age}. 선호 모드: {theme}, 그리고 {adblock}. 설치된 글꼴로 보면: {job}. 브라우저 지문: {fp}.",
+  story: "국적은 아마 {nat}, 지금 있는 곳은 {city}. 언어는 {lang}, 시간대는 {tz}, 시계는 {clock} 형식.\n기기는 {device}, 브라우저는 {browser}, 화면은 {screen}, 그래픽 카드는 {gpu}.\n접속 네트워크는 {isp}: {nettype}. DNS 리졸버 위치: {dns}.\n선호 모드: {theme}, 그리고 {adblock}. 글꼴로 보면: {job}. 나이: {age}.",
 
   lang_label: "언어", faq_h: "도움말", th_system: "테마: 시스템", th_light: "테마: 라이트", th_dark: "테마: 다크",
   a_theme: "테마", a_close: "닫기", a_prev: "이전", a_next: "다음",
@@ -91,7 +91,7 @@ export default {
   c_split: "분할 라우팅",
   c_split_ok: "모든 목적지에서 같은 출구",
   c_split_warn: "출구가 다름: {a} / {b}",
-  nt_split: "출구 {n}개로 나뉨({a} / {b} 주소가 다름)",
+  nt_split: "출구 {n}개로 나뉨",
   lan_mdns: "숨김(mDNS)",
   kex_pq: "양자 내성",
   hz_v: "{n} Hz",

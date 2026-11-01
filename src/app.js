@@ -22,6 +22,12 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   // a flag and the text after it, the flag kept on the line of the text's first word
   const flagged = (cc, s) => { const m = String(s).match(/^(\S+)([\s\S]*)$/) || ["", "", ""]; return `<span class="nw">${flag(cc)}${esc(m[1])}</span>${esc(m[2])}`; };
   const list = a => a.join(t("v_join"));
+  // a network's everyday name: "Alibaba Cloud (Singapore) Private Limited" → "Alibaba Cloud", "Amazon.com, Inc." → "Amazon.com"
+  const shortOrg = s => {
+    let x = String(s || "").replace(/\s*\([^)]*\)/g, "").trim(), y;
+    do { y = x; x = x.replace(/[,.]?\s+(inc|llc|l\.l\.c|ltd|limited|co|corp|corporation|company|gmbh|ag|s\.?a\.?|b\.?v\.?|pte|private|plc|oy|ab|as|srl|sas|kg)\.?$/i, "").trim(); } while (x !== y && x);
+    return x || String(s || "");
+  };
   const within = (p, ms, fb) => Promise.race([p, new Promise(r => setTimeout(() => r(fb), ms))]);
   const sha = async s => {
     try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join(""); }
@@ -546,7 +552,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const nat = nationality({ langs: R.langs, tz: R.tz, ipcc: c.country });
     blank("nat", nat ? flagged(nat.cc, country(nat.cc)) : esc(t("v_unknown")), nat ? nat.from : BLANKS.nat);
     blank("city", c.country ? flagged(c.country, [c.city, country(c.country)].filter(Boolean).join(", ")) : esc(t("v_unknown")));
-    blank("lang", esc(list((R.langs || []).filter((l, i, a) => a.findIndex(x => x.split("-")[0] === l.split("-")[0]) === i).slice(0, 2).map(language))) || esc(t("v_unknown")));
+    blank("lang", esc((R.langs || []).length ? language(R.langs[0]) : t("v_unknown")), BLANKS.lang, (R.langs || []).map(language).join(", "));
     blank("tz", esc(R.tzName || t("v_unknown")));
     blank("clock", esc(t(R.h12 ? "ck_12" : "ck_24")));
     const d = R.dev || {}, os = R.osTxt;
@@ -554,18 +560,17 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     blank("browser", esc(R.browser || t("v_unknown")));
     blank("screen", esc(R.screen));
     blank("gpu", esc(R.gpu || t("gpu_unknown")));
-    blank("isp", esc(c.asOrganization || (c.asn ? "AS" + c.asn : t("v_unknown"))));
+    blank("isp", esc(c.asOrganization ? shortOrg(c.asOrganization) : c.asn ? "AS" + c.asn : t("v_unknown")), BLANKS.isp, [c.asn ? "AS" + c.asn : "", c.asOrganization].filter(Boolean).join(" · "));
     blank("dns", R.dnsCC ? flagged(R.dnsCC, country(R.dnsCC)) : esc(t("v_unknown")), BLANKS.dns, R.dnsOrg || "");
     const ex = allExits(), split = ex && splitOf(ex);
-    blank("nettype", esc(split ? t("nt_split", { n: split.n, a: exitName(split.a), b: exitName(split.b) })
+    blank("nettype", esc(split ? t("nt_split", { n: split.n })
       : t(c.asn == null ? "v_unknown" : isDataCenter(c.asn, c.asOrganization) ? "nt_dc" : "nt_home")),
-      BLANKS.nettype, split ? split.ipA + " ≠ " + split.ipB : "");
+      BLANKS.nettype, split ? exitName(split.a) + ": " + split.ipA + "\n" + exitName(split.b) + ": " + split.ipB : "");
     blank("age", esc(t("age_v")), [], t("age_why"));
     blank("theme", esc(t(R.dark ? "pt_dark" : "pt_light")));
     blank("adblock", esc(t(R.adblock ? "pt_ab" : "pt_noab")));
     const jobs = fontHints(R.fonts || [], d.os);
     blank("job", esc(jobs.length ? list(jobs.map(([k]) => t("jb_" + k))) : t("jb_none")), BLANKS.job, jobs.length ? t("from", { list: jobs.map(([, f]) => f).join(", ") }) : "");
-    blank("fp", esc(R.rand ? t("fp_rand") : R.fp), BLANKS.fp, t(R.rand ? "fp_rand_why" : "fp_why"));
     $("#story").classList.remove("wait"); $("#storySk").hidden = true;
     idCard();
   }
@@ -576,7 +581,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const c = (R.srv && R.srv.cf) || {};
     const res = checks({
       tz: R.tz, tzOff: R.tzOff == null ? null : offTxt(R.tzOff), ipTzOff: c.timezone ? offTxt(tzOffset(c.timezone)) : null, ipcc: c.country,
-      langs: R.langs, dnsCC: R.dnsCC, exits: allExits(), rtc: R.rtc, ip: R.srv && R.srv.ip, asn: c.asn, org: c.asOrganization,
+      langs: R.langs, dnsCC: R.dnsCC, exits: allExits(), rtc: R.rtc, ip: R.srv && R.srv.ip, asn: c.asn, org: c.asOrganization && shortOrg(c.asOrganization),
       uaOS: R.dev && R.dev.os, real: !!R.dev, hintOS: R.hi && R.hi.platform, gpuOS: gpuOS(R.gpuRaw), rand: R.rand, webdriver: R.webdriver,
     });
     if (res.dc === null && R.srv && !c.asn) res.dc = ["info", "c_na", {}];

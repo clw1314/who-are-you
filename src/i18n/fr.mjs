@@ -7,7 +7,7 @@ export default {
   seo_kw: "empreinte du navigateur, fingerprint, test de confidentialité, ce que les sites savent de moi, fuite WebRTC, empreinte canvas, détection VPN, localisation IP, user agent",
   og_sub: "Ce que chaque site apprend sur vous, sans rien demander",
   h1: "Qui les sites croient que vous êtes",
-  story: "Votre nationalité, probablement : {nat}. Vous êtes en ce moment à {city}. Vous parlez {lang} ; fuseau horaire : {tz}, format {clock}. Vous utilisez {device} avec {browser}, un écran {screen} et une carte graphique {gpu}. Vous vous connectez via {isp} : {nettype}. Votre résolveur DNS : {dns}. Votre âge : {age}. Vous préférez {theme} et {adblock}. Vos polices disent : {job}. Votre empreinte de navigateur : {fp}.",
+  story: "Nationalité probable : {nat}. En ce moment : {city}. Vous parlez {lang} ; fuseau : {tz}, format {clock}.\nVous utilisez {browser} sur {device} ; écran {screen}, carte graphique {gpu}.\nConnexion via {isp} : {nettype}. Résolveur DNS : {dns}.\nVous préférez {theme} et {adblock}. Vos polices disent : {job}. Votre âge : {age}.",
 
   lang_label: "Langue", faq_h: "Aide", th_system: "Thème : système", th_light: "Thème : clair", th_dark: "Thème : sombre",
   a_theme: "Thème", a_close: "Fermer", a_prev: "Précédent", a_next: "Suivant",
@@ -91,7 +91,7 @@ export default {
   c_split: "Routage partagé",
   c_split_ok: "Toutes les destinations voient la même sortie",
   c_split_warn: "{a} et {b} voient des sorties différentes",
-  nt_split: "réparti sur {n} sorties ({a} et {b} voient des adresses différentes)",
+  nt_split: "répartie sur {n} sorties",
   lan_mdns: "masquée (mDNS)",
   kex_pq: "post-quantique",
   hz_v: "{n} Hz",

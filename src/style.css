@@ -16,7 +16,7 @@ h2 { font-size: 15px; font-weight: 700; }
    own panel on the right, the progress bar along the bottom */
 .hero { padding: 26px 26px 0; display: flex; flex-direction: column; gap: 22px;
   background: radial-gradient(120% 90% at 0% 0%, var(--ink-soft), transparent 55%), var(--panel); }
-.hero-b { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+.hero-b { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 36px; }
 .col { min-width: 0; display: flex; flex-direction: column; }
 .eyebrow { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; margin-bottom: 10px; padding: 3px 10px 3px 8px; border-radius: 999px;
   font-size: 12px; font-weight: 600; color: var(--ink); background: var(--ink-soft); }
@@ -25,30 +25,36 @@ h2 { font-size: 15px; font-weight: 700; }
 .hero h1 { font-size: clamp(24px, 3.2vw, 34px); line-height: 1.15; letter-spacing: -.025em; font-weight: 800; margin-bottom: 14px; }
 .sec-h { display: flex; align-items: center; gap: 8px; height: 22px; font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 6px; }
 
-/* The paragraph, set like a filled-in form: the printed words quiet, every answer written in on its line in the
-   accent color. Hovering an answer lights up the rows it came from. */
-.story { font-size: 17.5px; line-height: 2.1; color: color-mix(in srgb, var(--fg) 70%, transparent); letter-spacing: -.005em; }
-.bl { display: inline; padding: 1px 3px 2px; margin: 0 1px; color: var(--fg); font-weight: 650;
-  background: linear-gradient(to top, color-mix(in srgb, var(--ink) 55%, transparent) 2px, transparent 2px);
-  border-radius: 3px; cursor: help; outline: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; transition: background-color .15s; }
-.bl:hover, .bl:focus-visible { background-color: var(--ink-soft); }
-.bl[data-b="age"] { color: var(--muted); font-weight: 500; font-style: italic;
-  background: repeating-linear-gradient(to right, var(--muted) 0 4px, transparent 4px 7px) bottom / 100% 1.5px no-repeat; }
+/* The paragraph, set like a filled-in form: the printed words quiet, every answer in full ink with a highlighter
+   stroke. Hovering an answer lights up the rows it came from. */
+.story { font-size: 17px; line-height: 1.85; color: color-mix(in srgb, var(--fg) 66%, transparent); letter-spacing: -.005em; }
+/* one line per theme, a little air between them */
+.story p { margin: 0 0 10px; }
+.story p:last-child { margin-bottom: 0; }
+/* an answer: in full ink, with a soft highlighter stroke over its lower half */
+.bl { display: inline; padding: 0 2px; margin: 0 1px; color: var(--fg); font-weight: 600; border-radius: 3px;
+  background: linear-gradient(transparent 58%, color-mix(in srgb, var(--ink) 20%, transparent) 58%);
+  cursor: help; outline: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; transition: background-color .15s; }
+.bl:hover, .bl:focus-visible { background: var(--ink-soft); }
+.bl[data-b="age"] { color: var(--muted); font-weight: 500; background: none; }
 /* a waiting blank is about as wide as a typical answer, so the invisible paragraph takes about the height it will have */
 .bl.wait { display: inline-block; width: 7em; height: 1em; padding: 0; }
 .bl.wait[data-b="nat"], .bl.wait[data-b="clock"], .bl.wait[data-b="theme"], .bl.wait[data-b="screen"], .bl.wait[data-b="dns"] { width: 5em; }
-.bl.wait[data-b="gpu"], .bl.wait[data-b="isp"], .bl.wait[data-b="nettype"] { width: 15em; }
-.bl.wait[data-b="city"], .bl.wait[data-b="device"], .bl.wait[data-b="fp"] { width: 10em; }
+.bl.wait[data-b="gpu"] { width: 15em; }
+.bl.wait[data-b="isp"], .bl.wait[data-b="nettype"] { width: 9em; }
+.bl.wait[data-b="city"], .bl.wait[data-b="device"] { width: 10em; }
 /* until it is filled, the paragraph is laid out but invisible, with skeleton lines on top */
 .story-w { position: relative; }
 .story.wait { visibility: hidden; }
-.story-sk { position: absolute; inset: 0 0 auto; display: flex; flex-direction: column; gap: 20px; padding-top: 12px; }
+.story-sk { position: absolute; inset: 0 0 auto; display: flex; flex-direction: column; gap: 17px; padding-top: 9px; }
 .story-sk .skl { height: 15px; width: 100%; }
 .story-sk .skl:nth-child(odd) { width: 88%; } .story-sk .skl:last-child { width: 45%; }
 .bl .flag { vertical-align: -1px; }
 
 /* the fingerprint ID card: rings drawn from the hash, the ID, what it means */
-.idc { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 12px 16px 12px 12px; border-radius: 14px;
+.story-w { margin-bottom: 18px; }
+/* the card sits at the foot of the column, level with the bottom of the disguise panel */
+.idc { display: flex; align-items: center; gap: 14px; margin-top: auto; padding: 12px 16px 12px 12px; border-radius: 14px;
   border: 1px solid color-mix(in srgb, var(--ink) 25%, var(--line)); background: color-mix(in srgb, var(--ink) 5%, var(--panel)); }
 .fp-art { width: 56px; height: 56px; flex: none; fill: var(--ink); stroke: var(--ink); stroke-width: 1.7; stroke-linecap: round; }
 .fp-art path { fill: none; }
@@ -150,7 +156,7 @@ h2 { font-size: 15px; font-weight: 700; }
 @media (max-width: 720px) {
   .bar { margin: 0 -16px; padding: 12px 16px 14px; }
   .probes { padding: 16px 16px 12px; }
-  .story { font-size: 16px; line-height: 2.05; }
+  .story { font-size: 16px; line-height: 1.85; }
   .hero { padding: 20px 16px 0; }
   .disg { padding: 14px 14px 4px; }
   .pr { grid-template-columns: minmax(0, 8fr) minmax(0, 13fr); }

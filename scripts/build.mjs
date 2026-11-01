@@ -38,13 +38,14 @@ async function loadI18n() {
 const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "app_name", "docs", "lang_label", "faq_h", "story",
   ...CHECKS.map(c => "c_" + c)]);
 
-// the paragraph: its text with a placeholder for every blank, each blank once
+// the paragraph: one line per theme (where from, device, network, habits), a placeholder for every blank, each once
 export function storyHtml(s, lang) {
   const used = [...s.matchAll(/\{(\w+)\}/g)].map(m => m[1]);
   const want = Object.keys(BLANKS);
   const odd = [...used.filter(k => !want.includes(k)), ...want.filter(k => !used.includes(k))];
   if (odd.length || new Set(used).size !== used.length) throw new Error(`i18n/${lang}.mjs story: blanks ${odd.join(", ") || "repeated"}`);
-  return s.split(/(\{\w+\})/).map(p => /^\{\w+\}$/.test(p) ? `<span class="bl wait" data-b="${p.slice(1, -1)}"><i class="skl"></i></span>` : esc(p)).join("");
+  const line = l => l.split(/(\{\w+\})/).map(p => /^\{\w+\}$/.test(p) ? `<span class="bl wait" data-b="${p.slice(1, -1)}"><i class="skl"></i></span>` : esc(p)).join("");
+  return s.split("\n").map(l => `<p>${line(l)}</p>`).join("");
 }
 
 export async function build({ check = false } = {}) {
