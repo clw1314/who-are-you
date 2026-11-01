@@ -1,0 +1,22 @@
+{
+  "name": "who-are-you",
+  "private": true,
+  "type": "module",
+  "description": "Privacy self-check: who websites take you for, as a paragraph with the blanks filled in, every sniffer with what it read, and the contradictions that give away a VPN, proxy or spoofed browser",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/build.mjs --check && node --test \"test/*.test.mjs\"",
+    "dev": "wrangler dev --port 8795",
+    "deploy": "wrangler deploy",
+    "tz": "node scripts/tz.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yt1988/who-are-you"
+  },
+  "homepage": "https://who.1ms.dog"
+}

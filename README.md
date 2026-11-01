@@ -1,0 +1,62 @@
+# Who Are You
+
+**English** · [简体中文](README.zh-CN.md)
+
+Who do websites think you are? [Who Are You](https://who.1ms.dog) runs the sniffers any site can run the moment you open it, without a single permission prompt, and writes down the result as a paragraph with the blanks filled in: your likely nationality, the city you're in, your language and time zone, your device, browser, screen and graphics card, your network, your preferences, what your fonts say about your work, and your browser fingerprint.
+
+It then checks those readings against each other the way a site would to spot a disguise, and lists all 54 sniffers with how each one reads and what it read.
+
+**Live:** https://who.1ms.dog
+
+## What it shows
+
+- **The portrait.** One paragraph, every blank filled from the sniffers. Hover a blank to see which sniffers it came from (their rows light up). Age is the one blank it leaves open: nothing in a browser says it, and the page says so instead of guessing.
+- **The disguise check**, seven rows that matter when you want to hide:
+  - system time zone vs. the IP's time zone
+  - browser language vs. the IP's country
+  - WebRTC: public addresses STUN servers see that aren't the page's
+  - data center network (clouds, hosting, VPN providers)
+  - user agent vs. the system the client hints and WebGL renderer give away
+  - whether the fingerprint is stable (trackable) or randomized
+  - automation (`navigator.webdriver`)
+- **Every sniffer**, grouped:
+  - *What the server sees*: IP, Cloudflare geolocation (city, coordinates, ASN, time zone), reverse DNS, nearest edge and TCP RTT, HTTP/TLS version and cipher, a TLS ClientHello fingerprint, your clock's offset, WebRTC addresses
+  - *Request headers*: User-Agent, Accept-Language, Sec-CH-UA, platform, encodings, DNT/GPC, referrer
+  - *Language and region*: `navigator.languages`, locale, time zone, 12/24-hour clock, first day of the week, number and date format, keyboard layout, speech voices
+  - *Device*: OS and version, browser, architecture, screen, GPU, CPU threads, memory, touch, battery, connection, cameras and microphones (counted, never opened), storage quota
+  - *Browser settings*: color scheme, reduced motion, color gamut and HDR, DNT/GPC, cookies, PDF viewer, webdriver, ad blocker, tab history, installed fonts
+  - *Fingerprints*: canvas, WebGL, audio, font list, the combined fingerprint, and whether the browser randomizes them
+
+Rows are drawn before anything is read and filled the moment each sniffer answers; the paragraph is filled once, when every blank is in, so the page doesn't jump. A button blurs the address and location for screenshots.
+
+## Privacy
+
+Everything except the first group is read in the browser and stays there. The Worker answers one request, `GET /api/me`, with what it already sees in that request: the address, Cloudflare's `request.cf` data for it, the headers (cookies and Cloudflare's own left out), the address's PTR record and the server's clock. Nothing is stored or logged.
+
+## Run it yourself
+
+```bash
+git clone https://github.com/yt1988/who-are-you
+cd who-are-you
+npm ci
+npm run dev          # wrangler dev on http://localhost:8795 (geolocation comes from Cloudflare even locally)
+npm test             # public/ is up to date, and the unit tests
+npx wrangler deploy  # deploy the Worker "who"; then add a custom domain in the dashboard
+```
+
+`npm run build` regenerates `public/` from `src/`. Set `SITE_URL` for your own domain (canonical links, sitemap, llms.txt). `npm run tz` refreshes the time zone → country table from the tz database.
+
+## Layout
+
+```
+src/worker.js     GET /api/me: what the server sees
+src/sniffers.mjs  every sniffer row, the portrait's blanks and the checks
+src/infer.mjs     what the readings mean: OS, browser, GPU, keyboard, data centers, nationality, checks (unit tested)
+src/app.js        the page: runs the sniffers, fills the rows, the paragraph and the checks
+src/i18n/         10 languages
+scripts/build.mjs builds public/ (one page per language, CSP, sitemap)
+```
+
+## License
+
+MIT

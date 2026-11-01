@@ -1,0 +1,21 @@
+# Who Are You · 1ms.dog
+
+> Free privacy self-check. Shows who websites take you for, as a paragraph with the blanks filled in (likely
+> nationality, city, language, time zone, device, browser, screen, graphics card, network, preferences, what your
+> fonts say about your work, browser fingerprint), checks those readings against each other the way a site would to
+> spot a VPN, proxy or spoofed browser, and lists all 54 sniffers with what each one read: what the server sees
+> in the request (address, Cloudflare geolocation, ASN, TLS, headers, clock) and standard browser APIs (languages,
+> Intl, keyboard layout, speech voices, client hints, WebGL, screen, battery, media devices, fonts, canvas and audio
+> fingerprints, WebRTC). Nothing is stored.
+
+- Page: https://who.1ms.dog/ (also /zh-cn/, /zh-tw/, /ja/, /ko/, /es/, /fr/, /de/, /pt/, /ru/)
+- API (what the server sees, JSON): https://who.1ms.dog/api/me
+- Source code: https://github.com/yt1988/who-are-you
+
+## Other 1ms.dog tools
+- 1ms.dog: https://1ms.dog/ (Your exit IPs and latency to 40 services)
+- EgressLens: https://egress.1ms.dog/ (Which IP each site sees: split routing, proxies, WebRTC and IPv6 leaks)
+- IP Quality Test: https://ipqs.1ms.dog/ (How clean your IP is)
+- Me2Cloud: https://m2c.1ms.dog/ (Latency to 360+ cloud regions)
+- VPS2Cloud: https://v2c.1ms.dog/ (Latency from your server to the clouds)
+- Lightsail Cost Saver: https://ls.1ms.dog/ (AWS Lightsail transfer calculator)
