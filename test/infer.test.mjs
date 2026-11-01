@@ -1,7 +1,7 @@
 // What the readings are taken to mean: system and browser, graphics card, keyboard, network, nationality, checks.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { langCC, nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, fontHints, checks, offTxt } from "../src/infer.mjs";
+import { langCC, nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, fontHints, checks, offTxt, splitOf, netOf } from "../src/infer.mjs";
 
 const WIN = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36";
 const MAC_SAFARI = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15";
@@ -80,9 +80,10 @@ test("fonts: only ones the system doesn't bring say something", () => {
 
 test("disguise checks", () => {
   const base = { tz: "Asia/Shanghai", tzOff: "+08:00", ipTzOff: "+08:00", ipcc: "CN", langs: ["zh-CN"], rtc: ["1.2.3.4"], ip: "1.2.3.4",
-    asn: 4134, org: "Chinanet", uaOS: "Windows", real: true, hintOS: "Windows", gpuOS: "Windows", rand: false, webdriver: false };
+    asn: 4134, org: "Chinanet", uaOS: "Windows", real: true, hintOS: "Windows", gpuOS: "Windows", rand: false, webdriver: false,
+    dnsCC: "CN", exits: [["ip", "1.2.3.4"], ["ex_cn", "1.2.3.4"]] };
   const c = checks(base);
-  assert.deepEqual(Object.fromEntries(Object.entries(c).map(([k, v]) => [k, v[0]])), { tz: "ok", lang: "ok", webrtc: "ok", dc: "ok", ua: "ok", fp: "warn", bot: "ok" });
+  assert.deepEqual(Object.fromEntries(Object.entries(c).map(([k, v]) => [k, v[0]])), { tz: "ok", lang: "ok", dns: "ok", split: "ok", webrtc: "ok", dc: "ok", ua: "ok", fp: "warn", bot: "ok" });
   // through a VPN in Japan
   const v = checks({ ...base, ipTzOff: "+09:00", ipcc: "JP", asn: 16509, org: "Amazon.com, Inc.", rtc: ["1.2.3.4", "5.6.7.8"], ip: "5.6.7.8" });
   assert.equal(v.tz[0], "bad"); assert.equal(v.lang[0], "warn"); assert.equal(v.dc[0], "warn"); assert.equal(v.webrtc[0], "bad");
@@ -103,4 +104,21 @@ test("UTC offsets", () => {
   assert.equal(offTxt(480), "+08:00");
   assert.equal(offTxt(-210), "−03:30");
   assert.equal(offTxt(0), "+00:00");
+});
+
+test("split routing: different networks over the same IP version", () => {
+  assert.equal(splitOf([["ip", "1.2.3.4"], ["ex_cn", "1.2.9.9"], ["stack", "2001:db8::1"]]), null);   // same /16, and IPv6 beside IPv4
+  assert.deepEqual(splitOf([["ip", "45.76.1.1"], ["ex_cn", "114.254.73.157"], ["ex_gpt", "45.76.1.1"]]), { a: "ip", b: "ex_cn", ipA: "45.76.1.1", ipB: "114.254.73.157", n: 2 });
+  assert.equal(netOf("2406:da14:3c2:6400:f4b7:e910:7738:7af1"), "2406:da14:03c2:6400");
+  const base = { ipcc: "JP" };
+  assert.equal(checks({ ...base, exits: [["ip", "1.1.1.1"], ["ex_cn", "8.8.8.8"]] }).split[0], "warn");
+  assert.equal(checks({ ...base, exits: [["ip", "1.1.1.1"], ["ex_cn", "1.1.2.2"]] }).split[0], "ok");
+  assert.equal(checks(base).split, null);
+});
+
+test("DNS leak: the resolver's country against the address's", () => {
+  assert.equal(checks({ ipcc: "JP", dnsCC: "CN" }).dns[0], "bad");
+  assert.equal(checks({ ipcc: "JP", dnsCC: "JP" }).dns[0], "ok");
+  assert.equal(checks({ ipcc: "JP", dnsCC: null }).dns[0], "info");
+  assert.equal(checks({ ipcc: "JP" }).dns, null);
 });

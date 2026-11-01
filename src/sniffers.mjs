@@ -9,13 +9,26 @@ export const GROUPS = [
     { id: "geo", m: "request.cf.city", s: 1 },
     { id: "coords", m: "request.cf.latitude", s: 1 },
     { id: "isp", m: "request.cf.asOrganization" },
+    { id: "dns", m: "edns.ip-api.com", s: 1 },
     { id: "tzip", m: "request.cf.timezone" },
     { id: "ptr", m: "DNS PTR", s: 1 },
     { id: "edge", m: "request.cf.colo" },
     { id: "proto", m: "request.cf.tlsVersion" },
+    { id: "kex", m: "/cdn-cgi/trace · kex, sni" },
+    { id: "warp", m: "/cdn-cgi/trace · warp" },
     { id: "tlsfp", m: "TLS ClientHello" },
     { id: "clock", m: "Date.now()" },
     { id: "webrtc", m: "RTCPeerConnection · STUN", s: 1 },
+    { id: "lan", m: "WebRTC host candidate" },
+  ]],
+  // one address per kind of destination: a rule-based proxy picks the route by destination, so a split shows here
+  ["exit", [
+    { id: "ex_cn", m: "myip.ipip.net", s: 1 },
+    { id: "ex_intl", m: "api.ip.sb", s: 1 },
+    { id: "ex_gpt", m: "chatgpt.com/cdn-cgi/trace", s: 1 },
+    { id: "ex_claude", m: "claude.ai/cdn-cgi/trace", s: 1 },
+    { id: "ex_cf", m: "www.cloudflare.com/cdn-cgi/trace", s: 1 },
+    { id: "stack", m: "Cloudflare Radar · IPv4 / IPv6", s: 1 },
   ]],
   ["hdr", [
     { id: "h_ua", m: "User-Agent" },
@@ -41,13 +54,18 @@ export const GROUPS = [
     { id: "browser", m: "userAgentData.brands" },
     { id: "arch", m: "…architecture · bitness" },
     { id: "screen", m: "screen · devicePixelRatio" },
+    { id: "hz", m: "requestAnimationFrame" },
+    { id: "screens", m: "screen.isExtended · screenX" },
     { id: "gpu", m: "WebGL RENDERER" },
+    { id: "webgpu", m: "navigator.gpu adapter.info" },
     { id: "cpu", m: "hardwareConcurrency" },
     { id: "mem", m: "navigator.deviceMemory" },
     { id: "touch", m: "maxTouchPoints · pointer" },
     { id: "battery", m: "navigator.getBattery" },
     { id: "conn", m: "navigator.connection" },
     { id: "media", m: "enumerateDevices" },
+    { id: "codecs", m: "MediaSource.isTypeSupported" },
+    { id: "drm", m: "requestMediaKeySystemAccess" },
     { id: "storage", m: "storage.estimate" },
   ]],
   ["brw", [
@@ -56,6 +74,7 @@ export const GROUPS = [
     { id: "gamut", m: "color-gamut · dynamic-range" },
     { id: "dnt", m: "doNotTrack · GPC" },
     { id: "cookies", m: "navigator.cookieEnabled" },
+    { id: "perms", m: "permissions.query" },
     { id: "pdf", m: "pdfViewerEnabled" },
     { id: "webdriver", m: "navigator.webdriver" },
     { id: "adblock", m: "bait element" },
@@ -72,15 +91,15 @@ export const GROUPS = [
   ]],
 ];
 // the two columns of the sniffers card
-export const COLUMNS = [["net", "hdr", "loc"], ["dev", "brw", "fp"]];
+export const COLUMNS = [["net", "exit", "hdr", "loc"], ["dev", "brw", "fp"]];
 export const SNIFFERS = GROUPS.flatMap(([, l]) => l);
 
 // the blanks of the portrait, in the order the sentence template uses them; each names the rows it comes from
 export const BLANKS = {
   nat: ["langs", "tz", "geo"], city: ["geo"], lang: ["langs"], tz: ["tz"], clock: ["hour"],
   device: ["os", "screen", "touch"], browser: ["browser"], screen: ["screen"], gpu: ["gpu"],
-  isp: ["isp"], nettype: ["isp"], age: [], theme: ["scheme"], adblock: ["adblock"], job: ["fonts"], fp: ["fpid", "rand"],
+  isp: ["isp"], nettype: ["isp", "ex_cn", "ex_intl", "ex_gpt", "ex_claude", "ex_cf"], dns: ["dns"], age: [], theme: ["scheme"], adblock: ["adblock"], job: ["fonts"], fp: ["fpid", "rand"],
 };
 
 // the disguise checks, one row each
-export const CHECKS = ["tz", "lang", "webrtc", "dc", "ua", "fp", "bot"];
+export const CHECKS = ["tz", "lang", "dns", "split", "webrtc", "dc", "ua", "fp", "bot"];

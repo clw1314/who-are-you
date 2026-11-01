@@ -126,6 +126,25 @@ export function fontHints(fonts, os) {
   return FONT_HINTS.map(([k, l]) => [k, l.find(f => fonts.includes(f) && !(os === "Windows" && WIN_FONTS.includes(f)))]).filter(([, f]) => f);
 }
 
+// Addresses in one network count as one exit: CGNAT pools and temporary IPv6 addresses move around inside a /16 or /64
+const v6g = a => {
+  const [h, tl = ""] = a.toLowerCase().split("::"), H = h ? h.split(":") : [], T = tl ? tl.split(":") : [];
+  return [...H, ...Array(Math.max(0, 8 - H.length - T.length)).fill("0"), ...T].map(g => g.padStart(4, "0"));
+};
+export const netOf = ip => ip.includes(":") ? v6g(ip).slice(0, 4).join(":") : ip.split(".").slice(0, 2).join(".");
+// Split routing: two destinations that saw different networks over the same IP version. IPv4 next to IPv6 is just a
+// dual-stack connection. exits: [[row id, address]] in the order the rows are drawn; the first pair that differs.
+export function splitOf(exits) {
+  const seen = [];
+  for (const [id, ip] of exits) {
+    if (!ip) continue;
+    const other = seen.find(([, x]) => (x.includes(":") === ip.includes(":")) && netOf(x) !== netOf(ip));
+    if (other) return { a: other[0], b: id, ipA: other[1], ipB: ip, n: new Set(exits.filter(([, x]) => x).map(([, x]) => netOf(x))).size };
+    seen.push([id, ip]);
+  }
+  return null;
+}
+
 // The disguise checks. Each returns [level, key, vars]: "ok" (nothing gives you away), "warn" (a site could notice),
 // "bad" (a clear contradiction), "info" (says nothing either way), or null while its inputs are still coming in.
 const fam = ip => ip && ip.includes(":") ? 6 : 4;
@@ -141,6 +160,16 @@ export function checks(x) {
   else if (!lcc || /^en(-US)?$/i.test(x.langs[0])) out.lang = ["info", "c_lang_info", {}];
   else if (lcc === x.ipcc) out.lang = ["ok", "c_lang_ok", {}];
   else out.lang = ["warn", "c_lang_warn", { cc: lcc }];
+  // the DNS resolver that looked the page's test name up, against the address's country: a VPN that leaves DNS
+  // outside the tunnel shows the visitor's own provider here
+  if (x.dnsCC === undefined || !x.ipcc) out.dns = null;
+  else if (!x.dnsCC) out.dns = ["info", "c_dns_info", {}];
+  else if (x.dnsCC === x.ipcc) out.dns = ["ok", "c_dns_ok", {}];
+  else out.dns = ["bad", "c_dns_bad", { cc: x.dnsCC }];
+  // split routing: the exits seen by different kinds of destination (x.exits, set once they are all in)
+  if (!x.exits) out.split = null;
+  else if (x.exits.filter(([, ip]) => ip).length < 2) out.split = ["info", "c_na", {}];
+  else { const s = splitOf(x.exits); out.split = s ? ["warn", "c_split_warn", { a: s.a, b: s.b }] : ["ok", "c_split_ok", {}]; }
   // WebRTC: addresses the STUN servers saw that the page's request didn't come from
   if (x.rtc === undefined || !x.ip) out.webrtc = null;
   else if (x.rtc === false) out.webrtc = ["ok", "c_rtc_off", {}];

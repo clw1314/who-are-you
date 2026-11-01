@@ -3,7 +3,7 @@
 // read; each row is in the HTML from the start and is filled the moment its sniffer answers. The paragraph is filled
 // once, when every sniffer it needs is in, so its text doesn't reflow piece by piece. Strings: window.L1MS.
 import { GROUPS, SNIFFERS, BLANKS, CHECKS } from "./sniffers.mjs";
-import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, fontHints, checks, offTxt } from "./infer.mjs";
+import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, fontHints, checks, offTxt, splitOf } from "./infer.mjs";
 
 (function () {
   "use strict";
@@ -18,7 +18,9 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const REG = dn("region"), LNG = dn("language");
   const country = cc => { try { return REG ? REG.of(cc) : cc; } catch (e) { return cc; } };
   const language = tag => { try { return LNG ? LNG.of(tag) : tag; } catch (e) { return tag; } };
-  const flag = cc => /^[A-Z]{2}$/.test(cc || "") ? `<img class="flag" src="/flags/${cc.toLowerCase()}.svg" alt="" width="20" height="15">&#8288;` : "";   // the word joiner keeps the flag on its name's line
+  const flag = cc => /^[A-Z]{2}$/.test(cc || "") ? `<img class="flag" src="/flags/${cc.toLowerCase()}.svg" alt="" width="20" height="15">` : "";
+  // a flag and the text after it, the flag kept on the line of the text's first word
+  const flagged = (cc, s) => { const m = String(s).match(/^(S+)([sS]*)$/) || ["", "", ""]; return `<span class="nw">${flag(cc)}${esc(m[1])}</span>${esc(m[2])}`; };
   const list = a => a.join(t("v_join"));
   const within = (p, ms, fb) => Promise.race([p, new Promise(r => setTimeout(() => r(fb), ms))]);
   const sha = async s => {
@@ -26,6 +28,8 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     catch (e) { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return (h >>> 0).toString(16).padStart(8, "0"); }
   };
   const mq = q => matchMedia(q).matches;
+  const getJ = (u, ms = 5000) => fetch(u, { cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(ms) }).then(r => r.ok ? r.json() : Promise.reject());
+  const getT = (u, ms = 5000) => fetch(u, { cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(ms) }).then(r => r.ok ? r.text() : Promise.reject());
 
   /* ---------- theme and language (synced across the 1ms.dog tools) ---------- */
   const thBtn = $("#theme"), TH = ["system", "light", "dark"];
@@ -124,7 +128,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const c = j.cf || {}, h = j.h || {};
     R.srv = j;
     txt("ip", j.ip + " · IPv" + j.v);
-    row("geo", c.country ? flag(c.country) + esc([c.city, c.region, country(c.country)].filter(Boolean).join(", ")) : esc(t("v_empty")), { na: !c.country });
+    row("geo", c.country ? flagged(c.country, [c.city, c.region, country(c.country)].filter(Boolean).join(", ")) : esc(t("v_empty")), { na: !c.country });
     if (c.latitude != null) txt("coords", [(+c.latitude).toFixed(2) + ", " + (+c.longitude).toFixed(2), c.postalCode].filter(Boolean).join(" · ")); else na("coords", "v_empty");
     if (c.asn) txt("isp", "AS" + c.asn + " · " + (c.asOrganization || "")); else na("isp", "v_empty");
     if (c.timezone) txt("tzip", c.timezone + " · UTC" + offTxt(tzOffset(c.timezone))); else na("tzip", "v_empty");
@@ -346,14 +350,14 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     // everything that stays put on this device and browser; the address is left out, so it survives a VPN
     const all = [ch, gh, ah, fh, screen.width + "x" + screen.height + "x" + screen.colorDepth, devicePixelRatio, R.tz, (R.langs || []).join(), navigator.hardwareConcurrency,
       navigator.deviceMemory, navigator.platform, navigator.maxTouchPoints].join("|");
-    R.fp = short(await sha(all));
+    R.fpHex = await sha(all); R.fp = short(R.fpHex);
     txt("fpid", R.fp);
   }
 
   // WebRTC: the public addresses STUN servers see, which can be another than the one the page's requests come from
   async function webrtc() {
-    if (!window.RTCPeerConnection) { R.rtc = false; return txt("webrtc", t("rtc_off")); }
-    const ips = new Set();
+    if (!window.RTCPeerConnection) { R.rtc = false; na("lan", "rtc_off"); return txt("webrtc", t("rtc_off")); }
+    const ips = new Set(), lan = new Set();
     const one = async url => {
       let pc;
       try {
@@ -364,6 +368,8 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
             if (!e.candidate) return res();
             const m = (e.candidate.candidate || "").match(/ ([0-9a-f.:]+) \d+ typ srflx/i);
             if (m) ips.add(m[1]);
+            const h = (e.candidate.candidate || "").match(/ (\S+) \d+ typ host/i);
+            if (h) lan.add(h[1]);
           };
           setTimeout(res, 3500);
         });
@@ -374,11 +380,156 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     await Promise.all(["stun:stun.cloudflare.com:3478", "stun:stun.l.google.com:19302"].map(one));
     R.rtc = [...ips];
     txt("webrtc", R.rtc.length ? R.rtc.join(", ") : t("rtc_none"), { na: !R.rtc.length });
+    const local = [...lan], shown = local.filter(x => !/\.local$/i.test(x));
+    if (shown.length) txt("lan", shown.join(", "));
+    else if (local.length) txt("lan", t("lan_mdns"));
+    else na("lan", "v_empty");
+  }
+
+  // The address each kind of destination sees: a site in mainland China, an IP service abroad, two AI services and
+  // Cloudflare (its trace on each service's own domain). A rule-based proxy or VPN picks the route by destination.
+  const EXITS = [
+    ["ex_cn", () => getJ("https://myip.ipip.net/json").then(b => ({ ip: b.data.ip, cc: null, note: (b.data.location || []).filter(Boolean).join(" ") }))],
+    ["ex_intl", () => getJ("https://api.ip.sb/geoip").then(b => ({ ip: b.ip, cc: b.country_code, note: b.isp || b.asn_organization || "" }))],
+    ...[["ex_gpt", "chatgpt.com"], ["ex_claude", "claude.ai"], ["ex_cf", "www.cloudflare.com"]].map(([id, host]) => [id, () => getT(`https://${host}/cdn-cgi/trace`).then(s => {
+      const v = Object.fromEntries(s.split("\n").map(l => l.split("=")).filter(p => p.length === 2));
+      return { ip: v.ip, cc: v.loc, note: [v.colo, v.warp && v.warp !== "off" ? "WARP" : ""].filter(Boolean).join(" · ") };
+    })]),
+  ];
+  async function exits() {
+    R.ex = {};
+    await Promise.all(EXITS.map(async ([id, get]) => {
+      let r = null;
+      try { r = await get(); } catch (e) {}
+      if (!r || !r.ip) { R.ex[id] = null; return na(id, "v_fail"); }
+      R.ex[id] = r.ip;
+      const cc = /^[A-Z]{2}$/.test(r.cc || "") && r.cc !== "XX" ? r.cc : null;
+      row(id, flagged(cc, [r.ip, r.note].filter(Boolean).join(" · ")));
+    }));
+    R.exDone = true;
+  }
+
+  // the addresses this browser leaves by over IPv4 and over IPv6, from Cloudflare Radar's single-stack hosts
+  async function stack() {
+    const one = fam => getJ(`https://ipv${fam}-check-perf.radar.cloudflare.com/`).then(b => b.ip_address || null).catch(() => null);
+    const [v4, v6] = await Promise.all([one(4), one(6)]);
+    R.stack = [v4, v6].filter(Boolean);
+    if (!v4 && !v6) return na("stack", "v_empty");
+    txt("stack", "IPv4 " + (v4 || "–") + " · IPv6 " + (v6 || "–"));
+  }
+
+  // The DNS resolver: a name nobody looked up before goes to the visitor's resolver, and ip-api's name server tells
+  // who asked (and the client subnet the resolver passed along, if any). Its answer names the country in English.
+  const CC_ALIAS = { "Hong Kong": "HK", Macao: "MO", Macau: "MO", Taiwan: "TW", "South Korea": "KR", Russia: "RU", Vietnam: "VN", Turkey: "TR", "Türkiye": "TR",
+    Czechia: "CZ", "The Netherlands": "NL", Netherlands: "NL", "United States": "US", "United Kingdom": "GB" };
+  let EN_CC;
+  function ccOfName(name) {
+    if (CC_ALIAS[name]) return CC_ALIAS[name];
+    if (!EN_CC) {
+      EN_CC = {};
+      try {
+        const en = new Intl.DisplayNames(["en"], { type: "region" }), A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        for (const x of A) for (const y of A) { const c = x + y, n = en.of(c); if (n && n !== c) EN_CC[n] = c; }
+      } catch (e) {}
+    }
+    return EN_CC[name] || null;
+  }
+  async function dnsResolver() {
+    const id = [...crypto.getRandomValues(new Uint8Array(16))].map(b => b.toString(16).padStart(2, "0")).join("");
+    let j;
+    try { j = await getJ(`https://${id}.edns.ip-api.com/json`, 6000); } catch (e) { R.dnsCC = null; return na("dns", "v_fail"); }
+    const d = j.dns || {}, geo = String(d.geo || ""), parts = geo.split(" - "), cname = parts[0].trim();
+    R.dnsCC = ccOfName(cname); R.dnsOrg = parts.slice(1).join(" - ").trim();
+    const ecs = j.edns && j.edns.ip ? "ECS " + j.edns.ip : "";
+    row("dns", flagged(R.dnsCC, [d.ip, R.dnsOrg || cname, ecs].filter(Boolean).join(" · ")), { why: [d.ip, geo, ecs].filter(Boolean).join("\n") });
+  }
+
+  // Cloudflare's own trace on this domain: the key exchange (post-quantum or not), encrypted ClientHello, WARP
+  async function trace() {
+    const s = await getT("/cdn-cgi/trace").catch(() => "");
+    const v = Object.fromEntries(s.split("\n").map(l => l.split("=")).filter(p => p.length === 2));
+    if (!v.kex && !v.warp) { na("kex"); na("warp"); return; }
+    if (v.kex) txt("kex", v.kex + (/MLKEM|Kyber/i.test(v.kex) ? " · " + t("kex_pq") : "") + " · ECH " + t(v.sni === "encrypted" ? "v_on" : "v_off")); else na("kex");
+    txt("warp", "WARP " + (v.warp || "–") + " · Gateway " + (v.gateway || "–"));
+  }
+
+  async function webgpu() {
+    if (!navigator.gpu) return na("webgpu");
+    const ad = await within(navigator.gpu.requestAdapter(), 2000, null);
+    if (!ad) return na("webgpu", "v_empty");
+    const i = ad.info || (ad.requestAdapterInfo ? await within(ad.requestAdapterInfo(), 1000, {}) : {});
+    const s = [i.vendor, i.architecture, i.device, i.description].filter(Boolean).join(" · ");
+    if (s) txt("webgpu", s); else na("webgpu", "v_empty");
+  }
+
+  // the display's refresh rate, from the time between animation frames
+  async function refresh() {
+    const ts = await within(new Promise(res => { const a = []; const f = x => { a.push(x); if (a.length < 40) requestAnimationFrame(f); else res(a); }; requestAnimationFrame(f); }), 2000, null);
+    if (!ts) return na("hz");
+    const d = ts.slice(1).map((x, i) => x - ts[i]).sort((x, y) => x - y), hz = 1000 / d[d.length >> 1];
+    const near = [24, 30, 48, 50, 60, 72, 75, 90, 100, 120, 144, 165, 180, 240, 360].reduce((b, x) => Math.abs(x - hz) < Math.abs(b - hz) ? x : b);
+    txt("hz", t("hz_v", { n: Math.abs(near - hz) < 4 ? near : Math.round(hz) }));
+  }
+
+  function screens() {
+    const ext = screen.isExtended;
+    txt("screens", (ext == null ? t("v_unsup") : t(ext ? "scr_multi" : "scr_single")) + " · " + t("win_at", { x: screenX, y: screenY }));
+  }
+
+  function codecs() {
+    const v = document.createElement("video");
+    const ok = type => { try { return window.MediaSource && MediaSource.isTypeSupported ? MediaSource.isTypeSupported(type) : !!v.canPlayType(type); } catch (e) { return false; } };
+    const L = [["H.264", 'video/mp4; codecs="avc1.42E01E"'], ["VP9", 'video/webm; codecs="vp9"'], ["AV1", 'video/mp4; codecs="av01.0.05M.08"'],
+      ["HEVC", 'video/mp4; codecs="hvc1.1.6.L93.B0"'], ["Dolby Vision", 'video/mp4; codecs="dvh1.05.06"'], ["E-AC-3", 'audio/mp4; codecs="ec-3"']];
+    const yes = L.filter(([, ty]) => ok(ty)).map(([n]) => n);
+    if (yes.length) txt("codecs", yes.join(" · ")); else na("codecs", "v_empty");
+  }
+
+  // DRM systems the browser can use; Firefox asks the visitor before it turns DRM on, so it isn't asked there
+  async function drm() {
+    if (!navigator.requestMediaKeySystemAccess || /Firefox\//.test(navigator.userAgent)) return na("drm");
+    const cfg = [{ initDataTypes: ["cenc"], videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }] }];
+    const L = [["Widevine", "com.widevine.alpha"], ["PlayReady", "com.microsoft.playready.recommendation"], ["FairPlay", "com.apple.fps"], ["ClearKey", "org.w3.clearkey"]];
+    const r = await Promise.all(L.map(([n, ks]) => within(navigator.requestMediaKeySystemAccess(ks, cfg).then(() => n, () => null), 2000, null)));
+    const yes = r.filter(Boolean);
+    if (yes.length) txt("drm", yes.join(" · ")); else na("drm", "v_empty");
+  }
+
+  // what this site may already use: granted, blocked or still to be asked (a query never asks)
+  async function perms() {
+    if (!navigator.permissions) return na("perms");
+    const L = [["geolocation", "perm_geo"], ["notifications", "perm_notif"], ["camera", "perm_cam"], ["microphone", "perm_mic"]];
+    const r = await Promise.all(L.map(([p, k]) => navigator.permissions.query({ name: p }).then(s => t(k) + " " + t("ps_" + s.state), () => null)));
+    const s = r.filter(Boolean);
+    if (s.length) txt("perms", s.join(" · ")); else na("perms");
+  }
+
+  /* ---------- the fingerprint ID card ---------- */
+  function fpArt(hex) {
+    const by = i => parseInt(hex.substr((i * 2) % hex.length, 2), 16);
+    const pt = (r, deg) => { const t = (deg - 90) * Math.PI / 180; return (32 + r * Math.cos(t)).toFixed(2) + " " + (32 + r * Math.sin(t)).toFixed(2); };
+    let d = "", k = 0;
+    for (let i = 0; i < 7; i++) {
+      const r = 6 + i * 3.9, parts = 1 + (by(k++) % 3), turn = 360 / parts;
+      for (let p = 0; p < parts; p++) {
+        const s = p * turn + (by(k++) / 255) * turn * 0.5, len = turn * (0.45 + (by(k++) / 255) * 0.45);
+        d += `M${pt(r, s)}A${r} ${r} 0 ${len > 180 ? 1 : 0} 1 ${pt(r, s + len)}`;
+      }
+    }
+    return `<circle cx="32" cy="32" r="2.2"/><path d="${d}"/>`;
+  }
+  function idCard() {
+    $("#fpId").textContent = R.rand ? t("fp_rand") : R.fp;
+    $("#fpNote").textContent = t(R.rand ? "id_note_rand" : "id_note");
+    $("#fpArt").innerHTML = R.rand ? "" : fpArt(R.fpHex);
+    $("#idc").classList.toggle("rand", !!R.rand);
   }
 
   /* ---------- the paragraph ---------- */
   const BL = Object.fromEntries($$("#story .bl[data-b]").map(b => [b.dataset.b, b]));
   const rowName = id => t("s_" + id);
+  // a destination in the exits: the page's own request is "this site"
+  const exitName = id => id === "ip" ? t("ex_self") : rowName(id);
   function blank(k, html, from = BLANKS[k], why) {
     const b = BL[k]; if (!b) return;
     b.innerHTML = html; b.classList.remove("wait");
@@ -386,11 +537,15 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     b.dataset.why = why || (from.length ? t("from", { list: list(from.map(rowName)) }) : "");
     b.tabIndex = 0;
   }
+  const allExits = () => R.exDone && R.stack && R.srv
+    ? [["ip", R.srv.ip], ...EXITS.map(([id]) => [id, R.ex[id]]), ...R.stack.map(ip => ["stack", ip])].filter(([, ip]) => ip)
+    : null;
+
   function story() {
     const c = (R.srv && R.srv.cf) || {};
     const nat = nationality({ langs: R.langs, tz: R.tz, ipcc: c.country });
-    blank("nat", nat ? flag(nat.cc) + esc(country(nat.cc)) : esc(t("v_unknown")), nat ? nat.from : BLANKS.nat);
-    blank("city", c.country ? flag(c.country) + esc([c.city, country(c.country)].filter(Boolean).join(", ")) : esc(t("v_unknown")));
+    blank("nat", nat ? flagged(nat.cc, country(nat.cc)) : esc(t("v_unknown")), nat ? nat.from : BLANKS.nat);
+    blank("city", c.country ? flagged(c.country, [c.city, country(c.country)].filter(Boolean).join(", ")) : esc(t("v_unknown")));
     blank("lang", esc(list((R.langs || []).filter((l, i, a) => a.findIndex(x => x.split("-")[0] === l.split("-")[0]) === i).slice(0, 2).map(language))) || esc(t("v_unknown")));
     blank("tz", esc(R.tzName || t("v_unknown")));
     blank("clock", esc(t(R.h12 ? "ck_12" : "ck_24")));
@@ -400,7 +555,11 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     blank("screen", esc(R.screen));
     blank("gpu", esc(R.gpu || t("gpu_unknown")));
     blank("isp", esc(c.asOrganization || (c.asn ? "AS" + c.asn : t("v_unknown"))));
-    blank("nettype", esc(t(c.asn == null ? "v_unknown" : isDataCenter(c.asn, c.asOrganization) ? "nt_dc" : "nt_home")));
+    blank("dns", R.dnsCC ? flagged(R.dnsCC, country(R.dnsCC)) : esc(t("v_unknown")), BLANKS.dns, R.dnsOrg || "");
+    const ex = allExits(), split = ex && splitOf(ex);
+    blank("nettype", esc(split ? t("nt_split", { n: split.n, a: exitName(split.a), b: exitName(split.b) })
+      : t(c.asn == null ? "v_unknown" : isDataCenter(c.asn, c.asOrganization) ? "nt_dc" : "nt_home")),
+      BLANKS.nettype, split ? split.ipA + " ≠ " + split.ipB : "");
     blank("age", esc(t("age_v")), [], t("age_why"));
     blank("theme", esc(t(R.dark ? "pt_dark" : "pt_light")));
     blank("adblock", esc(t(R.adblock ? "pt_ab" : "pt_noab")));
@@ -408,6 +567,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     blank("job", esc(jobs.length ? list(jobs.map(([k]) => t("jb_" + k))) : t("jb_none")), BLANKS.job, jobs.length ? t("from", { list: jobs.map(([, f]) => f).join(", ") }) : "");
     blank("fp", esc(R.rand ? t("fp_rand") : R.fp), BLANKS.fp, t(R.rand ? "fp_rand_why" : "fp_why"));
     $("#story").classList.remove("wait"); $("#storySk").hidden = true;
+    idCard();
   }
 
   /* ---------- the disguise checks ---------- */
@@ -416,7 +576,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const c = (R.srv && R.srv.cf) || {};
     const res = checks({
       tz: R.tz, tzOff: R.tzOff == null ? null : offTxt(R.tzOff), ipTzOff: c.timezone ? offTxt(tzOffset(c.timezone)) : null, ipcc: c.country,
-      langs: R.langs, rtc: R.rtc, ip: R.srv && R.srv.ip, asn: c.asn, org: c.asOrganization,
+      langs: R.langs, dnsCC: R.dnsCC, exits: allExits(), rtc: R.rtc, ip: R.srv && R.srv.ip, asn: c.asn, org: c.asOrganization,
       uaOS: R.dev && R.dev.os, real: !!R.dev, hintOS: R.hi && R.hi.platform, gpuOS: gpuOS(R.gpuRaw), rand: R.rand, webdriver: R.webdriver,
     });
     if (res.dc === null && R.srv && !c.asn) res.dc = ["info", "c_na", {}];
@@ -427,8 +587,9 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       const [lv, key, vars] = v;
       if (lv === "bad") bad++; if (lv === "warn") warn++;
       r.className = "ckr st-" + lv;
-      const vv = Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "cc" ? country(x) : x]));
-      if (id === "tz" || id === "lang") vv.ipc = country(c.country);
+      const sg = $(`#segs [data-c="${id}"]`); if (sg) sg.className = "st-" + lv;
+      const vv = Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "cc" ? country(x) : id === "split" ? exitName(x) : x]));
+      if (id === "tz" || id === "lang" || id === "dns") vv.ipc = country(c.country);
       const cv = r.querySelector(".ck-v"); cv.textContent = t(key, vv); r.dataset.why = cv.textContent;
       r.querySelector(".st").textContent = lv === "ok" ? "✓" : lv === "info" ? "i" : "!";
     }
@@ -437,6 +598,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     $("#vHead").textContent = n ? t("v_found", { n }) : t("v_clean");
     $("#vText").textContent = t(n ? "v_found_d" : "v_clean_d");
     $("#vHead").className = "v-h" + (bad ? " bad" : warn ? " warn" : " ok");
+    $("#mNum").textContent = n; $("#mNum").className = "m-num " + (bad ? "bad" : warn ? "warn" : "ok");
   }
 
   /* ---------- a run ---------- */
@@ -448,7 +610,9 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     $("#story").classList.add("wait"); $("#storySk").hidden = false;
     for (const b of Object.values(BL)) { b.classList.add("wait"); b.innerHTML = '<i class="skl"></i>'; delete b.dataset.why; b.removeAttribute("tabindex"); }
     for (const r of Object.values(CK)) { r.className = "ckr"; delete r.dataset.why; r.querySelector(".ck-v").innerHTML = '<i class="skl"></i>'; r.querySelector(".st").textContent = ""; }
-    $("#vHead").textContent = t("checking"); $("#vHead").className = "v-h"; $("#vText").innerHTML = "&nbsp;";
+    $("#vHead").textContent = t("checking"); $("#vHead").className = "v-h";
+    $("#mNum").textContent = "–"; $("#mNum").className = "m-num"; $$("#segs i").forEach(i => { i.className = ""; });
+    $("#fpId").innerHTML = '<i class="skl"></i>'; $("#fpArt").innerHTML = ""; $("#fpNote").textContent = t("id_note"); $("#vText").innerHTML = "&nbsp;";
     $("#rerun").disabled = true; progress();
 
     referrer(); locale(); prefs();
@@ -459,6 +623,8 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       server(), guard("kbd", keyboard), guard("voices", voices), guard(["os", "browser", "arch", "screen", "cpu", "mem", "touch", "conn"], hardware),
       guard("battery", battery), guard("media", media), guard("storage", storage), guard("adblock", adblock),
       guard(["canvas", "audio", "fontfp", "rand", "fpid"], () => prints(glInfo)),
+      guard("stack", stack), guard(EXITS.map(([id]) => id), exits), guard("dns", () => dnsResolver().catch(e => { R.dnsCC = null; throw e; })), guard(["kex", "warp"], trace),
+      guard("webgpu", webgpu), guard("hz", refresh), guard("screens", screens), guard("codecs", codecs), guard("drm", drm), guard("perms", perms),
     ]);
     if (g !== gen) return;
     story(); judge(false);

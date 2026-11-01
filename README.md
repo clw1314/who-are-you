@@ -4,34 +4,37 @@
 
 Who do websites think you are? [Who Are You](https://who.1ms.dog) runs the sniffers any site can run the moment you open it, without a single permission prompt, and writes down the result as a paragraph with the blanks filled in: your likely nationality, the city you're in, your language and time zone, your device, browser, screen and graphics card, your network, your preferences, what your fonts say about your work, and your browser fingerprint.
 
-It then checks those readings against each other the way a site would to spot a disguise, and lists all 54 sniffers with how each one reads and what it read.
+It then checks those readings against each other the way a site would to spot a disguise, and lists all 70 sniffers with how each one reads and what it read.
 
 **Live:** https://who.1ms.dog
 
 ## What it shows
 
 - **The portrait.** One paragraph, every blank filled from the sniffers. Hover a blank to see which sniffers it came from (their rows light up). Age is the one blank it leaves open: nothing in a browser says it, and the page says so instead of guessing.
-- **The disguise check**, seven rows that matter when you want to hide:
+- **The disguise check**, nine rows that matter when you want to hide:
   - system time zone vs. the IP's time zone
   - browser language vs. the IP's country
+  - DNS leak: the country of the resolver that actually looked you up vs. the IP's
+  - split routing: a site in mainland China, an IP service abroad, ChatGPT, Claude, Cloudflare and this site seeing different exits
   - WebRTC: public addresses STUN servers see that aren't the page's
   - data center network (clouds, hosting, VPN providers)
   - user agent vs. the system the client hints and WebGL renderer give away
   - whether the fingerprint is stable (trackable) or randomized
   - automation (`navigator.webdriver`)
 - **Every sniffer**, grouped:
-  - *What the server sees*: IP, Cloudflare geolocation (city, coordinates, ASN, time zone), reverse DNS, nearest edge and TCP RTT, HTTP/TLS version and cipher, a TLS ClientHello fingerprint, your clock's offset, WebRTC addresses
+  - *What the server sees*: IP, Cloudflare geolocation (city, coordinates, ASN, time zone), reverse DNS, nearest edge and TCP RTT, HTTP/TLS version and cipher, post-quantum key exchange and ECH, Cloudflare WARP, a TLS ClientHello fingerprint, your clock's offset, the DNS resolver (edns.ip-api.com), WebRTC public and local addresses
+  - *Exits*: the address each kind of destination sees, plus your IPv4 and IPv6 exits (Cloudflare Radar)
   - *Request headers*: User-Agent, Accept-Language, Sec-CH-UA, platform, encodings, DNT/GPC, referrer
   - *Language and region*: `navigator.languages`, locale, time zone, 12/24-hour clock, first day of the week, number and date format, keyboard layout, speech voices
-  - *Device*: OS and version, browser, architecture, screen, GPU, CPU threads, memory, touch, battery, connection, cameras and microphones (counted, never opened), storage quota
-  - *Browser settings*: color scheme, reduced motion, color gamut and HDR, DNT/GPC, cookies, PDF viewer, webdriver, ad blocker, tab history, installed fonts
+  - *Device*: OS and version, browser, architecture, screen, refresh rate, number of screens, GPU (WebGL and WebGPU), CPU threads, memory, touch, battery, connection, cameras and microphones (counted, never opened), video codecs, DRM systems, storage quota
+  - *Browser settings*: color scheme, reduced motion, color gamut and HDR, DNT/GPC, cookies, permissions already granted or blocked, PDF viewer, webdriver, ad blocker, tab history, installed fonts
   - *Fingerprints*: canvas, WebGL, audio, font list, the combined fingerprint, and whether the browser randomizes them
 
 Rows are drawn before anything is read and filled the moment each sniffer answers; the paragraph is filled once, when every blank is in, so the page doesn't jump. A button blurs the address and location for screenshots.
 
 ## Privacy
 
-Everything except the first group is read in the browser and stays there. The Worker answers one request, `GET /api/me`, with what it already sees in that request: the address, Cloudflare's `request.cf` data for it, the headers (cookies and Cloudflare's own left out), the address's PTR record and the server's clock. Nothing is stored or logged.
+To find your exits and DNS resolver the page asks a few outside services directly (named in each row: IPIP.NET, IP.SB, the Cloudflare trace on chatgpt.com, claude.ai and www.cloudflare.com, Cloudflare Radar, ip-api's DNS server, two STUN servers); they see your address as any site does. Everything else is read in the browser and stays there. The Worker answers one request, `GET /api/me`, with what it already sees in that request: the address, Cloudflare's `request.cf` data for it, the headers (cookies and Cloudflare's own left out), the address's PTR record and the server's clock. Nothing is stored or logged.
 
 ## Run it yourself
 
