@@ -61,9 +61,6 @@ export default {
   fp_why: "Canvas, WebGL, áudio, fontes, tela e ajustes reunidos num hash. Não depende do seu IP, então uma VPN não muda isso.",
   fp_rand_why: "Seu navegador adiciona ruído aos desenhos, então a impressão muda a cada visita.",
 
-  tools_h: "Mais ferramentas do 1ms.dog",
-  tool_home: "Seus IPs de saída e a latência para 40 serviços", tool_egress: "Qual IP cada site vê: rotas divididas, proxies, vazamentos WebRTC e IPv6", tool_ipqs: "Qualidade do seu IP",
-  tool_m2c: "Latência para mais de 360 regiões de nuvem", tool_v2c: "Latência do seu servidor às nuvens", tool_ls: "Calculadora de tráfego do AWS Lightsail",
 
   docs: [
     ["O que esta página faz?", "Ela roda os mesmos farejadores que qualquer site pode rodar assim que você o abre e escreve quem isso faz de você: de onde você provavelmente vem, onde está, o que usa e do que gosta.\nPasse o mouse sobre uma lacuna do parágrafo para ver de quais farejadores ela veio; a lista abaixo mostra cada farejador, como ele lê (a API ou o cabeçalho da coluna da direita) e o que leu. Nenhum mostra pedido de permissão."],

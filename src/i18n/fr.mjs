@@ -61,9 +61,6 @@ export default {
   fp_why: "Canvas, WebGL, audio, polices, écran et réglages réunis en un hash. Il ne dépend pas de votre IP : un VPN ne le change pas.",
   fp_rand_why: "Votre navigateur ajoute du bruit aux dessins, donc l’empreinte change à chaque visite.",
 
-  tools_h: "Autres outils 1ms.dog",
-  tool_home: "Vos IP de sortie et la latence vers 40 services", tool_egress: "L’IP que voit chaque site : routage partagé, proxys, fuites WebRTC et IPv6", tool_ipqs: "Qualité de votre IP",
-  tool_m2c: "Latence vers 360+ régions cloud", tool_v2c: "Latence de votre serveur vers les clouds", tool_ls: "Calculateur de transfert AWS Lightsail",
 
   docs: [
     ["Que fait cette page ?", "Elle lance les mêmes renifleurs que n’importe quel site peut lancer dès que vous l’ouvrez, puis écrit qui cela fait de vous : d’où vous venez probablement, où vous êtes, ce que vous utilisez et ce que vous préférez.\nSurvolez un trou du paragraphe pour voir de quels renifleurs il vient ; la liste en dessous montre chaque renifleur, comment il lit (l’API ou l’en-tête de la colonne de droite) et ce qu’il a lu. Aucun n’affiche de demande d’autorisation."],

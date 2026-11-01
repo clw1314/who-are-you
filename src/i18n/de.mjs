@@ -61,9 +61,6 @@ export default {
   fp_why: "Canvas, WebGL, Audio, Schriften, Bildschirm und Einstellungen zu einem Hash zusammengefasst. Er hängt nicht von Ihrer IP ab, ein VPN ändert ihn also nicht.",
   fp_rand_why: "Ihr Browser verrauscht Zeichnungen, deshalb ändert sich der Fingerabdruck bei jedem Besuch.",
 
-  tools_h: "Weitere 1ms.dog-Tools",
-  tool_home: "Ihre Ausgangs-IPs und die Latenz zu 40 Diensten", tool_egress: "Welche IP jede Website sieht: Split-Routing, Proxys, WebRTC- und IPv6-Lecks", tool_ipqs: "Wie sauber Ihre IP ist",
-  tool_m2c: "Latenz zu über 360 Cloud-Regionen", tool_v2c: "Latenz von Ihrem Server zu den Clouds", tool_ls: "AWS-Lightsail-Transferrechner",
 
   docs: [
     ["Was macht diese Seite?", "Sie lässt dieselben Schnüffler laufen, die jede Website laufen lassen kann, sobald Sie sie öffnen, und schreibt auf, wer Sie damit sind: woher Sie wahrscheinlich kommen, wo Sie gerade sind, was Sie nutzen und was Sie mögen.\nZeigen Sie auf eine Lücke im Text, um zu sehen, von welchen Schnüfflern sie stammt; die Liste darunter zeigt jeden Schnüffler, wie er liest (die API oder der Header in der rechten Spalte) und was er gelesen hat. Keiner zeigt eine Berechtigungsabfrage."],

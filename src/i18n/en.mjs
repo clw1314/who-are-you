@@ -62,9 +62,6 @@ export default {
   fp_why: "Canvas, WebGL, audio, fonts, screen and settings hashed together. It doesn't depend on your IP, so a VPN doesn't change it.",
   fp_rand_why: "Your browser adds noise to drawings, so the fingerprint changes on every visit.",
 
-  tools_h: "More 1ms.dog tools",
-  tool_home: "Your exit IPs and latency to 40 services", tool_egress: "Which IP each site sees: split routing, proxies, WebRTC and IPv6 leaks", tool_ipqs: "How clean your IP is",
-  tool_m2c: "Latency to 360+ cloud regions", tool_v2c: "Latency from your server to the clouds", tool_ls: "AWS Lightsail transfer calculator",
 
   docs: [
     ["What does this page do?", "It runs the same sniffers any website can run the moment you open it, then writes down who that makes you: where you probably come from, where you are, what you use and what you like.\nEvery blank in the paragraph says on hover which sniffers it came from, and the list below shows each sniffer, how it reads (the API or header in the right column) and what it read. None of them shows a permission prompt."],

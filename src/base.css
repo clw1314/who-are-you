@@ -1,8 +1,8 @@
 /* who-are-you. Same tokens as the other 1ms.dog tools, so the site's top bar and the page switch theme together.
-   The accent is pink; checks run green (nothing gives you away), amber (a site could notice), red (a contradiction). */
+   The accent is lime green; checks run green (nothing gives you away), amber (a site could notice), red (a contradiction). */
 :root {
   --bg: #f6f6f7; --panel: #ffffff; --soft: #f0f0f2; --line: #e4e4e8;
-  --fg: #141416; --muted: #6e6e78; --ink: #db2777; --ink-fg: #ffffff; --ink-soft: #db277714;
+  --fg: #141416; --muted: #6e6e78; --ink: #4d7c0f; --ink-fg: #ffffff; --ink-soft: #65a30d1c;
   --warn: #b86e00; --warn-soft: #b86e001f; --bad: #d23a2f;
   --t1: #1a8a5a; --t3: #a16a00; --t5: #d23a2f;
   --shadow: #0000001c;
@@ -13,14 +13,14 @@
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #1c1c1c; --panel: #232323; --soft: #2a2a2a; --line: #363636;
-  --fg: #ededed; --muted: #a0a0a0; --ink: #f472b6; --ink-fg: #3b0820; --ink-soft: #f472b61f;
+  --fg: #ededed; --muted: #a0a0a0; --ink: #a3e635; --ink-fg: #1a2e05; --ink-soft: #a3e63524;
   --warn: #f5a524; --warn-soft: #f5a52424; --bad: #f56565;
   --t1: #3ecf8e; --t3: #f5c524; --t5: #f56565;
   --shadow: #00000080;
   color-scheme: dark; } }
 :root[data-theme="dark"] {
   --bg: #1c1c1c; --panel: #232323; --soft: #2a2a2a; --line: #363636;
-  --fg: #ededed; --muted: #a0a0a0; --ink: #f472b6; --ink-fg: #3b0820; --ink-soft: #f472b61f;
+  --fg: #ededed; --muted: #a0a0a0; --ink: #a3e635; --ink-fg: #1a2e05; --ink-soft: #a3e63524;
   --warn: #f5a524; --warn-soft: #f5a52424; --bad: #f56565;
   --t1: #3ecf8e; --t3: #f5c524; --t5: #f56565;
   --shadow: #00000080;

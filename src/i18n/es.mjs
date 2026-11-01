@@ -61,9 +61,6 @@ export default {
   fp_why: "Canvas, WebGL, audio, fuentes, pantalla y ajustes en un solo hash. No depende de tu IP, así que una VPN no lo cambia.",
   fp_rand_why: "Tu navegador añade ruido a los dibujos, así que la huella cambia en cada visita.",
 
-  tools_h: "Más herramientas de 1ms.dog",
-  tool_home: "Tus IP de salida y la latencia a 40 servicios", tool_egress: "Qué IP ve cada sitio: rutas divididas, proxies, fugas WebRTC e IPv6", tool_ipqs: "Calidad de tu IP",
-  tool_m2c: "Latencia a más de 360 regiones de nube", tool_v2c: "Latencia de tu servidor a las nubes", tool_ls: "Calculadora de tráfico de AWS Lightsail",
 
   docs: [
     ["¿Qué hace esta página?", "Ejecuta los mismos rastreadores que cualquier sitio puede ejecutar en cuanto lo abres y escribe quién te hace eso: de dónde vienes probablemente, dónde estás, qué usas y qué prefieres.\nAl pasar el ratón sobre un hueco del párrafo ves de qué rastreadores salió, y la lista de abajo muestra cada rastreador, cómo lee (la API o cabecera de la columna derecha) y lo que leyó. Ninguno muestra un aviso de permiso."],
