@@ -8,10 +8,14 @@
     "test": "node scripts/build.mjs --check && node --test \"test/*.test.mjs\"",
     "dev": "wrangler dev --port 8795",
     "deploy": "wrangler deploy",
-    "tz": "node scripts/tz.mjs"
+    "tz": "node scripts/tz.mjs",
+    "og": "node scripts/og.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "devDependencies": {
-    "esbuild": "0.25.10"
+    "@resvg/resvg-js": "^2.6.2",
+    "esbuild": "0.25.10",
+    "puppeteer-core": "^23.11.1"
   },
   "license": "MIT",
   "repository": {

@@ -78,6 +78,7 @@ export const GROUPS = [
     { id: "pdf", m: "pdfViewerEnabled" },
     { id: "webdriver", m: "navigator.webdriver" },
     { id: "adblock", m: "bait element" },
+    { id: "ext", m: "window.ethereum · DOM marks" },
     { id: "history", m: "history.length" },
     { id: "fonts", m: "canvas measureText" },
   ]],
@@ -98,7 +99,7 @@ export const SNIFFERS = GROUPS.flatMap(([, l]) => l);
 export const BLANKS = {
   nat: ["langs", "tz", "geo"], city: ["geo"], lang: ["langs"], tz: ["tz"], clock: ["hour"],
   device: ["os", "screen", "touch"], browser: ["browser"], screen: ["screen"], gpu: ["gpu"],
-  isp: ["isp"], nettype: ["isp", "ex_cn", "ex_intl", "ex_gpt", "ex_claude", "ex_cf"], dns: ["dns"], age: [], theme: ["scheme"], adblock: ["adblock"], job: ["fonts"],
+  isp: ["isp"], nettype: ["isp", "ex_cn", "ex_intl", "ex_gpt", "ex_claude", "ex_cf"], dns: ["dns"], age: [], theme: ["scheme"], adblock: ["adblock"], job: ["fonts", "ext"],
 };
 
 // the disguise checks, one row each

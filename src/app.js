@@ -13,14 +13,25 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const t = (k, v) => { let s = L[k] ?? k; if (v) for (const x in v) s = s.split("{" + x + "}").join(v[x]); return s; };
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
-  const K = { theme: "who:theme", lang: "who:lang", mask: "who:mask" };
+  const K = { theme: "who:theme", lang: "who:lang", mask: "who:mask", last: "who:last" };
   const dn = type => { try { return new Intl.DisplayNames([LANG], { type }); } catch (e) { return null; } };
   const REG = dn("region"), LNG = dn("language");
   const country = cc => { try { return REG ? REG.of(cc) : cc; } catch (e) { return cc; } };
   const language = tag => { try { return LNG ? LNG.of(tag) : tag; } catch (e) { return tag; } };
   const flag = cc => /^[A-Z]{2}$/.test(cc || "") ? `<img class="flag" src="/flags/${cc.toLowerCase()}.svg" alt="" width="20" height="15">` : "";
-  // a flag and the text after it, the flag kept on the line of the text's first word
-  const flagged = (cc, s) => { const m = String(s).match(/^(\S+)([\s\S]*)$/) || ["", "", ""]; return `<span class="nw">${flag(cc)}${esc(m[1])}</span>${esc(m[2])}`; };
+  // A flag and the text after it, the flag kept on the line of the text's first word; that word can be a link.
+  const flagged = (cc, s, href) => {
+    const m = String(s).match(/^(\S+)([\s\S]*)$/) || ["", "", ""];
+    const w = href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${esc(m[1])}</a>` : esc(m[1]);
+    return `<span class="nw">${flag(cc)}${w}</span>${esc(m[2])}`;
+  };
+  // other 1ms.dog tools, when the host announces them (absent when self-hosted)
+  const META = n => (document.querySelector(`meta[name="${n}"]`) || {}).content || "";
+  const IPQS = META("ipqs"), EGRESS = META("egress"), DNSTEST = META("dns");
+  // another tool's page in this page's language (every 1ms.dog tool keeps the same language folders)
+  const inLang = host => host.replace(/\/$/, "") + (D.paths[LANG] || "/");
+  const ipqsOf = ip => IPQS && ip ? IPQS.replace(/\/$/, "") + "/?ip=" + encodeURIComponent(ip) : "";
+  if (EGRESS && $("#egLink")) { $("#egLink").href = inLang(EGRESS); $("#egLink").hidden = false; }
   const list = a => a.join(t("v_join"));
   // a network's everyday name: "Alibaba Cloud (Singapore) Private Limited" → "Alibaba Cloud", "Amazon.com, Inc." → "Amazon.com"
   const shortOrg = s => {
@@ -133,7 +144,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     } catch (e) { for (const id of ids) na(id, "v_fail"); R.srv = {}; return; }
     const c = j.cf || {}, h = j.h || {};
     R.srv = j;
-    txt("ip", j.ip + " · IPv" + j.v);
+    row("ip", flagged(null, j.ip + " · IPv" + j.v, ipqsOf(j.ip)));
     row("geo", c.country ? flagged(c.country, [c.city, c.region, country(c.country)].filter(Boolean).join(", ")) : esc(t("v_empty")), { na: !c.country });
     if (c.latitude != null) txt("coords", [(+c.latitude).toFixed(2) + ", " + (+c.longitude).toFixed(2), c.postalCode].filter(Boolean).join(" · ")); else na("coords", "v_empty");
     if (c.asn) txt("isp", "AS" + c.asn + " · " + (c.asOrganization || "")); else na("isp", "v_empty");
@@ -410,7 +421,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       if (!r || !r.ip) { R.ex[id] = null; return na(id, "v_fail"); }
       R.ex[id] = r.ip;
       const cc = /^[A-Z]{2}$/.test(r.cc || "") && r.cc !== "XX" ? r.cc : null;
-      row(id, flagged(cc, [r.ip, r.note].filter(Boolean).join(" · ")));
+      row(id, flagged(cc, [r.ip, r.note].filter(Boolean).join(" · "), ipqsOf(r.ip)));
     }));
     R.exDone = true;
   }
@@ -510,6 +521,49 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     if (s.length) txt("perms", s.join(" · ")); else na("perms");
   }
 
+  // Extensions that leave a mark any page can see: crypto wallets announce themselves to the page, developer tools
+  // install a global hook, some extensions tag the document. Read a moment after load, when they have run.
+  async function extensions() {
+    await new Promise(r => setTimeout(r, 1200));
+    const w = window, d = document.documentElement, b = document.body, q = s => { try { return !!document.querySelector(s); } catch (e) { return false; } };
+    const found = [], eth = w.ethereum;
+    if (eth) found.push(["crypto", eth.isRabby ? "Rabby" : eth.isCoinbaseWallet ? "Coinbase Wallet" : eth.isBraveWallet ? "Brave Wallet" : eth.isOkxWallet || w.okxwallet ? "OKX Wallet"
+      : eth.isTrust ? "Trust Wallet" : eth.isTokenPocket ? "TokenPocket" : eth.isMetaMask ? "MetaMask" : "Ethereum wallet"]);
+    else if (w.okxwallet) found.push(["crypto", "OKX Wallet"]);
+    if (w.phantom || (w.solana && w.solana.isPhantom)) found.push(["crypto", "Phantom"]);
+    if (w.tronLink || w.tronWeb) found.push(["crypto", "TronLink"]);
+    if (w.__REACT_DEVTOOLS_GLOBAL_HOOK__) found.push(["dev", "React DevTools"]);
+    if (w.__VUE_DEVTOOLS_GLOBAL_HOOK__) found.push(["dev", "Vue DevTools"]);
+    if (w.__REDUX_DEVTOOLS_EXTENSION__) found.push(["dev", "Redux DevTools"]);
+    if (b.hasAttribute("data-gr-ext-installed") || b.hasAttribute("data-new-gr-c-s-check-loaded")) found.push(["", "Grammarly"]);
+    if (d.hasAttribute("data-darkreader-mode") || d.hasAttribute("data-darkreader-scheme") || q('meta[name="darkreader"]')) found.push(["", "Dark Reader"]);
+    if (q('[id*="immersive-translate"],[class*="immersive-translate"]') || d.hasAttribute("imt-state")) found.push(["", "Immersive Translate"]);
+    R.ext = found;
+    if (found.length) txt("ext", found.map(([, n]) => n).join(" · ")); else txt("ext", t("ext_none"), { na: true });
+  }
+
+  /* ---------- the portrait: what the paragraph, the ID card and a shared link are drawn from ---------- */
+  // Language-neutral, so a shared link reads in its viewer's language. The local view adds tooltips (X) that a shared
+  // one leaves out, and a shared one has no address, no city and no addresses in the checks.
+  const allExits = () => R.exDone && R.stack && R.srv
+    ? [["ip", R.srv.ip], ...EXITS.map(([id]) => [id, R.ex[id]]), ...R.stack.map(ip => ["stack", ip])].filter(([, ip]) => ip)
+    : null;
+  function jobsOf() {
+    const out = [...fontHints(R.fonts || [], R.dev && R.dev.os), ...(R.ext || []).filter(([k]) => k)];
+    return out.filter(([k], i) => out.findIndex(([x]) => x === k) === i);
+  }
+  function portrait() {
+    const c = (R.srv && R.srv.cf) || {}, d = R.dev || {};
+    const nat = nationality({ langs: R.langs, tz: R.tz, ipcc: c.country });
+    const ex = allExits(), split = ex && splitOf(ex);
+    return { v: 1, nat: nat ? nat.cc : null, natFrom: nat ? nat.from : null, cc: c.country || null, city: c.city || null, langs: R.langs || [],
+      tz: R.tz || null, h12: !!R.h12, os: R.osTxt || null, kind: d.kind || null, model: d.model || null, browser: R.browser || null,
+      screen: R.screen || null, gpu: R.gpu || null, org: c.asOrganization ? shortOrg(c.asOrganization) : c.asn ? "AS" + c.asn : null,
+      nt: split ? "split" : c.asn == null ? null : isDataCenter(c.asn, c.asOrganization) ? "dc" : "home", nx: split ? split.n : 0,
+      dns: R.dnsCC || null, dark: !!R.dark, ab: !!R.adblock, jobs: jobsOf(), fp: R.fp || null, rand: !!R.rand,
+      x: { split, fullOrg: [c.asn ? "AS" + c.asn : "", c.asOrganization].filter(Boolean).join(" · "), dnsOrg: R.dnsOrg || "", fpHex: R.fpHex } };
+  }
+
   /* ---------- the fingerprint ID card ---------- */
   function fpArt(hex) {
     const by = i => parseInt(hex.substr((i * 2) % hex.length, 2), 16);
@@ -524,11 +578,31 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     }
     return `<circle cx="32" cy="32" r="2.2"/><path d="${d}"/>`;
   }
-  function idCard() {
-    $("#fpId").textContent = R.rand ? t("fp_rand") : R.fp;
-    $("#fpNote").textContent = t(R.rand ? "id_note_rand" : "id_note");
-    $("#fpArt").innerHTML = R.rand ? "" : fpArt(R.fpHex);
-    $("#idc").classList.toggle("rand", !!R.rand);
+  // "3 days ago", in the page's language
+  function ago(ts) {
+    const s = Math.max(1, (Date.now() - ts) / 1000);
+    const [n, u] = s < 60 ? [s, "second"] : s < 3600 ? [s / 60, "minute"] : s < 86400 ? [s / 3600, "hour"] : s < 2592000 ? [s / 86400, "day"] : s < 31536000 ? [s / 2592000, "month"] : [s / 31536000, "year"];
+    try { return new Intl.RelativeTimeFormat(LANG, { numeric: "auto" }).format(-Math.floor(n), u); } catch (e) { return Math.floor(n) + " " + u; }
+  }
+  // The visit before this one, kept in this browser only: was the fingerprint the same? That is how a site that
+  // never set a cookie still knows you came back.
+  function returnVisit(P) {
+    let last = null;
+    try { last = JSON.parse(store.get(K.last) || "null"); } catch (e) {}
+    const where = P.city || (P.cc ? country(P.cc) : "");
+    store.set(K.last, JSON.stringify({ at: Date.now(), fp: P.rand ? null : P.fp, where }));
+    $("#forget").hidden = false;
+    if (P.rand) return t("rv_rand");
+    if (!last || !last.at) return t("rv_first");
+    return t(last.fp === P.fp ? "rv_same" : "rv_diff", { ago: ago(last.at), where: last.where || "?" });
+  }
+  $("#forget").onclick = () => { try { localStorage.removeItem(K.last); } catch (e) {} $("#fpRet").textContent = t("rv_forgot"); $("#forget").hidden = true; };
+  function idCard(P, shared) {
+    $("#fpId").textContent = P.rand ? t("fp_rand") : P.fp || "–";
+    $("#fpNote").textContent = t(P.rand ? "id_note_rand" : "id_note");
+    $("#fpArt").innerHTML = P.rand || !P.x.fpHex && !P.fp ? "" : fpArt(P.x.fpHex || P.fp.replace(/\W/g, "").repeat(4));
+    $("#idc").classList.toggle("rand", !!P.rand);
+    $("#fpRet").textContent = shared ? " " : returnVisit(P);
   }
 
   /* ---------- the paragraph ---------- */
@@ -543,48 +617,38 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     b.dataset.why = why || (from.length ? t("from", { list: list(from.map(rowName)) }) : "");
     b.tabIndex = 0;
   }
-  const allExits = () => R.exDone && R.stack && R.srv
-    ? [["ip", R.srv.ip], ...EXITS.map(([id]) => [id, R.ex[id]]), ...R.stack.map(ip => ["stack", ip])].filter(([, ip]) => ip)
-    : null;
-
-  function story() {
-    const c = (R.srv && R.srv.cf) || {};
-    const nat = nationality({ langs: R.langs, tz: R.tz, ipcc: c.country });
-    blank("nat", nat ? flagged(nat.cc, country(nat.cc)) : esc(t("v_unknown")), nat ? nat.from : BLANKS.nat);
-    blank("city", c.country ? flagged(c.country, [c.city, country(c.country)].filter(Boolean).join(", ")) : esc(t("v_unknown")));
-    blank("lang", esc((R.langs || []).length ? language(R.langs[0]) : t("v_unknown")), BLANKS.lang, (R.langs || []).map(language).join(", "));
-    blank("tz", esc(R.tzName || t("v_unknown")));
-    blank("clock", esc(t(R.h12 ? "ck_12" : "ck_24")));
-    const d = R.dev || {}, os = R.osTxt;
-    blank("device", esc(!os ? t("dv_unknown") : (d.kind === "phone" || d.kind === "tablet") && d.model ? t("dv_model", { model: d.model, os }) : t("dv_" + d.kind, { os })));
-    blank("browser", esc(R.browser || t("v_unknown")));
-    blank("screen", esc(R.screen));
-    blank("gpu", esc(R.gpu || t("gpu_unknown")));
-    blank("isp", esc(c.asOrganization ? shortOrg(c.asOrganization) : c.asn ? "AS" + c.asn : t("v_unknown")), BLANKS.isp, [c.asn ? "AS" + c.asn : "", c.asOrganization].filter(Boolean).join(" · "));
-    blank("dns", R.dnsCC ? flagged(R.dnsCC, country(R.dnsCC)) : esc(t("v_unknown")), BLANKS.dns, R.dnsOrg || "");
-    const ex = allExits(), split = ex && splitOf(ex);
-    blank("nettype", esc(split ? t("nt_split", { n: split.n })
-      : t(c.asn == null ? "v_unknown" : isDataCenter(c.asn, c.asOrganization) ? "nt_dc" : "nt_home")),
-      BLANKS.nettype, split ? exitName(split.a) + ": " + split.ipA + "\n" + exitName(split.b) + ": " + split.ipB : "");
+  function tzLabel(tz) {
+    try { return new Intl.DateTimeFormat(LANG, { timeZone: tz, timeZoneName: "longGeneric" }).formatToParts(new Date()).find(x => x.type === "timeZoneName").value; } catch (e) { return tz; }
+  }
+  function paint(P, shared) {
+    const X = P.x || {}, U = esc(t("v_unknown"));
+    blank("nat", P.nat ? flagged(P.nat, country(P.nat)) : U, P.natFrom || BLANKS.nat);
+    blank("city", shared ? esc(t("masked")) : P.cc ? flagged(P.cc, [P.city, country(P.cc)].filter(Boolean).join(", ")) : U, BLANKS.city, shared ? t("masked_why") : "");
+    if (shared) BL.city.classList.add("hid");
+    blank("lang", P.langs.length ? esc(language(P.langs[0])) : U, BLANKS.lang, P.langs.map(language).join(", "));
+    blank("tz", P.tz ? esc(tzLabel(P.tz)) : U, BLANKS.tz, P.tz || "");
+    blank("clock", esc(t(P.h12 ? "ck_12" : "ck_24")));
+    blank("device", esc(!P.os ? t("dv_unknown") : (P.kind === "phone" || P.kind === "tablet") && P.model ? t("dv_model", { model: P.model, os: P.os }) : t("dv_" + (P.kind || "pc"), { os: P.os })));
+    blank("browser", P.browser ? esc(P.browser) : U);
+    blank("screen", P.screen ? esc(P.screen) : U);
+    blank("gpu", esc(P.gpu || t("gpu_unknown")));
+    blank("isp", P.org ? esc(P.org) : U, BLANKS.isp, X.fullOrg || "");
+    blank("dns", P.dns ? flagged(P.dns, country(P.dns)) : U, BLANKS.dns, X.dnsOrg || "");
+    const sp = X.split;
+    blank("nettype", esc(P.nt === "split" ? t("nt_split", { n: P.nx }) : P.nt ? t("nt_" + P.nt) : t("v_unknown")),
+      BLANKS.nettype, sp ? exitName(sp.a) + ": " + sp.ipA + "\n" + exitName(sp.b) + ": " + sp.ipB : "");
     blank("age", esc(t("age_v")), [], t("age_why"));
-    blank("theme", esc(t(R.dark ? "pt_dark" : "pt_light")));
-    blank("adblock", esc(t(R.adblock ? "pt_ab" : "pt_noab")));
-    const jobs = fontHints(R.fonts || [], d.os);
-    blank("job", esc(jobs.length ? list(jobs.map(([k]) => t("jb_" + k))) : t("jb_none")), BLANKS.job, jobs.length ? t("from", { list: jobs.map(([, f]) => f).join(", ") }) : "");
+    blank("theme", esc(t(P.dark ? "pt_dark" : "pt_light")));
+    blank("adblock", esc(t(P.ab ? "pt_ab" : "pt_noab")));
+    blank("job", esc(P.jobs.length ? list(P.jobs.map(([k]) => t("jb_" + k))) : t("jb_none")), BLANKS.job, P.jobs.length ? t("from", { list: P.jobs.map(([, f]) => f).join(", ") }) : "");
     $("#story").classList.remove("wait"); $("#storySk").hidden = true;
-    idCard();
+    idCard(P, shared);
   }
 
   /* ---------- the disguise checks ---------- */
   const CK = Object.fromEntries($$(".ckr[data-c]").map(r => [r.dataset.c, r]));
-  function judge(final) {
-    const c = (R.srv && R.srv.cf) || {};
-    const res = checks({
-      tz: R.tz, tzOff: R.tzOff == null ? null : offTxt(R.tzOff), ipTzOff: c.timezone ? offTxt(tzOffset(c.timezone)) : null, ipcc: c.country,
-      langs: R.langs, dnsCC: R.dnsCC, exits: allExits(), rtc: R.rtc, ip: R.srv && R.srv.ip, asn: c.asn, org: c.asOrganization && shortOrg(c.asOrganization),
-      uaOS: R.dev && R.dev.os, real: !!R.dev, hintOS: R.hi && R.hi.platform, gpuOS: gpuOS(R.gpuRaw), rand: R.rand, webdriver: R.webdriver,
-    });
-    if (res.dc === null && R.srv && !c.asn) res.dc = ["info", "c_na", {}];
+  // res: check id → [level, key, vars]; ipc: the address's country
+  function paintChecks(res, ipc, final) {
     let bad = 0, warn = 0;
     for (const id of CHECKS) {
       const r = CK[id], v = res[id];
@@ -594,9 +658,16 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       r.className = "ckr st-" + lv;
       const sg = $(`#segs [data-c="${id}"]`); if (sg) sg.className = "st-" + lv;
       const vv = Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "cc" ? country(x) : id === "split" ? exitName(x) : x]));
-      if (id === "tz" || id === "lang" || id === "dns") vv.ipc = country(c.country);
+      if (id === "tz" || id === "lang" || id === "dns") vv.ipc = ipc ? country(ipc) : "?";
       const cv = r.querySelector(".ck-v"); cv.textContent = t(key, vv); r.dataset.why = cv.textContent;
       r.querySelector(".st").textContent = lv === "ok" ? "✓" : lv === "info" ? "i" : "!";
+      // a check that gives you away says how to fix it
+      r.querySelector(".ck-fix").hidden = lv !== "bad" && lv !== "warn";
+      const go = r.querySelector(".ck-go");
+      if (go) {
+        const href = id === "dns" ? DNSTEST && inLang(DNSTEST) : id === "dc" ? ipqsOf(R && R.srv && R.srv.ip) : EGRESS && inLang(EGRESS);
+        go.hidden = !href || (lv !== "bad" && lv !== "warn"); if (href) go.href = href;
+      }
     }
     if (!final) return;
     const n = bad + warn;
@@ -604,6 +675,71 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     $("#vText").textContent = t(n ? "v_found_d" : "v_clean_d");
     $("#vHead").className = "v-h" + (bad ? " bad" : warn ? " warn" : " ok");
     $("#mNum").textContent = n; $("#mNum").className = "m-num " + (bad ? "bad" : warn ? "warn" : "ok");
+  }
+  $$(".ck-fix").forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const tip = btn.closest(".ckr").querySelector(".ck-tip"), open = tip.hidden;
+      tip.hidden = !open; btn.setAttribute("aria-expanded", open);
+    };
+  });
+  function judge(final) {
+    const c = (R.srv && R.srv.cf) || {};
+    const res = checks({
+      tz: R.tz, tzOff: R.tzOff == null ? null : offTxt(R.tzOff), ipTzOff: c.timezone ? offTxt(tzOffset(c.timezone)) : null, ipcc: c.country,
+      langs: R.langs, dnsCC: R.dnsCC, exits: allExits(), rtc: R.rtc, ip: R.srv && R.srv.ip, asn: c.asn, org: c.asOrganization && shortOrg(c.asOrganization),
+      uaOS: R.dev && R.dev.os, real: !!R.dev, hintOS: R.hi && R.hi.platform, gpuOS: gpuOS(R.gpuRaw), rand: R.rand, webdriver: R.webdriver,
+    });
+    if (res.dc === null && R.srv && !c.asn) res.dc = ["info", "c_na", {}];
+    R.ck = res;
+    paintChecks(res, c.country, final);
+  }
+
+  /* ---------- sharing: the portrait in the link, without the address or the city ---------- */
+  const b64u = s => btoa(String.fromCharCode(...new TextEncoder().encode(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const unb64u = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), ch => ch.charCodeAt(0)));
+  const maskIp = ip => ip.includes(":") ? ip.split(":").slice(0, 2).join(":") + ":…" : ip.split(".").slice(0, 2).join(".") + ".•.•";
+  function shareCode() {
+    const P = portrait();
+    delete P.x; P.city = null;
+    // the checks travel too, with any address in them cut to its network
+    P.ck = Object.fromEntries(Object.entries(R.ck || {}).filter(([, v]) => v).map(([id, [lv, key, vars]]) =>
+      [id, [lv, key, Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "ip" ? maskIp(String(x)) : x]))]]));
+    return b64u(JSON.stringify(P));
+  }
+  async function shortLink(long) {
+    const meta = document.querySelector('meta[name="shortener"]');   // announced by the 1ms.dog host; absent when self-hosted
+    if (!meta) return long;
+    try {
+      const r = await fetch(meta.content, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ url: long }), signal: AbortSignal.timeout(5000) });
+      const j = await r.json(); if (j.url) return j.url;
+    } catch (e) {}
+    return long;
+  }
+  $("#share").onclick = async () => {
+    const long = location.origin + location.pathname + "#p=" + shareCode();
+    $("#shareUrl").value = long; $("#nativeShare").hidden = !navigator.share;
+    openDlg("shareDlg");
+    $("#shareUrl").value = await shortLink(long);
+  };
+  const flash = (btn, k) => { const o = btn.textContent; btn.textContent = t(k); setTimeout(() => { btn.textContent = o; }, 1500); };
+  $("#copyLink").onclick = async e => { try { await navigator.clipboard.writeText($("#shareUrl").value); flash(e.target, "copied"); } catch (x) { $("#shareUrl").select(); } };
+  $("#nativeShare").onclick = async () => { try { await navigator.share({ title: document.title, url: $("#shareUrl").value }); } catch (e) {} };
+
+  // someone else's portrait: drawn from the link, nothing sniffed; the sniffers card and the run controls step aside
+  function showShared(code) {
+    let P;
+    try { P = JSON.parse(unb64u(code)); } catch (e) { return false; }
+    if (!P || P.v !== 1) return false;
+    P.langs = P.langs || []; P.jobs = P.jobs || []; P.x = {};
+    document.documentElement.classList.add("shared");
+    $(".eyebrow").lastChild.textContent = t("sh_eyebrow");
+    $("#mine").hidden = false; $("#share").hidden = true; $("#rerun").hidden = true;
+    $("#mine").onclick = () => { location.href = location.pathname + location.search; };
+    $("#progTxt").textContent = " ";
+    paint(P, true);
+    paintChecks(P.ck || {}, P.cc, true);
+    return true;
   }
 
   /* ---------- a run ---------- */
@@ -614,11 +750,15 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     // the paragraph stays invisible (its skeleton on top) until every blank is in, so its text never reflows on screen
     $("#story").classList.add("wait"); $("#storySk").hidden = false;
     for (const b of Object.values(BL)) { b.classList.add("wait"); b.innerHTML = '<i class="skl"></i>'; delete b.dataset.why; b.removeAttribute("tabindex"); }
-    for (const r of Object.values(CK)) { r.className = "ckr"; delete r.dataset.why; r.querySelector(".ck-v").innerHTML = '<i class="skl"></i>'; r.querySelector(".st").textContent = ""; }
+    for (const r of Object.values(CK)) {
+      r.className = "ckr"; delete r.dataset.why; r.querySelector(".ck-v").innerHTML = '<i class="skl"></i>'; r.querySelector(".st").textContent = "";
+      r.querySelector(".ck-fix").hidden = true; r.querySelector(".ck-tip").hidden = true;
+      const go = r.querySelector(".ck-go"); if (go) go.hidden = true;
+    }
     $("#vHead").textContent = t("checking"); $("#vHead").className = "v-h";
     $("#mNum").textContent = "–"; $("#mNum").className = "m-num"; $$("#segs i").forEach(i => { i.className = ""; });
     $("#fpId").innerHTML = '<i class="skl"></i>'; $("#fpArt").innerHTML = ""; $("#fpNote").textContent = t("id_note"); $("#vText").innerHTML = "&nbsp;";
-    $("#rerun").disabled = true; progress();
+    $("#rerun").disabled = true; $("#share").disabled = true; progress();
 
     referrer(); locale(); prefs();
     const glInfo = gpu();
@@ -626,19 +766,20 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     const rtc = webrtc().then(() => g === gen && judge(false));
     await Promise.all([
       server(), guard("kbd", keyboard), guard("voices", voices), guard(["os", "browser", "arch", "screen", "cpu", "mem", "touch", "conn"], hardware),
-      guard("battery", battery), guard("media", media), guard("storage", storage), guard("adblock", adblock),
+      guard("battery", battery), guard("media", media), guard("storage", storage), guard("adblock", adblock), guard("ext", extensions),
       guard(["canvas", "audio", "fontfp", "rand", "fpid"], () => prints(glInfo)),
       guard("stack", stack), guard(EXITS.map(([id]) => id), exits), guard("dns", () => dnsResolver().catch(e => { R.dnsCC = null; throw e; })), guard(["kex", "warp"], trace),
       guard("webgpu", webgpu), guard("hz", refresh), guard("screens", screens), guard("codecs", codecs), guard("drm", drm), guard("perms", perms),
     ]);
     if (g !== gen) return;
-    story(); judge(false);
+    paint(portrait(), false); judge(false);
     await rtc;
     if (g !== gen) return;
     for (const id of Object.keys(PR)) if (!done.has(id)) na(id);   // anything a sniffer couldn't reach
     judge(true);
-    $("#rerun").disabled = false;
+    $("#rerun").disabled = false; $("#share").disabled = false;
   }
   $("#rerun").onclick = run;
-  run();
+  const shared = /^#p=/.test(location.hash) && showShared(location.hash.slice(3));
+  if (!shared) run();
 })();

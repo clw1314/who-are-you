@@ -38,6 +38,9 @@ async function loadI18n() {
 const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "app_name", "docs", "lang_label", "faq_h", "story",
   ...CHECKS.map(c => "c_" + c)]);
 
+// the checks another 1ms.dog tool looks into deeper; the page links there when the host announces that tool
+export const GO = { dns: "dns", split: "egress", webrtc: "egress", dc: "ipqs" };
+
 // the paragraph: one line per theme (where from, device, network, habits), a placeholder for every blank, each once
 export function storyHtml(s, lang) {
   const used = [...s.matchAll(/\{(\w+)\}/g)].map(m => m[1]);
@@ -91,15 +94,22 @@ export async function build({ check = false } = {}) {
       `<link rel="icon" href="/favicon.ico" sizes="any">`, `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">`, `<link rel="apple-touch-icon" href="/apple-touch-icon.png">`,
       `<meta property="og:type" content="website">`, `<meta property="og:site_name" content="1ms.dog">`,
       `<meta property="og:title" content="${esc(T("seo_title"))}">`, `<meta property="og:description" content="${esc(T("og_sub"))}">`, `<meta property="og:url" content="${url}">`,
-      `<meta property="og:locale" content="${locale}">`, `<meta name="twitter:card" content="summary">`,
+      `<meta property="og:locale" content="${locale}">`, `<meta property="og:image" content="${SITE}/og/${lang.toLowerCase()}.png">`,
+      `<meta property="og:image:width" content="1200">`, `<meta property="og:image:height" content="630">`,
+      `<meta name="twitter:card" content="summary_large_image">`, `<meta name="twitter:image" content="${SITE}/og/${lang.toLowerCase()}.png">`,
       `<meta name="twitter:title" content="${esc(T("seo_title"))}">`, `<meta name="twitter:description" content="${esc(T("og_sub"))}">`,
       `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c")}</script>`,
     ].join("\n");
 
     // the checks and every sniffer have their rows from the start; readings fill them in place
-    const checks = `<ul class="ck" id="checks">` + CHECKS.map(c => `<li class="ckr" data-c="${c}"><i class="st"></i><span class="ck-l">${esc(T("c_" + c))}</span><span class="ck-v"><i class="skl"></i></span></li>`).join("") + "</ul>";
+    const checks = `<ul class="ck" id="checks">` + CHECKS.map(c => `<li class="ckr" data-c="${c}"><i class="st"></i><span class="ck-l">${esc(T("c_" + c))}` +
+      `<span class="ck-acts"><button class="ck-fix" type="button" aria-expanded="false" hidden>${esc(T("fix"))}</button>` +
+      (GO[c] ? `<a class="ck-go" target="_blank" rel="noopener" hidden>${esc(T("go_" + GO[c]))} →</a>` : "") +
+      `</span></span><span class="ck-v"><i class="skl"></i></span>` +
+      `<p class="ck-tip" hidden>${esc(T("tip_" + c))}</p></li>`).join("") + "</ul>";
     const G = Object.fromEntries(GROUPS);
-    const group = g => `<div class="pg" data-g="${g}"><h3>${esc(T("g_" + g))}<span class="pg-n">${G[g].length}</span></h3>` +
+    const group = g => `<div class="pg" data-g="${g}"><h3>${esc(T("g_" + g))}<span class="pg-n">${G[g].length}</span>` +
+      (g === "exit" ? `<a class="pg-a" id="egLink" target="_blank" rel="noopener" hidden>${esc(T("ex_more"))}</a>` : "") + "</h3>" +
       G[g].map(s => `<div class="pr wait" data-s="${s.id}"${s.s ? " data-sens" : ""}><span class="pn">${esc(T("s_" + s.id))}</span><span class="pa">…</span><code class="pm">${esc(s.m)}</code></div>`).join("") + "</div>";
     const groups = COLUMNS.map(col => `<div class="pcol">${col.map(group).join("")}</div>`).join("");
     const helpNav = docs.map(([q], i) => `<button type="button" role="tab" data-hq="${i}" aria-selected="${i === 0}">${esc(q)}</button>`).join("");
@@ -167,6 +177,8 @@ export async function build({ check = false } = {}) {
   Cache-Control: public, max-age=31536000, immutable
 /flags/*
   Cache-Control: public, max-age=2592000
+/og/*
+  Cache-Control: public, max-age=604800
 /llms.txt
   Access-Control-Allow-Origin: *
   Content-Type: text/plain; charset=utf-8

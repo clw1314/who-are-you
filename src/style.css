@@ -65,6 +65,12 @@ h2 { font-size: 15px; font-weight: 700; }
 .idc-v .skl { width: 11em; height: 12px; }
 .idc.rand .idc-v { font: 600 15px/1.4 var(--f-ui); }
 .idc-n { font-size: 12.5px; color: var(--muted); }
+/* the visit before this one (kept in this browser only), and a button that forgets it */
+.idc { position: relative; }
+.idc-r { font-size: 12.5px; color: var(--fg); margin-top: 4px; min-height: 1.5em; line-height: 1.5; }
+.idc-x { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 7px; background: transparent; border-color: transparent; color: var(--muted); }
+.idc-x:hover { border-color: var(--line); color: var(--fg); }
+.idc-x svg { width: 12px; height: 12px; }
 
 /* the disguise check: its own panel, a big count, one colored segment per check, then the rows */
 .disg { padding: 16px 18px 6px; border-radius: 16px; border: 1px solid var(--line); background: color-mix(in srgb, var(--fg) 2.5%, var(--panel)); }
@@ -80,8 +86,18 @@ h2 { font-size: 15px; font-weight: 700; }
 .v-h.ok { color: var(--t1); } .v-h.warn { color: var(--t3); } .v-h.bad { color: var(--t5); }
 .v-d { color: var(--muted); font-size: 12.5px; line-height: 1.45; min-height: 2.9em; margin-top: 3px; }
 .ck { list-style: none; margin: 0; padding: 0; }
-.ckr { display: grid; grid-template-columns: 18px minmax(0, 9fr) minmax(0, 13fr); gap: 10px; align-items: center; height: 44px; padding: 4px 0; border-top: 1px solid var(--line); font-size: 13px; }
-.ck-l { font-weight: 600; }
+.ckr { display: grid; grid-template-columns: 18px minmax(0, 9fr) minmax(0, 13fr); gap: 0 10px; align-items: center; min-height: 44px; padding: 4px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.ck-l { font-weight: 600; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+/* "how to fix" under a check that gives you away, and the tip it opens across the whole row */
+.ck-acts { display: flex; flex-wrap: wrap; gap: 0 10px; }
+.ck-acts:empty, .ck-acts:not(:has(:not([hidden]))) { display: none; }
+.ck-go { font: 500 11.5px var(--f-ui); color: var(--muted); text-decoration: none; }
+.ck-go:hover { color: var(--ink); text-decoration: underline; }
+.ck-fix { border: 0; background: none; padding: 0; font: 500 11.5px var(--f-ui); color: var(--ink); cursor: pointer; }
+.ck-fix::after { content: " ▾"; font-size: 9px; }
+.ck-fix[aria-expanded="true"]::after { content: " ▴"; }
+.ck-fix:hover { text-decoration: underline; }
+.ck-tip { grid-column: 1 / -1; margin: 6px 0 4px 28px; padding: 9px 12px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); font-size: 12.5px; line-height: 1.6; color: var(--fg); }
 /* two lines at most, so a long network name doesn't make the row taller; the whole text is on hover */
 .ck-v { color: var(--muted); font-size: 12.5px; line-height: 1.4; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .ckr[data-why] { cursor: help; }
@@ -114,9 +130,13 @@ h2 { font-size: 15px; font-weight: 700; }
 .pg h3 { font-size: 12px; font-weight: 700; color: var(--fg); letter-spacing: .01em; height: 30px; display: flex; align-items: center; gap: 8px; margin: 0; }
 .pg h3::before { content: ""; width: 3px; height: 14px; border-radius: 2px; background: var(--ink); }
 .pg-n { font: 500 11.5px var(--f-num); color: var(--muted); }
+.pg-a { margin-left: auto; font: 500 12px var(--f-ui); color: var(--ink); text-decoration: none; }
+.pg-a:hover { text-decoration: underline; }
 .pr { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 13fr) minmax(0, 7fr); align-items: center; gap: 10px; height: 34px; border-top: 1px solid var(--line); font-size: 13px; transition: background-color .15s; }
 .pn { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pa { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: 12.5px var(--f-num); }
+.pa a { color: inherit; text-decoration: underline dotted color-mix(in srgb, var(--fg) 40%, transparent); text-underline-offset: 3px; }
+.pa a:hover { color: var(--ink); }
 .pa .flag { margin-right: 4px; }
 .pm { justify-self: end; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: 10.5px/18px var(--f-num); color: var(--muted); padding: 0 6px; border-radius: 5px; background: var(--soft); }
 .pr.wait .pa { color: var(--muted); animation: blink 1.2s ease-in-out infinite; }
@@ -136,6 +156,15 @@ h2 { font-size: 15px; font-weight: 700; }
 .dlg-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 12px 12px 18px; border-bottom: 1px solid var(--line); }
 .dlg-h h2 { font-size: 16px; }
 .dialog.help { width: 860px; height: min(560px, calc(100vh - 32px)); }
+.dialog.share { width: 520px; }
+.share-b { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.share-b .m { font-size: 13px; }
+.share-b input { height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--fg); font: 13px var(--f-num); width: 100%; }
+.share-acts { display: flex; gap: 8px; }
+.btn.pri { background: var(--ink); color: var(--ink-fg); border-color: transparent; font-weight: 600; }
+/* someone else's portrait: the city is masked, and there is nothing sniffed to list */
+.bl.hid { color: var(--muted); letter-spacing: .1em; background: none; }
+.shared .probes, .shared #eye { display: none; }
 .help-b { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 0; flex: 1; }
 .help-nav { border-right: 1px solid var(--line); padding: 8px; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
 .help-nav button { text-align: left; border: 0; background: none; padding: 9px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--muted); line-height: 1.4; }

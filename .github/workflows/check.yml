@@ -1,6 +1,6 @@
 name: Check
 
-# Fails when public/ no longer matches src/, or a test fails.
+# Fails when public/ no longer matches src/, a test fails, or the page breaks in a real browser (scripts/smoke.mjs).
 on:
   push:
   pull_request:
@@ -18,3 +18,6 @@ jobs:
           node-version: 22
       - run: npm ci
       - run: npm test
+      - run: npm run smoke
+        env:
+          CHROME_PATH: /usr/bin/google-chrome

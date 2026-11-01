@@ -4,7 +4,7 @@
 
 网站眼中的你是谁？[你是谁](https://who.1ms.dog) 运行任何网站在你打开它的那一刻都能运行的嗅探器，全程不弹任何授权提示，然后把结果写成一段填空的话：你可能的国籍、所在城市、语言和时区、设备、浏览器、屏幕和显卡、网络、偏好、从字体看出的职业，以及浏览器指纹。
 
-接着它像网站识别伪装那样，把这些信息互相对比；并列出全部 70 个嗅探器、每个的读取方式和读到的结果。
+接着它像网站识别伪装那样，把这些信息互相对比；并列出全部 71 个嗅探器、每个的读取方式和读到的结果。
 
 **在线使用：** https://who.1ms.dog
 
@@ -21,13 +21,17 @@
   - User-Agent 和 Client Hints、WebGL 显卡暴露的真实系统
   - 指纹是稳定的（可追踪）还是随机的
   - 自动化（`navigator.webdriver`）
+
+  每一项会暴露你的检测都附有**怎么修**（DNS 泄露用 Clash 的 fake-ip 或 TUN、限制 WebRTC、改时区……）；页面由 1ms.dog 托管时，还会直接链到能查得更深的工具（`<meta name="dns">`、`"egress"`、`"ipqs"`）。
+- **指纹卡**和上次来访：只记在你的浏览器里，显示你上次什么时候来、指纹变没变。网站不用 Cookie 也能认出你，靠的就是这个。
+- **分享**：链接里只有画像和检测结果，不含地址和城市，打开的人看到的是他自己的语言。托管方提供短链服务时（`<meta name="shortener">`）会自动缩短。
 - **全部嗅探器**，分组列出：
   - *服务器看到的*：IP、Cloudflare 地理位置（城市、坐标、ASN、时区）、反向解析、最近的边缘节点和 TCP 往返时间、HTTP/TLS 版本和加密套件、抗量子密钥交换和 ECH、Cloudflare WARP、TLS ClientHello 指纹、你的时钟偏差、DNS 解析器（edns.ip-api.com）、WebRTC 公网和内网地址
   - *出口*：每类目的地看到的地址，以及 IPv4 和 IPv6 出口（Cloudflare Radar）
   - *请求头*：User-Agent、Accept-Language、Sec-CH-UA、平台、压缩方式、DNT/GPC、来源页
   - *语言和地区*：`navigator.languages`、区域设置、时区、12/24 小时制、每周第一天、数字和日期格式、键盘布局、语音朗读
   - *设备*：系统和版本、浏览器、架构、屏幕、刷新率、显示器数量、显卡（WebGL 和 WebGPU）、CPU 线程、内存、触控、电池、网络连接、摄像头和麦克风（只计数，不打开）、视频解码、DRM、存储配额
-  - *浏览器设置*：配色、减少动画、色域和 HDR、DNT/GPC、Cookie、已授予或已拒绝的权限、PDF 阅读器、webdriver、广告拦截、标签页历史、已装字体
+  - *浏览器设置*：配色、减少动画、色域和 HDR、DNT/GPC、Cookie、已授予或已拒绝的权限、PDF 阅读器、webdriver、广告拦截、会留下痕迹的扩展（加密钱包、开发者工具、Grammarly、Dark Reader、沉浸式翻译）、标签页历史、已装字体
   - *指纹*：Canvas、WebGL、音频、字体列表、综合指纹，以及浏览器是否会随机化它们
 
 所有行在读取之前就已画好，哪个嗅探器先返回就先填哪一行；那段话等所有空都齐了才一次填好，页面不会跳动。另有一个按钮可以模糊地址和位置，方便截图。
@@ -44,6 +48,8 @@ cd who-are-you
 npm ci
 npm run dev          # wrangler dev，http://localhost:8795（本地也会拿到 Cloudflare 的地理位置）
 npm test             # 检查 public/ 是否最新，并跑单元测试
+npm run smoke        # 用无头 Chrome 或 Edge 打开每种语言的页面：所有行、空格和检测都填上了，分享能用
+npm run og           # 重新生成链接预览图（public/og/）
 npx wrangler deploy  # 部署名为 who 的 Worker，再到控制台绑定自定义域名
 ```
 

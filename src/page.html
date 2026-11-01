@@ -41,7 +41,8 @@
           <div class="story-w"><div class="story wait" id="story">{{story}}</div><div class="story-sk" id="storySk" aria-hidden="true"><i class="skl"></i><i class="skl"></i><i class="skl"></i><i class="skl"></i><i class="skl"></i><i class="skl"></i><i class="skl"></i></div></div>
           <div class="idc" id="idc">
             <svg class="fp-art" id="fpArt" viewBox="0 0 64 64" aria-hidden="true"></svg>
-            <div class="idc-t"><span class="idc-h" data-i="id_h"></span><b class="idc-v" id="fpId"><i class="skl"></i></b><span class="idc-n" id="fpNote" data-i="id_note"></span></div>
+            <div class="idc-t"><span class="idc-h" data-i="id_h"></span><b class="idc-v" id="fpId"><i class="skl"></i></b><span class="idc-n" id="fpNote" data-i="id_note"></span><span class="idc-r" id="fpRet">&nbsp;</span></div>
+            <button class="icon-btn idc-x" id="forget" type="button" aria-label="{{a:rv_forget}}" title="{{a:rv_forget}}" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
           </div>
         </div>
         <aside class="col disg">
@@ -55,6 +56,8 @@
         <div class="prog" id="prog"><i></i></div>
         <span class="prog-t" id="progTxt">&nbsp;</span>
         <div class="acts">
+          <button class="btn" id="mine" type="button" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5.5" r="3"/><path d="M2.5 14.5c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5"/></svg><span data-i="mine"></span></button>
+          <button class="btn" id="share" type="button" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="12" cy="3.5" r="2"/><circle cx="4" cy="8" r="2"/><circle cx="12" cy="12.5" r="2"/><path d="M5.8 7l4.4-2.5M5.8 9l4.4 2.5"/></svg><span data-i="share"></span></button>
           <button class="btn" id="eye" type="button" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 8s2.4-4.5 6.5-4.5S14.5 8 14.5 8s-2.4 4.5-6.5 4.5S1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg><span id="eyeT" data-i="hide"></span></button>
           <button class="btn" id="rerun" type="button" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2v3h-3"/></svg><span data-i="rerun"></span></button>
         </div>
@@ -68,6 +71,17 @@
 
   </main>
   <div data-ms-more></div>
+</div>
+<div class="scrim" id="shareDlg" hidden>
+  <div class="dialog share" role="dialog" aria-modal="true" aria-labelledby="shareT">
+    <div class="dlg-h"><h2 id="shareT" data-i="sh_h"></h2>
+      <button class="icon-btn" data-close type="button" aria-label="{{a:a_close}}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+    <div class="share-b">
+      <p class="m" data-i="sh_note"></p>
+      <input id="shareUrl" type="text" readonly aria-labelledby="shareT">
+      <div class="share-acts"><button class="btn pri" id="copyLink" type="button" data-i="sh_copy"></button><button class="btn" id="nativeShare" type="button" data-i="sh_native" hidden></button></div>
+    </div>
+  </div>
 </div>
 <div class="scrim" id="help" hidden>
   <div class="dialog help" role="dialog" aria-modal="true" aria-labelledby="helpT">

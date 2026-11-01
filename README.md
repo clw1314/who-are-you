@@ -4,7 +4,7 @@
 
 Who do websites think you are? [Who Are You](https://who.1ms.dog) runs the sniffers any site can run the moment you open it, without a single permission prompt, and writes down the result as a paragraph with the blanks filled in: your likely nationality, the city you're in, your language and time zone, your device, browser, screen and graphics card, your network, your preferences, what your fonts say about your work, and your browser fingerprint.
 
-It then checks those readings against each other the way a site would to spot a disguise, and lists all 70 sniffers with how each one reads and what it read.
+It then checks those readings against each other the way a site would to spot a disguise, and lists all 71 sniffers with how each one reads and what it read.
 
 **Live:** https://who.1ms.dog
 
@@ -21,13 +21,17 @@ It then checks those readings against each other the way a site would to spot a 
   - user agent vs. the system the client hints and WebGL renderer give away
   - whether the fingerprint is stable (trackable) or randomized
   - automation (`navigator.webdriver`)
+
+  Every check that gives you away has a **How to fix** tip (Clash fake-ip / TUN for DNS leaks, limiting WebRTC, matching the time zone…), and a link to the 1ms.dog tool that looks deeper when the host announces it (`<meta name="dns">`, `"egress"`, `"ipqs"`).
+- **The fingerprint ID card**, with your previous visit: kept in your browser only, it shows when you were last here and whether the fingerprint was the same, which is how a site that never set a cookie still recognizes you.
+- **Sharing.** A link carries the portrait and the checks, never your address or city; it reads in the viewer's language. Shortened when the host announces a shortener (`<meta name="shortener">`).
 - **Every sniffer**, grouped:
   - *What the server sees*: IP, Cloudflare geolocation (city, coordinates, ASN, time zone), reverse DNS, nearest edge and TCP RTT, HTTP/TLS version and cipher, post-quantum key exchange and ECH, Cloudflare WARP, a TLS ClientHello fingerprint, your clock's offset, the DNS resolver (edns.ip-api.com), WebRTC public and local addresses
   - *Exits*: the address each kind of destination sees, plus your IPv4 and IPv6 exits (Cloudflare Radar)
   - *Request headers*: User-Agent, Accept-Language, Sec-CH-UA, platform, encodings, DNT/GPC, referrer
   - *Language and region*: `navigator.languages`, locale, time zone, 12/24-hour clock, first day of the week, number and date format, keyboard layout, speech voices
   - *Device*: OS and version, browser, architecture, screen, refresh rate, number of screens, GPU (WebGL and WebGPU), CPU threads, memory, touch, battery, connection, cameras and microphones (counted, never opened), video codecs, DRM systems, storage quota
-  - *Browser settings*: color scheme, reduced motion, color gamut and HDR, DNT/GPC, cookies, permissions already granted or blocked, PDF viewer, webdriver, ad blocker, tab history, installed fonts
+  - *Browser settings*: color scheme, reduced motion, color gamut and HDR, DNT/GPC, cookies, permissions already granted or blocked, PDF viewer, webdriver, ad blocker, extensions that leave a mark (crypto wallets, developer tools, Grammarly, Dark Reader, Immersive Translate), tab history, installed fonts
   - *Fingerprints*: canvas, WebGL, audio, font list, the combined fingerprint, and whether the browser randomizes them
 
 Rows are drawn before anything is read and filled the moment each sniffer answers; the paragraph is filled once, when every blank is in, so the page doesn't jump. A button blurs the address and location for screenshots.
@@ -44,6 +48,8 @@ cd who-are-you
 npm ci
 npm run dev          # wrangler dev on http://localhost:8795 (geolocation comes from Cloudflare even locally)
 npm test             # public/ is up to date, and the unit tests
+npm run smoke        # every language page in headless Chrome or Edge: all rows, blanks and checks filled, sharing works
+npm run og           # re-render the link-preview images (public/og/)
 npx wrangler deploy  # deploy the Worker "who"; then add a custom domain in the dashboard
 ```
 
