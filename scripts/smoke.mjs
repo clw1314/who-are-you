@@ -2,7 +2,8 @@
 // Smoke test in a real browser: serves public/ (with a stand-in for /api/me and Cloudflare's trace), opens every
 // language page in headless Chrome and checks that the page script ran through: no script errors, every sniffer row
 // filled, every blank of the portrait filled with no placeholder or "undefined" left, every check judged. Then it
-// shares the English portrait and opens the link: the shared view must show the portrait with the city masked.
+// shares the English portrait (link and image card) and opens the link: the link must carry no address, city,
+// network or fingerprint, and the shared view must show the portrait with the city and fingerprint masked.
 // The exit and DNS probes go to the real services, so a row may read "couldn't read" offline; it must not stay "…".
 // Usage: node scripts/smoke.mjs            (finds Chrome or Edge; CHROME_PATH=… to pick one)
 import { createServer } from "node:http";
@@ -11,6 +12,7 @@ import { extname } from "node:path";
 import puppeteer from "puppeteer-core";
 import { LANGS } from "./build.mjs";
 import { SNIFFERS, BLANKS, CHECKS } from "../src/sniffers.mjs";
+import { decode, SLUG } from "../src/share.mjs";
 
 const pub = new URL("../public/", import.meta.url);
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2", ".ico": "image/x-icon" };
@@ -21,6 +23,12 @@ const ME = { ip: "203.0.113.7", v: 4, ptr: null, h: { "user-agent": "smoke", "ac
 const server = createServer(async (req, res) => {
   const path = decodeURIComponent(new URL(req.url, "http://x").pathname);
   if (path === "/api/me") { res.writeHead(200, { "content-type": "application/json" }); return res.end(JSON.stringify({ ...ME, at: Date.now() })); }
+  // a shared portrait: the Worker serves its language's page (here without the preview tags it adds)
+  if (path.startsWith("/r/")) {
+    const P = decode(path.slice(3)), slug = P && SLUG[P.l];
+    res.writeHead(P ? 200 : 404, { "content-type": TYPES[".html"] });
+    return res.end(P ? await readFile(new URL((slug ? slug + "/" : "") + "index.html", pub)) : "");
+  }
   if (path === "/cdn-cgi/trace") { res.writeHead(200, { "content-type": "text/plain" }); return res.end("ip=203.0.113.7\nkex=X25519MLKEM768\nsni=plaintext\nwarp=off\ngateway=off\n"); }
   try {
     const body = await readFile(new URL("." + (path.endsWith("/") ? path + "index.html" : path), pub));
@@ -72,17 +80,23 @@ for (const [lang, slug] of LANGS) {
   if (lang === "en") {
     // share, then open the link as someone else would
     await page.click("#share");
-    await page.waitForFunction(() => /#p=/.test(document.querySelector("#shareUrl").value), { timeout: 5000 }).catch(() => fail("share", "no link"));
-    const link = await page.$eval("#shareUrl", x => x.value);
-    if (/203\.0\.113\.7|Tokyo/.test(decodeURIComponent(link)) || /203\.0\.113\.7|Tokyo/.test(Buffer.from(link.split("#p=")[1].replace(/-/g, "+").replace(/_/g, "/"), "base64").toString()))
-      fail("share", "the link carries the address or the city");
+    // the link and the image card, made in the page
+    await page.waitForFunction(() => /\/r\//.test(document.querySelector("#shareUrl").value) && document.querySelector("#shareImg").src, { timeout: 8000 })
+      .catch(() => fail("share", "no link or no image"));
+    const link = await page.$eval("#shareUrl", x => x.value), P = decode(link.split("/r/")[1] || "");
+    if (!P) fail("share", "the link doesn't decode");
+    else {
+      if (/203\.0\.113\.7|Tokyo|KDDI/.test(JSON.stringify(P))) fail("share", "the link carries the address, city or network");
+      if ("fp" in P || "x" in P) fail("share", "the link carries the fingerprint");
+    }
     const s = await open(link);
     await s.page.waitForSelector("html.shared", { timeout: 5000 }).catch(() => fail("share", "shared view not shown"));
-    const v = await s.page.evaluate(() => ({ waiting: document.querySelectorAll(".bl.wait").length, city: document.querySelector('.bl[data-b="city"]').textContent,
+    const v = await s.page.evaluate(() => ({ waiting: document.querySelectorAll(".bl.wait").length, city: document.querySelector('.bl[data-b="city"]').textContent, fp: document.querySelector("#fpId").textContent,
       story: document.querySelector("#story").textContent, mine: !document.querySelector("#mine").hidden }));
     for (const e of s.errors) fail("share", "script error: " + e);
     if (v.waiting) fail("share", `${v.waiting} blanks still waiting`);
     if (v.city !== "•••") fail("share", `city shows "${v.city}"`);
+    if (v.fp !== "•••") fail("share", `fingerprint shows "${v.fp}"`);
     if (/\{\w+\}|undefined|null|NaN/.test(v.story)) fail("share", "portrait has a leftover");
     if (!v.mine) fail("share", "no \"check mine\" button");
     await s.page.close();

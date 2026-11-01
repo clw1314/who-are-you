@@ -128,7 +128,7 @@ export default {
   ex_more: "Prueba completa →",
   share: "Compartir",
   sh_h: "Comparte tu retrato",
-  sh_note: "El enlace lleva el retrato y la prueba de disfraz, sin tu dirección ni tu ciudad.",
+  sh_note: "Se hace en tu navegador y nunca se sube. La imagen y el enlace no llevan tu dirección ni tu huella; la ciudad y la red, solo si marcas la casilla.",
   sh_copy: "Copiar enlace",
   copied: "Copiado",
   sh_native: "Compartir…",
@@ -138,6 +138,19 @@ export default {
   masked_why: "La ciudad no se comparte.",
 
   go_egress: "Lupa IP", go_ipqs: "Test de calidad IP", go_dns: "Test de DNS",
+
+  r_title: "{n} cosas podrían delatarme",
+  r_title_clean: "Mi disfraz no tiene contradicciones",
+  r_desc: "Quién creen los sitios que soy: probablemente de {nat}, {os}, {browser}. Abre el retrato y mira el tuyo.",
+  card_me: "Quién creen los sitios que soy",
+  card_cta: "Mira el tuyo",
+  sh_show: "Mostrar mi ciudad y mi red",
+  sh_img_copy: "Copiar imagen",
+  sh_dl: "Descargar imagen",
+  sh_fp: "La huella no se comparte",
+  og_r0: "Sin contradicciones",
+  og_r1: "Algunas cosas me delatan",
+  og_r2: "Muchas cosas me delatan",
 
   docs: [
     ["¿Qué hace esta página?", "Ejecuta los mismos rastreadores que cualquier sitio puede ejecutar en cuanto lo abres y escribe quién te hace eso: de dónde vienes probablemente, dónde estás, qué usas y qué prefieres.\nAl pasar el ratón sobre un hueco del párrafo ves de qué rastreadores salió, y la lista de abajo muestra cada rastreador, cómo lee (la API o cabecera de la columna derecha) y lo que leyó. Ninguno muestra un aviso de permiso."],

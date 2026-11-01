@@ -128,7 +128,7 @@ export default {
   ex_more: "Vollständig prüfen →",
   share: "Teilen",
   sh_h: "Ihr Porträt teilen",
-  sh_note: "Der Link enthält Porträt und Tarnungs-Check, ohne Ihre Adresse oder Stadt.",
+  sh_note: "Entsteht in Ihrem Browser und wird nie hochgeladen. Bild und Link enthalten weder Adresse noch Fingerabdruck; Stadt und Netz nur, wenn Sie das Kästchen ankreuzen.",
   sh_copy: "Link kopieren",
   copied: "Kopiert",
   sh_native: "Teilen …",
@@ -138,6 +138,19 @@ export default {
   masked_why: "Die Stadt wird nicht geteilt.",
 
   go_egress: "IP-Lupe", go_ipqs: "IP-Qualitätstest", go_dns: "DNS-Test",
+
+  r_title: "{n} Dinge könnten mich verraten",
+  r_title_clean: "Keine Widersprüche in meiner Tarnung",
+  r_desc: "Für wen Websites mich halten: vermutlich aus {nat}, {os}, {browser}. Porträt öffnen und das eigene prüfen.",
+  card_me: "Für wen Websites mich halten",
+  card_cta: "Ihres prüfen",
+  sh_show: "Meine Stadt und mein Netz zeigen",
+  sh_img_copy: "Bild kopieren",
+  sh_dl: "Bild herunterladen",
+  sh_fp: "Der Fingerabdruck wird nicht geteilt",
+  og_r0: "Keine Widersprüche",
+  og_r1: "Ein paar Dinge verraten mich",
+  og_r2: "Vieles verrät mich",
 
   docs: [
     ["Was macht diese Seite?", "Sie lässt dieselben Schnüffler laufen, die jede Website laufen lassen kann, sobald Sie sie öffnen, und schreibt auf, wer Sie damit sind: woher Sie wahrscheinlich kommen, wo Sie gerade sind, was Sie nutzen und was Sie mögen.\nZeigen Sie auf eine Lücke im Text, um zu sehen, von welchen Schnüfflern sie stammt; die Liste darunter zeigt jeden Schnüffler, wie er liest (die API oder der Header in der rechten Spalte) und was er gelesen hat. Keiner zeigt eine Berechtigungsabfrage."],

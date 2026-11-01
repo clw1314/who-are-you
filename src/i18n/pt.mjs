@@ -128,7 +128,7 @@ export default {
   ex_more: "Teste completo →",
   share: "Compartilhar",
   sh_h: "Compartilhe seu retrato",
-  sh_note: "O link leva o retrato e o teste de disfarce, sem seu endereço nem sua cidade.",
+  sh_note: "Feito no seu navegador e nunca enviado. A imagem e o link não levam seu endereço nem sua impressão digital; cidade e rede só se você marcar a caixa.",
   sh_copy: "Copiar link",
   copied: "Copiado",
   sh_native: "Compartilhar…",
@@ -138,6 +138,19 @@ export default {
   masked_why: "A cidade não é compartilhada.",
 
   go_egress: "Lupa de IP", go_ipqs: "Teste de qualidade IP", go_dns: "Teste de DNS",
+
+  r_title: "{n} coisas podem me entregar",
+  r_title_clean: "Meu disfarce não tem contradições",
+  r_desc: "Quem os sites acham que eu sou: provavelmente de {nat}, {os}, {browser}. Abra o retrato e veja o seu.",
+  card_me: "Quem os sites acham que eu sou",
+  card_cta: "Veja o seu",
+  sh_show: "Mostrar minha cidade e minha rede",
+  sh_img_copy: "Copiar imagem",
+  sh_dl: "Baixar imagem",
+  sh_fp: "A impressão digital não é compartilhada",
+  og_r0: "Nenhuma contradição",
+  og_r1: "Algumas coisas me entregam",
+  og_r2: "Muitas coisas me entregam",
 
   docs: [
     ["O que esta página faz?", "Ela roda os mesmos farejadores que qualquer site pode rodar assim que você o abre e escreve quem isso faz de você: de onde você provavelmente vem, onde está, o que usa e do que gosta.\nPasse o mouse sobre uma lacuna do parágrafo para ver de quais farejadores ela veio; a lista abaixo mostra cada farejador, como ele lê (a API ou o cabeçalho da coluna da direita) e o que leu. Nenhum mostra pedido de permissão."],

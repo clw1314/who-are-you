@@ -128,7 +128,7 @@ export default {
   ex_more: "Test complet →",
   share: "Partager",
   sh_h: "Partager votre portrait",
-  sh_note: "Le lien contient le portrait et le test de déguisement, sans votre adresse ni votre ville.",
+  sh_note: "Fait dans votre navigateur, jamais envoyé. L’image et le lien ne contiennent ni votre adresse ni votre empreinte ; la ville et le réseau seulement si vous cochez la case.",
   sh_copy: "Copier le lien",
   copied: "Copié",
   sh_native: "Partager…",
@@ -138,6 +138,19 @@ export default {
   masked_why: "La ville n’est pas partagée.",
 
   go_egress: "Loupe IP", go_ipqs: "Test qualité IP", go_dns: "Test DNS",
+
+  r_title: "{n} points pourraient me trahir",
+  r_title_clean: "Aucune contradiction dans mon déguisement",
+  r_desc: "Qui les sites croient que je suis : nationalité probable {nat}, {os}, {browser}. Ouvrez le portrait, puis testez le vôtre.",
+  card_me: "Qui les sites croient que je suis",
+  card_cta: "Testez le vôtre",
+  sh_show: "Afficher ma ville et mon réseau",
+  sh_img_copy: "Copier l’image",
+  sh_dl: "Télécharger l’image",
+  sh_fp: "L’empreinte n’est pas partagée",
+  og_r0: "Aucune contradiction",
+  og_r1: "Quelques points me trahissent",
+  og_r2: "Beaucoup de points me trahissent",
 
   docs: [
     ["Que fait cette page ?", "Elle lance les mêmes renifleurs que n’importe quel site peut lancer dès que vous l’ouvrez, puis écrit qui cela fait de vous : d’où vous venez probablement, où vous êtes, ce que vous utilisez et ce que vous préférez.\nSurvolez un trou du paragraphe pour voir de quels renifleurs il vient ; la liste en dessous montre chaque renifleur, comment il lit (l’API ou l’en-tête de la colonne de droite) et ce qu’il a lu. Aucun n’affiche de demande d’autorisation."],

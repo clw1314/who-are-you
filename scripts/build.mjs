@@ -34,9 +34,9 @@ async function loadI18n() {
   return out;
 }
 
-// Strings only the build uses (the page already shows them); everything else goes to the browser
-const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "app_name", "docs", "lang_label", "faq_h", "story",
-  ...CHECKS.map(c => "c_" + c)]);
+// Strings only the build uses (the page already shows them); everything else goes to the browser (the check names
+// too: the share card draws them)
+const BUILD_ONLY = new Set(["name", "seo_title", "seo_desc", "seo_kw", "og_sub", "h1", "app_name", "docs", "lang_label", "faq_h", "story"]);
 
 // the checks another 1ms.dog tool looks into deeper; the page links there when the host announces that tool
 export const GO = { dns: "dns", split: "egress", webrtc: "egress", dc: "ipqs" };

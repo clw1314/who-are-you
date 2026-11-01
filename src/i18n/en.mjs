@@ -129,7 +129,7 @@ export default {
   ex_more: "Full check →",
   share: "Share",
   sh_h: "Share your portrait",
-  sh_note: "The link carries the portrait and the checks, without your address or city.",
+  sh_note: "Made in your browser and never uploaded. The image and link leave out your address and fingerprint; city and network only if you tick the box.",
   sh_copy: "Copy link",
   copied: "Copied",
   sh_native: "Share…",
@@ -139,6 +139,19 @@ export default {
   masked_why: "The city isn't shared.",
 
   go_egress: "EgressLens", go_ipqs: "IP Quality Test", go_dns: "DNS Test",
+
+  r_title: "{n} things could give me away",
+  r_title_clean: "No contradictions in my disguise",
+  r_desc: "Who sites think I am: probably from {nat}, {os}, {browser}. Open the portrait, then check yours.",
+  card_me: "Who sites think I am",
+  card_cta: "Check yours",
+  sh_show: "Show my city and network",
+  sh_img_copy: "Copy image",
+  sh_dl: "Download image",
+  sh_fp: "The fingerprint isn't shared",
+  og_r0: "No contradictions",
+  og_r1: "A few things give me away",
+  og_r2: "Lots of things give me away",
 
   docs: [
     ["What does this page do?", "It runs the same sniffers any website can run the moment you open it, then writes down who that makes you: where you probably come from, where you are, what you use and what you like.\nEvery blank in the paragraph says on hover which sniffers it came from, and the list below shows each sniffer, how it reads (the API or header in the right column) and what it read. None of them shows a permission prompt."],

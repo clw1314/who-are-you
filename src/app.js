@@ -3,6 +3,7 @@
 // read; each row is in the HTML from the start and is filled the moment its sniffer answers. The paragraph is filled
 // once, when every sniffer it needs is in, so its text doesn't reflow piece by piece. Strings: window.L1MS.
 import { GROUPS, SNIFFERS, BLANKS, CHECKS } from "./sniffers.mjs";
+import { encode, decode } from "./share.mjs";
 import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, fontHints, checks, offTxt, splitOf } from "./infer.mjs";
 
 (function () {
@@ -56,7 +57,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   };
   applyTheme(TH.includes(store.get(K.theme)) ? store.get(K.theme) : "system");
   thBtn.onclick = () => { const n = TH[(TH.indexOf(thBtn.dataset.th) + 1) % 3]; store.set(K.theme, n); applyTheme(n); };
-  $("#lang").onchange = e => { const l = e.target.value; store.set(K.lang, l); location.href = D.paths[l] + location.search + location.hash; };   // a shared portrait comes along
+  $("#lang").onchange = e => { const l = e.target.value; store.set(K.lang, l); location.href = /^\/r\//.test(location.pathname) ? location.pathname + "?lang=" + l : D.paths[l] + location.search + location.hash; };   // a shared portrait comes along
 
   /* ---------- dialogs ---------- */
   function openDlg(id) { $("#" + id).hidden = false; document.documentElement.style.overflow = "hidden"; $("#" + id + " [data-close]").focus(); }
@@ -598,9 +599,9 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   }
   $("#forget").onclick = () => { try { localStorage.removeItem(K.last); } catch (e) {} $("#fpRet").textContent = t("rv_forgot"); $("#forget").hidden = true; };
   function idCard(P, shared) {
-    $("#fpId").textContent = P.rand ? t("fp_rand") : P.fp || "–";
-    $("#fpNote").textContent = t(P.rand ? "id_note_rand" : "id_note");
-    $("#fpArt").innerHTML = P.rand || !P.x.fpHex && !P.fp ? "" : fpArt(P.x.fpHex || P.fp.replace(/\W/g, "").repeat(4));
+    $("#fpId").textContent = P.rand ? t("fp_rand") : P.fp || t("masked");
+    $("#fpNote").textContent = t(shared ? "sh_fp" : P.rand ? "id_note_rand" : "id_note");
+    $("#fpArt").innerHTML = P.rand || !P.x.fpHex ? "" : fpArt(P.x.fpHex);
     $("#idc").classList.toggle("rand", !!P.rand);
     $("#fpRet").textContent = shared ? " " : returnVisit(P);
   }
@@ -623,8 +624,9 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   function paint(P, shared) {
     const X = P.x || {}, U = esc(t("v_unknown"));
     blank("nat", P.nat ? flagged(P.nat, country(P.nat)) : U, P.natFrom || BLANKS.nat);
-    blank("city", shared ? esc(t("masked")) : P.cc ? flagged(P.cc, [P.city, country(P.cc)].filter(Boolean).join(", ")) : U, BLANKS.city, shared ? t("masked_why") : "");
-    if (shared) BL.city.classList.add("hid");
+    blank("city", shared && !P.city ? esc(t("masked")) : P.cc ? flagged(P.cc, [P.city, country(P.cc)].filter(Boolean).join(", ")) : U, BLANKS.city, shared ? t("masked_why") : "");
+    BL.city.classList.toggle("hid", shared && !P.city);
+    BL.isp.classList.toggle("hid", shared && !P.org);
     blank("lang", P.langs.length ? esc(language(P.langs[0])) : U, BLANKS.lang, P.langs.map(language).join(", "));
     blank("tz", P.tz ? esc(tzLabel(P.tz)) : U, BLANKS.tz, P.tz || "");
     blank("clock", esc(t(P.h12 ? "ck_12" : "ck_24")));
@@ -632,7 +634,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     blank("browser", P.browser ? esc(P.browser) : U);
     blank("screen", P.screen ? esc(P.screen) : U);
     blank("gpu", esc(P.gpu || t("gpu_unknown")));
-    blank("isp", P.org ? esc(P.org) : U, BLANKS.isp, X.fullOrg || "");
+    blank("isp", P.org ? esc(P.org) : shared ? esc(t("masked")) : U, BLANKS.isp, X.fullOrg || (shared && !P.org ? t("masked_why") : ""));
     blank("dns", P.dns ? flagged(P.dns, country(P.dns)) : U, BLANKS.dns, X.dnsOrg || "");
     const sp = X.split;
     blank("nettype", esc(P.nt === "split" ? t("nt_split", { n: P.nx }) : P.nt ? t("nt_" + P.nt) : t("v_unknown")),
@@ -695,17 +697,19 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     paintChecks(res, c.country, final);
   }
 
-  /* ---------- sharing: the portrait in the link, without the address or the city ---------- */
-  const b64u = s => btoa(String.fromCharCode(...new TextEncoder().encode(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  const unb64u = s => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), ch => ch.charCodeAt(0)));
+  /* ---------- sharing: an image card and a link, both made here, without the address or the fingerprint ---------- */
+  // The city and the network go out only when the sharer ticks "show"; the fingerprint never does (it is the very
+  // thing that would let anyone follow them). Addresses in the checks are cut to their network.
   const maskIp = ip => ip.includes(":") ? ip.split(":").slice(0, 2).join(":") + ":…" : ip.split(".").slice(0, 2).join(".") + ".•.•";
-  function shareCode() {
+  const shareShow = () => $("#shareShow").checked;
+  function sharedPortrait(show) {
     const P = portrait();
-    delete P.x; P.city = null;
-    // the checks travel too, with any address in them cut to its network
+    delete P.x; delete P.fp;
+    if (!show) { P.city = null; P.org = null; }
+    P.l = LANG;
     P.ck = Object.fromEntries(Object.entries(R.ck || {}).filter(([, v]) => v).map(([id, [lv, key, vars]]) =>
-      [id, [lv, key, Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "ip" ? maskIp(String(x)) : x]))]]));
-    return b64u(JSON.stringify(P));
+      [id, [lv, key, Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "ip" ? maskIp(String(x)) : k === "org" && !show ? t("masked") : x]))]]));
+    return P;
   }
   async function shortLink(long) {
     const meta = document.querySelector('meta[name="shortener"]');   // announced by the 1ms.dog host; absent when self-hosted
@@ -716,31 +720,111 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     } catch (e) {}
     return long;
   }
-  $("#share").onclick = async () => {
-    const long = location.origin + location.pathname + "#p=" + shareCode();
-    $("#shareUrl").value = long; $("#nativeShare").hidden = !navigator.share;
-    openDlg("shareDlg");
-    $("#shareUrl").value = await shortLink(long);
-  };
+
+  // The card: brand, the paragraph as the page shows it (masked blanks stay masked), the count with every check,
+  // and where to try it. Drawn twice: once to measure the height, once to paint.
+  const img = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  async function drawCard(show) {
+    const W = 1080, P = 64, F = "Geist, 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans', 'Malgun Gothic', sans-serif";
+    const LIME = "#a3e635", FG = "#f2f2f2", MUT = "#9a9a9a", LV = { ok: "#3ecf8e", warn: "#f5c524", bad: "#f56565", info: "#6b6b6b" };
+    const logo = await img("/assets/logo-dark.svg").catch(() => null);
+    // the paragraph as segments of plain words and answers
+    const lines = $$("#story p").map(p => [...p.childNodes].map(n => {
+      if (n.nodeType === 3) return [n.textContent, false];
+      const k = n.dataset && n.dataset.b;
+      return [(k === "city" || k === "isp") && !show ? t("masked") : n.textContent, true];
+    }));
+    const res = R.ck || {}, n = Object.values(res).filter(v => v && (v[0] === "bad" || v[0] === "warn")).length;
+    const draw = (c, paint) => {
+      let y = P;
+      if (paint) { c.fillStyle = "#161616"; c.fillRect(0, 0, W, c.canvas.height); const g = c.createRadialGradient(0, 0, 0, 0, 0, 900); g.addColorStop(0, "rgba(163,230,53,.16)"); g.addColorStop(1, "rgba(163,230,53,0)"); c.fillStyle = g; c.fillRect(0, 0, W, c.canvas.height); }
+      if (paint && logo) c.drawImage(logo, P, y, 120, 48);
+      c.font = `600 22px ${F}`; c.fillStyle = MUT; c.textAlign = "right"; if (paint) c.fillText(location.host, W - P, y + 32); c.textAlign = "left";
+      y += 48 + 44;
+      c.font = `800 52px ${F}`; c.fillStyle = FG; if (paint) c.fillText(t("card_me"), P, y); y += 40;
+      // the paragraph, wrapped word by word (character by character for CJK)
+      const size = 28, lh = 48;
+      for (const segs of lines) {
+        let x = P; y += lh;
+        for (const [text, ans] of segs) {
+          c.font = `${ans ? 700 : 400} ${size}px ${F}`;
+          for (const tok of text.match(/[　-鿿가-힯＀-￯]|[^\s　-鿿가-힯＀-￯]+\s*|\s+/g) || []) {
+            const w = c.measureText(tok).width;
+            if (x + w > W - P && x > P) { x = P; y += lh; if (/^\s+$/.test(tok)) continue; }
+            if (paint) {
+              if (ans) { c.fillStyle = "rgba(163,230,53,.28)"; c.fillRect(x, y + 6, w, 10); }
+              c.fillStyle = ans ? FG : MUT; c.fillText(tok, x, y);
+            }
+            x += w;
+          }
+        }
+        y += 10;
+      }
+      // the count and every check
+      y += 44;
+      if (paint) { c.fillStyle = "#2a2a2a"; c.fillRect(P, y, W - 2 * P, 2); }
+      y += 70;
+      c.font = `800 72px ${F}`; c.fillStyle = n ? (Object.values(res).some(v => v && v[0] === "bad") ? LV.bad : LV.warn) : LV.ok;
+      if (paint) c.fillText(String(n), P, y);
+      const nw = c.measureText(String(n)).width;
+      c.font = `700 30px ${F}`; c.fillStyle = FG; if (paint) c.fillText(n ? t("v_found", { n }) : t("v_clean"), P + nw + 24, y - 14);
+      y += 30;
+      const colW = (W - 2 * P) / 2;
+      CHECKS.forEach((id, i) => {
+        const v = res[id]; const cx = P + (i % 2) * colW, cy = y + 52 * Math.floor(i / 2) + 30;
+        if (!paint) return;
+        c.fillStyle = v ? LV[v[0]] : LV.info; c.beginPath(); c.arc(cx + 9, cy - 9, 9, 0, Math.PI * 2); c.fill();
+        c.font = `500 25px ${F}`; c.fillStyle = FG; c.fillText(t("c_" + id), cx + 30, cy);
+      });
+      y += 52 * Math.ceil(CHECKS.length / 2) + 40;
+      c.font = `700 28px ${F}`; c.fillStyle = LIME; if (paint) c.fillText(t("card_cta") + " → " + location.host, P, y);
+      return y + P - 10;
+    };
+    const cv = document.createElement("canvas"); cv.width = W; cv.height = 10;
+    const h = draw(cv.getContext("2d"), false);
+    cv.height = h;
+    draw(cv.getContext("2d"), true);
+    return cv;
+  }
+
+  let shareBlob = null;
+  async function makeShare() {
+    const show = shareShow();
+    const long = location.origin + "/r/" + encode(sharedPortrait(show));
+    $("#shareUrl").value = long;
+    shareBlob = null; $("#shareImg").removeAttribute("src");
+    const [url, cv] = await Promise.all([shortLink(long), drawCard(show).catch(() => null)]);
+    $("#shareUrl").value = url;
+    if (cv) { $("#shareImg").src = cv.toDataURL("image/png"); cv.toBlob(b => { shareBlob = b; }, "image/png"); }
+  }
+  $("#share").onclick = () => { $("#nativeShare").hidden = !navigator.share; openDlg("shareDlg"); makeShare(); };
+  $("#shareShow").onchange = makeShare;
   const flash = (btn, k) => { const o = btn.textContent; btn.textContent = t(k); setTimeout(() => { btn.textContent = o; }, 1500); };
   $("#copyLink").onclick = async e => { try { await navigator.clipboard.writeText($("#shareUrl").value); flash(e.target, "copied"); } catch (x) { $("#shareUrl").select(); } };
-  $("#nativeShare").onclick = async () => { try { await navigator.share({ title: document.title, url: $("#shareUrl").value }); } catch (e) {} };
+  $("#copyImg").onclick = async e => { try { await navigator.clipboard.write([new ClipboardItem({ "image/png": shareBlob })]); flash(e.target, "copied"); } catch (x) {} };
+  $("#dlImg").onclick = () => { if (!$("#shareImg").src) return; const a = document.createElement("a"); a.href = $("#shareImg").src; a.download = "who-1ms-dog.png"; a.click(); };
+  $("#nativeShare").onclick = async () => {
+    const file = shareBlob && new File([shareBlob], "who-1ms-dog.png", { type: "image/png" });
+    const data = { title: t("card_me"), url: $("#shareUrl").value };
+    try { await navigator.share(file && navigator.canShare && navigator.canShare({ files: [file] }) ? { ...data, files: [file] } : data); } catch (e) {}
+  };
 
-  // someone else's portrait: drawn from the link, nothing sniffed; the sniffers card and the run controls step aside
+  // Someone else's portrait: from /r/<code> (or an older #p=<code> link), drawn from the link with nothing sniffed;
+  // the sniffers card and the run controls step aside.
   function showShared(code) {
-    let P;
-    try { P = JSON.parse(unb64u(code)); } catch (e) { return false; }
-    if (!P || P.v !== 1) return false;
+    const P = decode(code);
+    if (!P) return false;
     P.langs = P.langs || []; P.jobs = P.jobs || []; P.x = {};
     document.documentElement.classList.add("shared");
     $(".eyebrow").lastChild.textContent = t("sh_eyebrow");
     $("#mine").hidden = false; $("#share").hidden = true; $("#rerun").hidden = true;
-    $("#mine").onclick = () => { location.href = location.pathname + location.search; };
+    $("#mine").onclick = () => { location.href = D.paths[LANG] || "/"; };
     $("#progTxt").textContent = " ";
     paint(P, true);
     paintChecks(P.ck || {}, P.cc, true);
     return true;
   }
+  const sharedCode = (location.pathname.match(/^\/r\/([A-Za-z0-9_-]+)/) || [])[1] || (/^#p=/.test(location.hash) ? location.hash.slice(3) : null);
 
   /* ---------- a run ---------- */
   async function run() {
@@ -780,6 +864,6 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     $("#rerun").disabled = false; $("#share").disabled = false;
   }
   $("#rerun").onclick = run;
-  const shared = /^#p=/.test(location.hash) && showShared(location.hash.slice(3));
+  const shared = sharedCode && showShared(sharedCode);
   if (!shared) run();
 })();

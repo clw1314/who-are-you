@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Renders the link-preview images with resvg (dev dependency), 1200 × 630: public/og/<lang>.png for each language.
+// Renders the link-preview images with resvg (dev dependency), 1200 × 630: public/og/<lang>.png for each language,
+// and public/og/r<tier>-<lang>.png for shared results (the Worker picks one by how many checks give the sharer away).
 // The headline and subtitle come from the page's strings; the rings are the page's fingerprint picture; the colored
 // bars are the disguise check. Run when the headline or the look changes, and commit the output. Uses system fonts
 // for the text (Windows: Segoe UI, Microsoft YaHei, Microsoft JhengHei, Yu Gothic UI, Malgun Gothic).
@@ -31,9 +32,11 @@ function rings(cx, cy, scale) {
   return `<circle cx="${cx}" cy="${cy}" r="${2.2 * scale}" fill="${LIME}"/><path d="${d}" fill="none" stroke="${LIME}" stroke-width="${1.7 * scale * 0.55}" stroke-linecap="round"/>`;
 }
 
-function card(lang, d) {
+// tier: the result previews of shared links (0 nothing gives the sharer away, 1 a few things, 2 many); none: the page
+const TIER_BARS = [[OK, OK, OK, OK, OK, OK, OK, OK, OK], [OK, WARN, OK, OK, WARN, OK, OK, WARN, OK], [OK, BAD, WARN, BAD, WARN, BAD, OK, WARN, BAD]];
+function card(lang, d, tier) {
   const ff = `${FONTS[lang] ? `'${FONTS[lang]}', ` : ""}'Segoe UI', 'Microsoft YaHei', sans-serif`;
-  const title = d.h1, sub = d.og_sub, chip = d.eyebrow.replace("{n}", SNIFFERS.length);
+  const title = tier == null ? d.h1 : d["og_r" + tier], sub = tier == null ? d.og_sub : d.card_me, chip = d.eyebrow.replace("{n}", SNIFFERS.length);
   const cjk = /[　-鿿가-힯]/.test(title), max = cjk ? 9 : 18;
   // wrap the headline at a space (or in the middle for CJK) when it is long
   let lines = [title];
@@ -43,7 +46,7 @@ function card(lang, d) {
     lines = [title.slice(0, cut).trim(), title.slice(cut).trim()];
   }
   const size = lines.some(l => l.length > (cjk ? 10 : 20)) ? 64 : 76;
-  const bars = [OK, WARN, BAD, WARN, BAD, WARN, OK, WARN, OK].map((c, i) => `<rect x="${80 + i * 58}" y="520" width="50" height="10" rx="5" fill="${c}"/>`).join("");
+  const bars = (tier == null ? [OK, WARN, BAD, WARN, BAD, WARN, OK, WARN, OK] : TIER_BARS[tier]).map((c, i) => `<rect x="${80 + i * 58}" y="520" width="50" height="10" rx="5" fill="${c}"/>`).join("");
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs><radialGradient id="g" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 0) scale(900 700)">
     <stop offset="0" stop-color="${LIME}" stop-opacity=".18"/><stop offset="1" stop-color="${LIME}" stop-opacity="0"/></radialGradient></defs>
@@ -64,5 +67,6 @@ await mkdir(out, { recursive: true });
 for (const f of (await readdir(new URL("i18n/", src))).filter(f => f.endsWith(".mjs"))) {
   const lang = f.slice(0, -4), d = (await import(new URL("i18n/" + f, src).href)).default;
   await writeFile(new URL(lang.toLowerCase() + ".png", out), render(card(lang, d)));
+  for (const k of [0, 1, 2]) await writeFile(new URL(`r${k}-${lang.toLowerCase()}.png`, out), render(card(lang, d, k)));
   console.log("og/" + lang.toLowerCase() + ".png");
 }
