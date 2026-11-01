@@ -30,7 +30,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const IPQS = META("ipqs"), EGRESS = META("egress"), DNSTEST = META("dns");
   // another tool's page in this page's language (every 1ms.dog tool keeps the same language folders)
   const inLang = host => host.replace(/\/$/, "") + (D.paths[LANG] || "/");
-  const ipqsOf = ip => IPQS && ip ? IPQS.replace(/\/$/, "") + "/?ip=" + encodeURIComponent(ip) : "";
+  const ipqsOf = ip => IPQS && ip ? inLang(IPQS) + "?ip=" + encodeURIComponent(ip) : "";
   if (EGRESS && $("#egLink")) { $("#egLink").href = inLang(EGRESS); $("#egLink").hidden = false; }
   const list = a => a.join(t("v_join"));
   // a network's everyday name: "Alibaba Cloud (Singapore) Private Limited" → "Alibaba Cloud", "Amazon.com, Inc." → "Amazon.com"
@@ -56,7 +56,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   };
   applyTheme(TH.includes(store.get(K.theme)) ? store.get(K.theme) : "system");
   thBtn.onclick = () => { const n = TH[(TH.indexOf(thBtn.dataset.th) + 1) % 3]; store.set(K.theme, n); applyTheme(n); };
-  $("#lang").onchange = e => { const l = e.target.value; store.set(K.lang, l); location.href = D.paths[l] + location.search; };
+  $("#lang").onchange = e => { const l = e.target.value; store.set(K.lang, l); location.href = D.paths[l] + location.search + location.hash; };   // a shared portrait comes along
 
   /* ---------- dialogs ---------- */
   function openDlg(id) { $("#" + id).hidden = false; document.documentElement.style.overflow = "hidden"; $("#" + id + " [data-close]").focus(); }
