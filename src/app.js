@@ -178,6 +178,13 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     hv("h_dnt", [h.dnt != null ? "DNT: " + h.dnt : "", h["sec-gpc"] != null ? "Sec-GPC: " + h["sec-gpc"] : ""].filter(Boolean).join(" · "));
   }
 
+  // a time zone's name in the page's language ("北美太平洋时间"), with its offset
+  function zoneLabel(tz, off) {
+    let name = "";
+    try { if (tz) name = new Intl.DateTimeFormat(LANG, { timeZone: tz, timeZoneName: "longGeneric" }).formatToParts(new Date()).find(x => x.type === "timeZoneName").value; } catch (e) {}
+    return (name && !/^GMT|^UTC/.test(name) ? name + " " : "") + "UTC" + off;
+  }
+
   // a time zone's UTC offset now, in minutes
   function tzOffset(tz) {
     try {
@@ -678,6 +685,8 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
       const sg = $(`#segs [data-c="${id}"]`); if (sg) sg.className = "st-" + lv;
       const vv = Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "cc" ? country(x) : id === "split" ? exitName(x) : x]));
       if (id === "tz" || id === "lang" || id === "dns") vv.ipc = ipc ? country(ipc) : "?";
+      // each side as its zone's name with the offset ("Pacific Time UTC-08:00"), or the offset alone
+      if (id === "tz") { vv.A = zoneLabel(vars.za, vars.a); vv.B = zoneLabel(vars.zb, vars.b); }
       // the whole text on hover only when two lines cut it short; otherwise it would just repeat the row
       const cv = r.querySelector(".ck-v"); cv.textContent = t(key, vv);
       if (cv.scrollHeight > cv.clientHeight + 1) r.dataset.why = cv.textContent; else delete r.dataset.why;
@@ -712,7 +721,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   function judge(final) {
     const c = (R.srv && R.srv.cf) || {};
     const res = checks({
-      tz: R.tz, tzOff: R.tzOff == null ? null : offTxt(R.tzOff), ipTzOff: c.timezone ? offTxt(tzOffset(c.timezone)) : null, ipcc: c.country,
+      tz: R.tz, tzOff: R.tzOff == null ? null : offTxt(R.tzOff), ipTzOff: c.timezone ? offTxt(tzOffset(c.timezone)) : null, ipTz: c.timezone || null, ipcc: c.country,
       langs: R.langs, dnsCC: R.dnsCC, exits: allExits(), rtc: R.rtc, ip: R.srv && R.srv.ip, asn: c.asn, org: c.asOrganization && shortOrg(c.asOrganization),
       uaOS: R.dev && R.dev.os, real: !!R.dev, hintOS: R.hi && R.hi.platform, gpuOS: gpuOS(R.gpuRaw), rand: R.rand, webdriver: R.webdriver,
     });
@@ -732,7 +741,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     delete P.asn;
     P.l = LANG;
     P.ck = Object.fromEntries(Object.entries(R.ck || {}).filter(([, v]) => v).map(([id, [lv, key, vars]]) =>
-      [id, [lv, key, Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "ip" ? maskIp(String(x)) : k === "org" && !show ? t("masked") : x]))]]));
+      [id, [lv, key, Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "ip" ? maskIp(String(x)) : k === "org" && !show ? t("masked") : k === "za" && !show ? null : x]))]]));
     return P;
   }
 

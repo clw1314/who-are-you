@@ -28,7 +28,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "Audio", s_fontfp: "Liste des polices", s_fpid: "Empreinte combinée", s_rand: "Protection d’empreinte",
 
   c_tz: "Fuseau et IP", c_lang: "Langue et IP", c_webrtc: "Fuite WebRTC", c_dc: "IP de centre de données", c_ua: "User agent et système", c_fp: "Empreinte traçable", c_bot: "Automatisation",
-  c_tz_ok: "Tous deux UTC{a}", c_tz_bad: "L’IP ({ipc}) est en UTC{a}, votre système en UTC{b}",
+  c_tz_ok: "Tous deux UTC{a}", c_tz_bad: "L’IP ({ipc}) est en UTC{a}, votre système en UTC{b}", c_tz_off: "IP : {A}, votre système : {B}", c_tz_near: "Même pays ({ipc}), mais IP : {A}, système : {B}",
   c_lang_info: "L’anglais en dit peu sur votre position", c_lang_ok: "Votre langue correspond au pays de l’IP : {ipc}", c_lang_warn: "Votre langue renvoie à : {cc} ; l’IP est ici : {ipc}",
   c_rtc_off: "WebRTC désactivé : rien à fuir", c_rtc_ok: "La même adresse que celle vue par la page", c_rtc_none: "Aucune adresse publique reçue",
   c_rtc_bad: "Fuite d’une autre adresse : {ip}", c_rtc_warn: "Une autre adresse aussi : {ip} (peut-être juste IPv6)",

@@ -28,7 +28,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "Áudio", s_fontfp: "Lista de fontes", s_fpid: "Impressão combinada", s_rand: "Proteção de impressão",
 
   c_tz: "Fuso e IP", c_lang: "Idioma e IP", c_webrtc: "Vazamento WebRTC", c_dc: "IP de data center", c_ua: "User agent e sistema", c_fp: "Impressão rastreável", c_bot: "Automação",
-  c_tz_ok: "Ambos UTC{a}", c_tz_bad: "O IP ({ipc}) é UTC{a}, seu sistema UTC{b}",
+  c_tz_ok: "Ambos UTC{a}", c_tz_bad: "O IP ({ipc}) é UTC{a}, seu sistema UTC{b}", c_tz_off: "IP: {A}, seu sistema: {B}", c_tz_near: "Mesmo país ({ipc}), mas IP: {A}, sistema: {B}",
   c_lang_info: "Inglês diz pouco sobre onde você está", c_lang_ok: "Seu idioma bate com o país do IP: {ipc}", c_lang_warn: "Seu idioma aponta para {cc}; o IP está em: {ipc}",
   c_rtc_off: "WebRTC desligado: nada a vazar", c_rtc_ok: "O mesmo endereço que a página vê", c_rtc_none: "Nenhum endereço público voltou",
   c_rtc_bad: "Vaza outro endereço: {ip}", c_rtc_warn: "Outro endereço também: {ip} (talvez só IPv6)",

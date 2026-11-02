@@ -28,7 +28,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "Audio", s_fontfp: "Schriftenliste", s_fpid: "Gesamt-Fingerabdruck", s_rand: "Fingerabdruck-Schutz",
 
   c_tz: "Zeitzone und IP", c_lang: "Sprache und IP", c_webrtc: "WebRTC-Leck", c_dc: "Rechenzentrums-IP", c_ua: "User-Agent und System", c_fp: "Verfolgbarer Fingerabdruck", c_bot: "Automatisierung",
-  c_tz_ok: "Beide UTC{a}", c_tz_bad: "IP ({ipc}) ist UTC{a}, Ihr System UTC{b}",
+  c_tz_ok: "Beide UTC{a}", c_tz_bad: "IP ({ipc}) ist UTC{a}, Ihr System UTC{b}", c_tz_off: "IP: {A}, Ihr System: {B}", c_tz_near: "Gleiches Land ({ipc}), aber IP: {A}, System: {B}",
   c_lang_info: "Englisch verrät wenig über den Ort", c_lang_ok: "Ihre Sprache passt zum Land der IP: {ipc}", c_lang_warn: "Ihre Sprache deutet auf {cc}, die IP liegt in: {ipc}",
   c_rtc_off: "WebRTC ist aus: nichts zu verraten", c_rtc_ok: "Dieselbe Adresse, die die Seite sieht", c_rtc_none: "Keine öffentliche Adresse zurückbekommen",
   c_rtc_bad: "Verrät eine andere Adresse: {ip}", c_rtc_warn: "Noch eine Adresse: {ip} (vielleicht nur IPv6)",

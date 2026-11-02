@@ -88,6 +88,14 @@ test("disguise checks", () => {
   const v = checks({ ...base, ipTzOff: "+09:00", ipcc: "JP", asn: 16509, org: "Amazon.com, Inc.", rtc: ["1.2.3.4", "5.6.7.8"], ip: "5.6.7.8" });
   assert.equal(v.tz[0], "bad"); assert.equal(v.lang[0], "warn"); assert.equal(v.dc[0], "warn"); assert.equal(v.webrtc[0], "bad");
   assert.deepEqual(v.webrtc[2], { ip: "1.2.3.4" });
+  assert.deepEqual(v.tz, ["bad", "c_tz_off", { a: "+09:00", b: "+08:00", za: null, zb: "Asia/Shanghai" }]);
+  // another zone of the IP's own country only hints: New York against an address placed in Los Angeles
+  const us = { ...base, tz: "America/New_York", tzOff: "-05:00", ipTz: "America/Los_Angeles", ipTzOff: "-08:00", ipcc: "US" };
+  assert.deepEqual(checks(us).tz, ["warn", "c_tz_near", { a: "-08:00", b: "-05:00", za: "America/Los_Angeles", zb: "America/New_York" }]);
+  assert.equal(checks({ ...base, tz: "Europe/Moscow", tzOff: "+03:00", ipTz: "Asia/Vladivostok", ipTzOff: "+10:00", ipcc: "RU" }).tz[0], "warn");
+  // New York's clock behind an address in Japan is a contradiction; the same offset in another country is not
+  assert.equal(checks({ ...us, ipTz: "Asia/Tokyo", ipTzOff: "+09:00", ipcc: "JP" }).tz[0], "bad");
+  assert.equal(checks({ ...base, ipTz: "Asia/Singapore", ipcc: "SG" }).tz[0], "ok");
   // an IPv6 address next to an IPv4 page request is only a warning
   assert.equal(checks({ ...base, rtc: ["2001:db8::1", "1.2.3.4"] }).webrtc[0], "warn");
   // an IPv6 address this site sees too is no leak; one that differs from it is

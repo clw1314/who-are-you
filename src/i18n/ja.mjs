@@ -28,7 +28,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "オーディオ", s_fontfp: "フォント一覧", s_fpid: "総合フィンガープリント", s_rand: "フィンガープリント対策",
 
   c_tz: "タイムゾーンと IP", c_lang: "言語と IP", c_webrtc: "WebRTC 漏れ", c_dc: "データセンター IP", c_ua: "UA と実際の OS", c_fp: "追跡できる指紋", c_bot: "自動操作の痕跡",
-  c_tz_ok: "どちらも UTC{a}", c_tz_bad: "IP は{ipc}で UTC{a}、システムは UTC{b}",
+  c_tz_ok: "どちらも UTC{a}", c_tz_bad: "IP は{ipc}で UTC{a}、システムは UTC{b}", c_tz_off: "IP は{A}、システムは{B}", c_tz_near: "同じ国（{ipc}）でも、IP は{A}、システムは{B}",
   c_lang_info: "英語だけでは場所は分からない", c_lang_ok: "言語は{ipc}と一致", c_lang_warn: "言語は{cc}を指すが、IP は{ipc}",
   c_rtc_off: "WebRTC はオフ：漏れない", c_rtc_ok: "ページから見えるアドレスと同じ", c_rtc_none: "公開アドレスは返らなかった",
   c_rtc_bad: "別のアドレスが漏れている：{ip}", c_rtc_warn: "別のアドレスもある：{ip}（IPv6 なだけかも）",

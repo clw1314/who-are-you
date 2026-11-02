@@ -28,7 +28,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "오디오", s_fontfp: "글꼴 목록", s_fpid: "종합 지문", s_rand: "지문 보호",
 
   c_tz: "시간대와 IP", c_lang: "언어와 IP", c_webrtc: "WebRTC 유출", c_dc: "데이터 센터 IP", c_ua: "UA와 실제 시스템", c_fp: "추적 가능한 지문", c_bot: "자동화 흔적",
-  c_tz_ok: "둘 다 UTC{a}", c_tz_bad: "IP 위치 {ipc}: UTC{a}, 시스템: UTC{b}",
+  c_tz_ok: "둘 다 UTC{a}", c_tz_bad: "IP 위치 {ipc}: UTC{a}, 시스템: UTC{b}", c_tz_off: "IP: {A}, 시스템: {B}", c_tz_near: "같은 나라({ipc})지만 IP: {A}, 시스템: {B}",
   c_lang_info: "영어만으로는 위치를 알 수 없음", c_lang_ok: "언어와 IP 위치 {ipc}: 일치", c_lang_warn: "언어가 가리키는 곳 {cc}, IP 위치 {ipc}",
   c_rtc_off: "WebRTC 꺼짐: 유출 없음", c_rtc_ok: "페이지가 보는 주소와 같음", c_rtc_none: "공인 주소를 받지 못함",
   c_rtc_bad: "다른 주소 유출: {ip}", c_rtc_warn: "다른 주소도 있음: {ip} (IPv6일 수도)",

@@ -29,7 +29,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "Audio", s_fontfp: "Font list", s_fpid: "Combined fingerprint", s_rand: "Fingerprint protection",
 
   c_tz: "Time zone vs IP", c_lang: "Language vs IP", c_webrtc: "WebRTC leak", c_dc: "Data center IP", c_ua: "User agent vs system", c_fp: "Trackable fingerprint", c_bot: "Automation",
-  c_tz_ok: "Both UTC{a}", c_tz_bad: "IP in {ipc} is UTC{a}, your system is UTC{b}",
+  c_tz_ok: "Both UTC{a}", c_tz_bad: "IP in {ipc} is UTC{a}, your system is UTC{b}", c_tz_off: "IP on {A}, your system on {B}", c_tz_near: "Same country ({ipc}), but the IP is on {A} and your system on {B}",
   c_lang_info: "English says little about where you are", c_lang_ok: "Your language matches {ipc}", c_lang_warn: "Your language points to {cc}, the IP is in {ipc}",
   c_rtc_off: "WebRTC is off: nothing to leak", c_rtc_ok: "Same address as the page sees", c_rtc_none: "No public address came back",
   c_rtc_bad: "Leaks another address: {ip}", c_rtc_warn: "Another address too: {ip} (may just be IPv6)",

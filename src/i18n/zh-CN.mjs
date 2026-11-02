@@ -28,7 +28,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "音频", s_fontfp: "字体列表", s_fpid: "综合指纹", s_rand: "防指纹",
 
   c_tz: "时区与 IP", c_lang: "语言与 IP", c_webrtc: "WebRTC 泄露", c_dc: "机房 IP", c_ua: "UA 与真实系统", c_fp: "指纹可追踪", c_bot: "自动化痕迹",
-  c_tz_ok: "都是 UTC{a}", c_tz_bad: "IP 在{ipc}，是 UTC{a}；系统是 UTC{b}",
+  c_tz_ok: "都是 UTC{a}", c_tz_bad: "IP 在{ipc}，是 UTC{a}；系统是 UTC{b}", c_tz_off: "IP 是{A}，系统是{B}", c_tz_near: "同在{ipc}，但 IP 是{A}，系统是{B}",
   c_lang_info: "英语看不出你在哪", c_lang_ok: "语言和{ipc}一致", c_lang_warn: "语言指向{cc}，IP 却在{ipc}",
   c_rtc_off: "WebRTC 已关闭，不会泄露", c_rtc_ok: "和网页看到的地址相同", c_rtc_none: "没有拿到公网地址",
   c_rtc_bad: "泄露了另一个地址：{ip}", c_rtc_warn: "还有另一个地址：{ip}（可能只是 IPv6）",

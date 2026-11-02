@@ -28,7 +28,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "Audio", s_fontfp: "Lista de fuentes", s_fpid: "Huella combinada", s_rand: "Protección de huella",
 
   c_tz: "Zona horaria e IP", c_lang: "Idioma e IP", c_webrtc: "Fuga WebRTC", c_dc: "IP de centro de datos", c_ua: "User agent y sistema", c_fp: "Huella rastreable", c_bot: "Automatización",
-  c_tz_ok: "Ambas UTC{a}", c_tz_bad: "La IP en {ipc} es UTC{a}, tu sistema UTC{b}",
+  c_tz_ok: "Ambas UTC{a}", c_tz_bad: "La IP en {ipc} es UTC{a}, tu sistema UTC{b}", c_tz_off: "IP: {A}, tu sistema: {B}", c_tz_near: "Mismo país ({ipc}), pero IP: {A}, sistema: {B}",
   c_lang_info: "El inglés dice poco de dónde estás", c_lang_ok: "Tu idioma encaja con {ipc}", c_lang_warn: "Tu idioma apunta a {cc}, la IP está en {ipc}",
   c_rtc_off: "WebRTC desactivado: nada que filtrar", c_rtc_ok: "La misma dirección que ve la página", c_rtc_none: "No volvió ninguna dirección pública",
   c_rtc_bad: "Filtra otra dirección: {ip}", c_rtc_warn: "También otra dirección: {ip} (quizá solo IPv6)",

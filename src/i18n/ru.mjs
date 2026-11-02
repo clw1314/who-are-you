@@ -28,7 +28,7 @@ export default {
   s_canvas: "Canvas", s_webgl: "WebGL", s_audio: "Аудио", s_fontfp: "Список шрифтов", s_fpid: "Общий отпечаток", s_rand: "Защита от отпечатков",
 
   c_tz: "Пояс и IP", c_lang: "Язык и IP", c_webrtc: "Утечка WebRTC", c_dc: "IP дата-центра", c_ua: "User-Agent и система", c_fp: "Отслеживаемый отпечаток", c_bot: "Автоматизация",
-  c_tz_ok: "Оба UTC{a}", c_tz_bad: "IP ({ipc}): UTC{a}, система: UTC{b}",
+  c_tz_ok: "Оба UTC{a}", c_tz_bad: "IP ({ipc}): UTC{a}, система: UTC{b}", c_tz_off: "IP: {A}, система: {B}", c_tz_near: "Одна страна ({ipc}), но IP: {A}, система: {B}",
   c_lang_info: "Английский мало говорит о том, где вы", c_lang_ok: "Язык совпадает со страной IP: {ipc}", c_lang_warn: "Язык указывает на: {cc}; IP: {ipc}",
   c_rtc_off: "WebRTC выключен: утекать нечему", c_rtc_ok: "Тот же адрес, что видит страница", c_rtc_none: "Публичный адрес не получен",
   c_rtc_bad: "Утекает другой адрес: {ip}", c_rtc_warn: "Есть и другой адрес: {ip} (возможно, просто IPv6)",

@@ -150,10 +150,11 @@ export function splitOf(exits) {
 const fam = ip => ip && ip.includes(":") ? 6 : 4;
 export function checks(x) {
   const out = {};
-  // the system time zone against the address's
+  // the system time zone against the address's: another zone of the same country (the US has six) only hints, since
+  // an address is often placed in the right country but the wrong city; another country's is a contradiction
   if (x.tz == null || !x.ipcc) out.tz = null;
-  else if (x.tzOff !== x.ipTzOff) out.tz = ["bad", "c_tz_bad", { a: x.ipTzOff, b: x.tzOff }];
-  else out.tz = ["ok", "c_tz_ok", { a: x.tzOff }];
+  else if (x.tzOff === x.ipTzOff) out.tz = ["ok", "c_tz_ok", { a: x.tzOff }];
+  else out.tz = [tzCC(x.tz) === x.ipcc ? "warn" : "bad", tzCC(x.tz) === x.ipcc ? "c_tz_near" : "c_tz_off", { a: x.ipTzOff, b: x.tzOff, za: x.ipTz || null, zb: x.tz }];
   // the browser language against the address's country
   const lcc = langCC((x.langs || [])[0]);
   if (!x.ipcc || !x.langs) out.lang = null;
