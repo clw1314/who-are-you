@@ -133,6 +133,10 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const PR = Object.fromEntries($$(".pr[data-s]").map(r => [r.dataset.s, r]));
   const FR = Object.fromEntries($$(".focus-rows [data-f]").map(r => [r.dataset.f, r]));
   const N = SNIFFERS.length;
+  // Network Checkup, the run of every 1ms.dog tool at once, beside the verdict (when the host announces it; never
+  // inside it)
+  const CHECK = META("check");
+  if (CHECK && !EMBED) { const a = $("#checkGo"); a.href = inLang(CHECK); a.innerHTML = esc(t("go_check")) + EXT; a.hidden = false; }
   let gen = 0, done = new Set();
   // fill a row: html is trusted markup built here, everything read from the browser or the server goes through esc()
   function row(id, html, opt = {}) {
