@@ -231,3 +231,12 @@ h2 { font-size: 15px; font-weight: 700; }
   .bar .btn span { display: none; }
   .bar .btn { padding: 0 10px; }
 }
+
+/* Embedded in Connection Checkup: the run and its result only, compact, as wide as the frame */
+html[data-who-embed] { overflow-x: hidden; scrollbar-gutter: auto; }
+html[data-who-embed] .app { max-width: none; padding: 8px; gap: 12px; }
+html[data-who-embed] .top, html[data-who-embed] .topics, html[data-who-embed] [data-ms-more], html[data-who-embed] .probes,
+html[data-who-embed] .eyebrow, html[data-who-embed] .acts, html[data-who-embed] #forget, html[data-who-embed] .idc-r, html[data-who-embed] #help { display: none !important; }
+html[data-who-embed] .hero { padding: 16px 16px 0; gap: 14px; }
+html[data-who-embed] .hero h1 { font-size: 22px; margin-bottom: 8px; }
+html[data-who-embed] .bar { margin: 0 -16px; padding: 10px 16px 12px; }

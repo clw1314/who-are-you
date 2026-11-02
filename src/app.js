@@ -28,6 +28,16 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   };
   // other 1ms.dog tools, when the host announces them (absent when self-hosted)
   const META = n => (document.querySelector(`meta[name="${n}"]`) || {}).content || "";
+  // Embedded in Connection Checkup: only when opened with ?embed=checkup by the report page the host names in
+  // <meta name="check">; anything else (no meta when self-hosted, another referrer) is an ordinary page. The report
+  // page is the only origin the page talks to.
+  const EMBED = (() => {
+    const check = META("check");
+    if (new URLSearchParams(location.search).get("embed") !== "checkup" || !check || window.parent === window) return "";
+    try { const o = new URL(check).origin; return new URL(document.referrer).origin === o ? o : ""; } catch (e) { return ""; }
+  })();
+  if (EMBED) document.documentElement.setAttribute("data-who-embed", "");
+  const post = m => { if (EMBED) window.parent.postMessage({ ms: "checkup", v: 1, tool: "who", ...m }, EMBED); };
   // the icon that ends a link to another tool (the same as the build's EXT)
   const EXT = '<svg class="ext" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M12 10v3.5H2.5V4H6"/></svg>';
   const IPQS = META("ipqs"), EGRESS = META("egress"), DNSTEST = META("dns"), ASN = META("asn"), IPV6 = META("ipv6");
@@ -141,6 +151,7 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     $("#prog i").style.transform = `scaleX(${n / N})`;
     $("#prog").classList.toggle("end", n >= N);
     $("#progTxt").textContent = n >= N ? t("done_n", { n: N }) : t("progress", { n, of: N });
+    post({ type: "progress", done: n, total: N, text: $("#progTxt").textContent });
   }
   // run a sniffer; one that throws marks its rows as unreadable
   const guard = async (ids, f) => { try { await f(); } catch (e) { for (const id of [].concat(ids)) na(id, "v_fail"); } };
@@ -179,9 +190,11 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   }
 
   // a time zone's name in the page's language ("北美太平洋时间"), with its offset
-  function zoneLabel(tz, off) {
+  // (a shared link leaves the address's zone out unless it shows the city: its country stands in, "日本 UTC+09:00")
+  function zoneLabel(tz, off, cc) {
     let name = "";
     try { if (tz) name = new Intl.DateTimeFormat(LANG, { timeZone: tz, timeZoneName: "longGeneric" }).formatToParts(new Date()).find(x => x.type === "timeZoneName").value; } catch (e) {}
+    if (!name && cc) name = country(cc);
     return (name && !/^GMT|^UTC/.test(name) ? name + " " : "") + "UTC" + off;
   }
 
@@ -673,22 +686,26 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
 
   /* ---------- the disguise checks ---------- */
   const CK = Object.fromEntries($$(".ckr[data-c]").map(r => [r.dataset.c, r]));
+  // a check's result as text: [level, key, vars]; ipc: the address's country
+  function ckText(id, [, key, vars], ipc) {
+    const vv = Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "cc" ? country(x) : id === "split" ? exitName(x) : x]));
+    if (id === "tz" || id === "lang" || id === "dns") vv.ipc = ipc ? country(ipc) : "?";
+    // each side as its zone's name with the offset ("Pacific Time UTC-08:00"), or the offset alone
+    if (id === "tz") { vv.A = zoneLabel(vars.za, vars.a, ipc); vv.B = zoneLabel(vars.zb, vars.b); }
+    return t(key, vv);
+  }
   // res: check id → [level, key, vars]; ipc: the address's country
   function paintChecks(res, ipc, final) {
     let bad = 0, warn = 0;
     for (const id of CHECKS) {
       const r = CK[id], v = res[id];
       if (!v) continue;
-      const [lv, key, vars] = v;
+      const [lv] = v;
       if (lv === "bad") bad++; if (lv === "warn") warn++;
       r.className = "ckr st-" + lv;
       const sg = $(`#segs [data-c="${id}"]`); if (sg) sg.className = "st-" + lv;
-      const vv = Object.fromEntries(Object.entries(vars).map(([k, x]) => [k, k === "cc" ? country(x) : id === "split" ? exitName(x) : x]));
-      if (id === "tz" || id === "lang" || id === "dns") vv.ipc = ipc ? country(ipc) : "?";
-      // each side as its zone's name with the offset ("Pacific Time UTC-08:00"), or the offset alone
-      if (id === "tz") { vv.A = zoneLabel(vars.za, vars.a); vv.B = zoneLabel(vars.zb, vars.b); }
       // the whole text on hover only when two lines cut it short; otherwise it would just repeat the row
-      const cv = r.querySelector(".ck-v"); cv.textContent = t(key, vv);
+      const cv = r.querySelector(".ck-v"); cv.textContent = ckText(id, v, ipc);
       if (cv.scrollHeight > cv.clientHeight + 1) r.dataset.why = cv.textContent; else delete r.dataset.why;
       r.querySelector(".st").textContent = lv === "ok" ? "✓" : lv === "info" ? "i" : "!";
       if (D.focus && D.focus.check === id) {
@@ -862,8 +879,38 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
     for (const id of Object.keys(PR)) if (!done.has(id)) na(id);   // anything a sniffer couldn't reach
     judge(true);
     $("#rerun").disabled = false; $("#share").disabled = false;
+    if (EMBED) post(embedResult());
   }
+
+  // The result for the report page: the headline and checks as the page shows them, the link a share would give
+  // (without city and network, the share box's default), and facts for its cross-tool rules. Addresses in the
+  // findings are cut to their network, as in a shared link.
+  function embedResult() {
+    const c = (R.srv && R.srv.cf) || {}, ck = R.ck || {}, P = sharedPortrait(false), lv = id => ck[id] && ck[id][0];
+    const found = Object.values(ck).filter(x => x && (x[0] === "bad" || x[0] === "warn")).length;
+    const RANK = { bad: 0, warn: 1, ok: 2 };
+    const findings = CHECKS.filter(id => P.ck[id] && P.ck[id][0] in RANK).sort((a, b) => RANK[P.ck[a][0]] - RANK[P.ck[b][0]]).slice(0, 4)
+      .map(id => ({ level: P.ck[id][0], text: t("c_" + id) + " · " + ckText(id, P.ck[id], c.country) }));
+    const stats = [{ label: t("h_checks"), value: found + " / " + CHECKS.length }];
+    if (c.country) stats.push({ label: t("s_geo"), value: country(c.country) });
+    if (R.dnsCC) stats.push({ label: t("s_dns"), value: country(R.dnsCC) });
+    const facts = { problems: found };
+    if (c.country) facts.ipCountry = c.country;
+    if (ck.tz) facts.tzMismatch = lv("tz") === "bad";                    // another country's zone; one of the same country is only a warning
+    if (ck.lang && lv("lang") !== "info") facts.langMismatch = lv("lang") !== "ok";
+    if (ck.webrtc) facts.webrtcLeak = lv("webrtc") === "bad";
+    if (R.dnsCC) facts.dnsCountry = R.dnsCC;
+    if (ck.dc && lv("dc") !== "info") facts.dc = lv("dc") !== "ok";
+    if (ck.fp) facts.fpSame = ck.fp[1] === "c_fp_same";
+    return { type: "result", lang: LANG, path: linkPath(LANG, encode(P)), grade: null, score: null, headline: $("#vHead").textContent, stats, findings, facts };
+  }
+  // the report page sizes the frame to the content
+  if (EMBED && window.ResizeObserver) {
+    let h = 0;
+    new ResizeObserver(() => { const n = Math.ceil($(".app").getBoundingClientRect().height); if (n !== h) post({ type: "size", height: h = n }); }).observe($(".app"));
+  }
+
   $("#rerun").onclick = run;
-  const shared = sharedCode && showShared(sharedCode);
+  const shared = !EMBED && sharedCode && showShared(sharedCode);
   if (!shared) run();
 })();
