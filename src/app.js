@@ -30,10 +30,11 @@ import { nationality, device, browser, gpuName, gpuOS, kbdLayout, isDataCenter, 
   const META = n => (document.querySelector(`meta[name="${n}"]`) || {}).content || "";
   // Embedded in Connection Checkup: only when opened with ?embed=checkup by the report page the host names in
   // <meta name="check">; anything else (no meta when self-hosted, another referrer) is an ordinary page. The report
-  // page is the only origin the page talks to.
+  // page is the only origin the page talks to. Only the home page embeds: not a topic page, not a shared portrait.
   const EMBED = (() => {
     const check = META("check");
     if (new URLSearchParams(location.search).get("embed") !== "checkup" || !check || window.parent === window) return "";
+    if (D.focus || parsePath(location.pathname)) return "";
     try { const o = new URL(check).origin; return new URL(document.referrer).origin === o ? o : ""; } catch (e) { return ""; }
   })();
   if (EMBED) document.documentElement.setAttribute("data-who-embed", "");
